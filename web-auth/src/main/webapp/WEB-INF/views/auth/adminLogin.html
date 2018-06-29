@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="common/fragments/commonHeader :: frg_common_header(~{::title})">
+        <title>Login as system administrator</title>
+    </head>
+    <body>
+        <form class="form-narrow form-horizontal" th:action="@{/admin/login}" method="post">
+            <th:block th:if="${param.error != null}">
+                <div th:replace="common/fragments/components :: alert (type='danger', message='Sign in error. Please try again.')">Alert</div>
+            </th:block>
+            <fieldset>
+                <legend>Please input information for admin</legend>
+                <div class="form-group">
+                    <label for="inputEmail" class="col-lg-2 control-label">Username</label>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control" id="inputEmail" placeholder="Username" name="username" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                    <div class="col-lg-10">
+                        <input type="password" class="form-control" id="inputPassword" placeholder="Password" name="password" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-10">
+                        <button type="submit" class="btn btn-default">Login</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <!-- /* Common styles and scripts, along with title passes as parameter */ -->
+    <head th:fragment="frg_common_header(title)">
+        <title th:replace="${title}">Title</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="../../../resources/assets/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/resources/assets/css/bootstrap.min.css}"/>
+        <link href="../../../resources/assets/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/assets/css/core.css}" />
+        <script src="../../../resources/assets/js/jquery.min.js" th:src="@{/resources/assets/js/jquery.min.js}"></script>
+        <script src="../../../resources/assets/js/bootstrap.min.js" th:src="@{/resources/assets/js/bootstrap.min.js}"></script>
+    </head>
+</html>
