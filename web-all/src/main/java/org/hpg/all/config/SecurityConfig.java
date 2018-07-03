@@ -50,6 +50,7 @@ public class SecurityConfig {
                     .loginPage("/auth/userLogin")
                     .loginProcessingUrl("/user/login") // Prefix 'must' be /user
                     .failureUrl("/auth/userLogin?error=1")
+                    .defaultSuccessUrl("/user/home")
                     .and()
                     .logout()
                     .logoutUrl("/user/logout") // Prefix 'must' be /user (?), default is clearing authentication and httpsession
@@ -72,6 +73,7 @@ public class SecurityConfig {
                     .loginPage("/auth/adminLogin")
                     .loginProcessingUrl("/admin/login") // Prefix 'must' be /admin
                     .failureUrl("/auth/adminLogin?error=1")
+                    .defaultSuccessUrl("/admin/home")
                     .and()
                     .logout()
                     .logoutUrl("/admin/logout") // Prefix 'must' be /admin (?), default is clearing authentication and httpsession

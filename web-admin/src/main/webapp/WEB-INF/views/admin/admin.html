@@ -10,6 +10,8 @@ and open the template in the editor.
     </head>
     <body>
         <div>Content coming soon</div>
-        <a href="#" th:href="@{/admin/logout}">Logout</a>
+        <form action="#" th:action="@{/admin/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
     </body>
 </html>
