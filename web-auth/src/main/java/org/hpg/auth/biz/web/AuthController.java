@@ -25,6 +25,7 @@ public class AuthController {
      */
     @GetMapping("/userLogin")
     public String userLogin() {
+        // Test reference to WEB-COMMON: Still does not work
         return "auth/userLogin";
     }
 

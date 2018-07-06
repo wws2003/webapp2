@@ -1,4 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-</project>	
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>web-search</artifactId>
+    <version>1.0</version>
+    <packaging>war</packaging>
+    <name>Sample Multi-Modules Project Search module</name>
+
+    <!-- Parent -->
+    <parent>
+        <groupId>org.hpg.multi</groupId>
+        <artifactId>hpg-web-app</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <!-- Properties -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java-version>1.8</java-version>
+    </properties>
+
+    <!-- Build -->
+    <build>
+        <plugins>
+            <!-- Compile -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <!-- War archive -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <!-- Copying plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${basedir}/target/${project.artifactId}/WEB-INF/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <!-- Dependency on lib-common module -->
+        <dependency>
+            <groupId>org.hpg.multi</groupId>
+            <artifactId>lib-common</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        <!-- Dependency on web-common module (war) -->
+        <dependency>
+            <groupId>org.hpg.multi</groupId>
+            <artifactId>web-common</artifactId>
+            <version>1.0</version>
+            <type>war</type>
+        </dependency>
+        <!-- Dependency on web-common module (jar) -->
+        <dependency>
+            <groupId>org.hpg.multi</groupId>
+            <artifactId>web-common-lib</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

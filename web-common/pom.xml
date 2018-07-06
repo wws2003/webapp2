@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>web-common</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
@@ -13,6 +13,24 @@
         <version>1.0</version>
     </parent>
 
+    <!-- Properties -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java-version>1.8</java-version>
+        <!-- Override Spring version -->
+        <spring.version>5.0.5.RELEASE</spring.version>
+        <jackson.version>2.9.1</jackson.version>
+        <!-- Thymeleaf 3 -->
+        <org.thymeleaf-version>3.0.7.RELEASE</org.thymeleaf-version>
+        <org.thymeleaf-spring5-version>3.0.7.RC1</org.thymeleaf-spring5-version>
+        <org.thymeleaf.extras.springsecurity4-version>3.0.2.RELEASE</org.thymeleaf.extras.springsecurity4-version>
+        <nz.net.ultraq.thymeleaflayout-version>2.2.2</nz.net.ultraq.thymeleaflayout-version>
+        <nz.net.ultraq.thymeleaflayout-version>2.2.2</nz.net.ultraq.thymeleaflayout-version>
+        <thymeleaf-extras-java8time-version>3.0.1.RELEASE</thymeleaf-extras-java8time-version>
+        <!-- AssertJ is not a part of Spring IO platform, so the version must be provided explicitly -->
+        <assertj-core-version>3.8.0</assertj-core-version>
+    </properties>
+
     <!-- Build -->
     <build>
         <plugins>
@@ -24,9 +42,6 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <compilerArguments>
-                        <endorseddirs>${endorsed.dir}</endorseddirs>
-                    </compilerArguments>
                 </configuration>
             </plugin>
             <!-- War archive -->
@@ -38,28 +53,41 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-            <!-- Copy -->
+            <!-- Create JAR apart from WAR (to be refered by other modules) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
                     <execution>
-                        <phase>validate</phase>
+                        <id>copy</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${endorsed.dir}</outputDirectory>
-                            <silent>true</silent>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>javax</groupId>
-                                    <artifactId>javaee-endorsed-api</artifactId>
-                                    <version>7.0</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Install built JAR to local repository (to be refered by other modules) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <!--JARをローカルリポジトリへ登録-->
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <packaging>jar</packaging>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}-lib</artifactId>
+                            <version>${project.version}</version>
+                            <file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
                         </configuration>
                     </execution>
                 </executions>
@@ -83,10 +111,4 @@
             <version>1.0</version>
         </dependency>
     </dependencies>
-
-    <!-- Properties -->
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-</project>	
+</project>
