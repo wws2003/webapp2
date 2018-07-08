@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.biz.web;
 
+import org.hpg.common.constant.MendelRole;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,8 @@ public class AuthController {
      */
     @GetMapping("/adminLogin")
     public String adminLogin() {
+        // Test import
+        MendelRole e = MendelRole.ADMIN;
         return "auth/adminLogin";
     }
 }

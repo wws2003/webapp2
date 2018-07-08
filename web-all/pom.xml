@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>web-all</artifactId>
+    <artifactId>mendel-all</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
     <name>Sample Multi-Modules Project Web-all module</name>
@@ -13,13 +13,39 @@
         <version>1.0</version>
     </parent>
 
+    <!-- Profile -->
+    <profiles>
+        <!-- Unix -->
+        <profile>
+            <id>unix</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <glassfish.home.prefix>${user.home}/servers</glassfish.home.prefix>
+            </properties>
+        </profile>
+        <!-- Windows -->
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <glassfish.home.prefix>C:/Users/trungpt/servers/glassfish-4.1.2</glassfish.home.prefix>
+            </properties>
+        </profile>
+    </profiles>
+
     <!-- Properties -->
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java-version>1.8</java-version>
         <!-- Web container (Glassfish) -->
         <glassfish.domain.name>domain1</glassfish.domain.name>
-        <glassfish.home>C:\Users\trungpt\servers\glassfish-4.1.2\glassfish4</glassfish.home>
+        <glassfish.home>${glassfish.home.prefix}/glassfish4</glassfish.home>
         <integration.container.id>glassfish4x</integration.container.id>
     </properties>
 
@@ -116,6 +142,13 @@
         <dependency>
             <groupId>org.hpg.multi</groupId>
             <artifactId>web-admin</artifactId>
+            <version>1.0</version>
+            <type>war</type>
+        </dependency>
+        <!-- Dependency on web-common module (war)-->
+        <dependency>
+            <groupId>org.hpg.multi</groupId>
+            <artifactId>web-common</artifactId>
             <version>1.0</version>
             <type>war</type>
         </dependency>

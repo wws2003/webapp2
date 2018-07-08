@@ -13,11 +13,7 @@
         <version>1.0</version>
     </parent>
 
-    <!-- Properties -->
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java-version>1.8</java-version>
-    </properties>
+    <!-- Properties: Inherit from parent properties -->
 
     <!-- Build -->
     <build>
@@ -53,12 +49,12 @@
             <version>1.0</version>
             <type>jar</type>
         </dependency>
-        <!-- Dependency on web-common module -->
+        <!-- Dependency on web-common module (jar) -->
         <dependency>
             <groupId>org.hpg.multi</groupId>
-            <artifactId>web-common</artifactId>
+            <artifactId>web-common-lib</artifactId>
             <version>1.0</version>
-            <type>war</type>
+            <type>jar</type>
         </dependency>
     </dependencies>
 
