@@ -87,6 +87,7 @@
                             <outputDirectory>
                                 ${basedir}/target/${project.artifactId}/WEB-INF/lib
                             </outputDirectory>
+                            <silent>true</silent>
                         </configuration>
                     </execution>
                 </executions>
