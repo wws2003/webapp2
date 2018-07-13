@@ -5,6 +5,12 @@
  */
 package org.hpg.auth.biz.service.impl;
 
+import org.hpg.common.biz.service.abstr.IUserService;
+import org.hpg.common.config.QualifierConstant;
+import org.hpg.common.constant.MendelRole;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,8 +22,19 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public class AdminRolelUserDetailsServiceImpl implements UserDetailsService {
 
+    @Autowired
+    @Qualifier(QualifierConstant.USER_SERVICE_FOR_ADMIN)
+    private IUserService userService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO Implement properly
+        return userService.findUserByName(username, MendelRole.ADMIN)
+                .map(mendelUser -> {
+                    return User.withUsername(mendelUser.getName())
+                            .password("password")
+                            .build();
+                })
+                .orElse(null);
     }
 }

@@ -5,7 +5,7 @@
  */
 package org.hpg.auth.biz.service.impl;
 
-import org.hpg.common.service.abstr.IUserService;
+import org.hpg.common.biz.service.abstr.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
