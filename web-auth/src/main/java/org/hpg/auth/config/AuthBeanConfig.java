@@ -6,9 +6,13 @@
 package org.hpg.auth.config;
 
 import org.hpg.auth.biz.service.impl.AdminRolelUserDetailsServiceImpl;
+import org.hpg.auth.biz.service.impl.UserRoleUserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Configuration (mostly in term of producer) for beans provided by auth module
@@ -20,8 +24,18 @@ public class AuthBeanConfig {
     // TODO Implement
 
     @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @Qualifier("userDetailsServiceForAdmin")
     public UserDetailsService getUserDetailsServiceForAdmin() {
         // TODO Confirm: Is it possible to wire dependency via new operator ?
         return new AdminRolelUserDetailsServiceImpl();
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @Qualifier("userDetailsServiceForUser")
+    public UserDetailsService getUserDetailsServiceForUser() {
+        // TODO Confirm: Is it possible to wire dependency via new operator ?
+        return new UserRoleUserDetailsServiceImpl();
     }
 }

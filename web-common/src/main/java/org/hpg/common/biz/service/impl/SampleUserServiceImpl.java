@@ -25,7 +25,11 @@ public class SampleUserServiceImpl implements IUserService {
         // TODO Implement properly
         MendelUser user = new MendelUser();
         user.setName(role == MendelRole.ADMIN ? "admin" : "user");
-        user.setEncodedPassword("password");
+        user.setPassword("password");
+
+        // Test debug
+        System.out.println("-----------------------Trying to find user with name " + userName + "------------------");
+
         return Optional.of(user);
     }
 

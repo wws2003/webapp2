@@ -10,7 +10,7 @@ package org.hpg.common.config;
  *
  * @author trungpt
  */
-public class QualifierConstant {
+public class CommonQualifierConstant {
 
     public static final String USER_SERVICE_FOR_USER = "userServiceForUser";
 

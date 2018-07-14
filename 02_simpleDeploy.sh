@@ -1,5 +1,7 @@
 # Make war file for web-all
-mvn clean package war:war -pl web-all -am
+echo "==========================================Packaging war artifact=========================================="
+mvn clean package war:war -DskipTests=true -pl web-all -am
 
 # Deploy web-all war artifact
-mvn integration-test -pl web-all
+echo "==========================================Deploying to Glassfish server=========================================="
+mvn integration-test -DskipTests=true  -pl web-all

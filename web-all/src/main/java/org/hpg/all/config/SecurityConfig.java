@@ -5,16 +5,14 @@
  */
 package org.hpg.all.config;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
  * Security configuration file for the whole application
@@ -24,20 +22,18 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public UserDetailsService userDetailsService() throws Exception {
-        // TODO Move to auth module
-        // ensure the passwords are encoded properly
-        UserBuilder users = User.withDefaultPasswordEncoder();
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(users.username("user").password("password").roles("USER").build());
-        manager.createUser(users.username("admin").password("password").roles("USER", "ADMIN").build());
-        return manager;
-    }
-
     @Configuration
     @Order(1)
     public static class SecurityUserRoleConfig extends WebSecurityConfigurerAdapter {
+
+        @Autowired
+        @Qualifier("userDetailsServiceForUser")
+        private UserDetailsService mUserUserDetailsService;
+
+        @Override
+        protected UserDetailsService userDetailsService() {
+            return mUserUserDetailsService;
+        }
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
@@ -62,6 +58,16 @@ public class SecurityConfig {
     @Configuration
     @Order(2)
     public static class SecurityAdminRoleConfig extends WebSecurityConfigurerAdapter {
+
+        @Autowired
+        @Qualifier("userDetailsServiceForAdmin")
+        private UserDetailsService mAdminUserDetailsService;
+
+        @Override
+        protected UserDetailsService userDetailsService() {
+            System.out.println("-----------------------Getting userDetailService for admin role ------------------");
+            return mAdminUserDetailsService;
+        }
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {

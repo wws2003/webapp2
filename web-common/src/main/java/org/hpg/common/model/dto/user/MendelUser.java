@@ -30,6 +30,11 @@ public class MendelUser {
     private String dispName;
 
     /**
+     * Password
+     */
+    private String password;
+
+    /**
      * Encoded password
      */
     private String encodedPassword;
@@ -98,6 +103,24 @@ public class MendelUser {
     @Override
     public String toString() {
         return "MendelUser{" + "id=" + id + ", name=" + name + ", dispName=" + dispName + ", role=" + role + '}';
+    }
+
+    /**
+     * Get the password
+     *
+     * @return
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Set the password
+     *
+     * @param password
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
