@@ -9,6 +9,9 @@ and open the template in the editor.
         <title>Admin home page</title>
     </head>
     <body>
+        <div>
+            <label th:text="'Welcome ' + ${userName}">Username</label>
+        </div>
         <div>Content coming soon</div>
         <form action="#" th:action="@{/admin/logout}" method="post">
             <button type="submit">Logout</button>
