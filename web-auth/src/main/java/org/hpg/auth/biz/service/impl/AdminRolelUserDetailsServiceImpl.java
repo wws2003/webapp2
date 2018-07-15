@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Spring-provided UserDetailsService implementation class for Admin role
@@ -24,7 +25,10 @@ public class AdminRolelUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     @Qualifier(CommonQualifierConstant.USER_SERVICE_FOR_ADMIN)
-    private IUserService userService;
+    private IUserService mUserService;
+
+    @Autowired
+    private PasswordEncoder mPasswordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
@@ -33,10 +37,11 @@ public class AdminRolelUserDetailsServiceImpl implements UserDetailsService {
 
         System.out.println("-----------------------Loading user for admin role " + userName + "------------------");
 
-        return userService.findUserByName(userName, MendelRole.ADMIN)
+        return mUserService.findUserByName(userName, MendelRole.ADMIN)
                 .map(mendelUser -> {
                     return User.withUsername(mendelUser.getName())
-                            .password("password")
+                            .password(mPasswordEncoder.encode(mendelUser.getPassword()))
+                            .roles(MendelRole.ADMIN.getName())
                             .build();
                 })
                 .orElse(null);

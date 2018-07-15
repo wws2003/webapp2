@@ -5,10 +5,16 @@
  */
 package org.hpg.auth.biz.service.impl;
 
+import org.hpg.common.biz.service.abstr.IUserService;
+import org.hpg.common.config.CommonQualifierConstant;
+import org.hpg.common.constant.MendelRole;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Spring-provided UserDetailsService implementation class for normal user role
@@ -17,9 +23,27 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public class UserRoleUserDetailsServiceImpl implements UserDetailsService {
 
+    @Autowired
+    @Qualifier(CommonQualifierConstant.USER_SERVICE_FOR_USER)
+    private IUserService mUserService;
+
+    @Autowired
+    private PasswordEncoder mPasswordEncoder;
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         // TODO Implement properly
-        return User.builder().username("user").password("password").build();
+        // Test debug
+
+        System.out.println("-----------------------Loading user for user role " + userName + "------------------");
+
+        return mUserService.findUserByName(userName, MendelRole.USER)
+                .map(mendelUser -> {
+                    return User.withUsername(mendelUser.getName())
+                            .password(mPasswordEncoder.encode(mendelUser.getPassword()))
+                            .roles(MendelRole.USER.getName())
+                            .build();
+                })
+                .orElse(null);
     }
 }

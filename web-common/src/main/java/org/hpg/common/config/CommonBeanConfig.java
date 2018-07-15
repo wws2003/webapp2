@@ -28,4 +28,11 @@ public class CommonBeanConfig {
     public IUserService getUserServiceForAdmin() {
         return new SampleUserServiceImpl();
     }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @Qualifier(CommonQualifierConstant.USER_SERVICE_FOR_USER)
+    public IUserService getUserServiceForUser() {
+        return new SampleUserServiceImpl();
+    }
 }
