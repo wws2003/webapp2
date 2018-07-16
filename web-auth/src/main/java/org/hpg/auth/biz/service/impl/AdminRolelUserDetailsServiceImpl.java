@@ -40,7 +40,8 @@ public class AdminRolelUserDetailsServiceImpl implements UserDetailsService {
         return mUserService.findUserByName(userName, MendelRole.ADMIN)
                 .map(mendelUser -> {
                     return User.withUsername(mendelUser.getName())
-                            .password(mPasswordEncoder.encode(mendelUser.getPassword()))
+                            .password(mendelUser.getPassword())
+                            .passwordEncoder(mPasswordEncoder::encode)
                             .roles(MendelRole.ADMIN.getName())
                             .build();
                 })

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="common/fragments/commonHeader :: frg_common_header(~{::title})">
+        <title>Mendel home</title>
+    </head>
+    <body>
+        <div>Choose system</div>
+        <div>
+            <a href="#" th:href="@{/admin/home}">Admin login</a>
+        </div>
+        <div>
+            <a href="#" th:href="@{/user/home}">User login</a>
+        </div>
+        <div>
+            <a href="#" th:href="#">Guest login</a>
+        </div>
+    </body>
+</html>
