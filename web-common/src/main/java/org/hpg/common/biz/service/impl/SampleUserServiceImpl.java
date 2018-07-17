@@ -24,7 +24,8 @@ public class SampleUserServiceImpl implements IUserService {
     public Optional<MendelUser> findUserByName(String userName, MendelRole role) throws MendelRuntimeException {
         // TODO Implement properly
         MendelUser user = new MendelUser();
-        user.setName(role == MendelRole.ADMIN ? "admin" : "user");
+        user.setName(userName);
+        user.setRole(role);
         user.setPassword("password");
 
         // Test debug

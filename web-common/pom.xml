@@ -45,6 +45,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Include source code (for debug purpose) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Install built JAR to local repository (to be refered by other modules) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
