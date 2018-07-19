@@ -23,6 +23,9 @@ public class SampleUserServiceImpl implements IUserService {
     @Override
     public Optional<MendelUser> findUserByName(String userName, MendelRole role) throws MendelRuntimeException {
         // TODO Implement properly
+        if (!"admin".equals(userName) && !"user".equals(userName)) {
+            return Optional.empty();
+        }
         MendelUser user = new MendelUser();
         user.setName(userName);
         user.setRole(role);

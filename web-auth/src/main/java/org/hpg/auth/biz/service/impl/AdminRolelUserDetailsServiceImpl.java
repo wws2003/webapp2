@@ -54,6 +54,6 @@ public class AdminRolelUserDetailsServiceImpl implements UserDetailsService {
                 .map(mendelUser -> {
                     return LoginInfo.withUser(mendelUser).build();
                 })
-                .orElse(null);
+                .orElseThrow(() -> new UsernameNotFoundException(userName));
     }
 }

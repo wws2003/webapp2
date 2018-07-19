@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 /**
  * Security configuration file for the whole application
@@ -31,6 +32,9 @@ public class SecurityConfig {
         @Autowired
         @Qualifier("userDetailsServiceForUser")
         private UserDetailsService mUserUserDetailsService;
+
+        @Autowired
+        private AuthenticationFailureHandler authenticationFailureHandler;
 
         @Autowired
         private PasswordEncoder mPasswordEncoder;
@@ -51,7 +55,8 @@ public class SecurityConfig {
                     .formLogin()
                     .loginPage("/auth/userLogin")
                     .loginProcessingUrl("/user/login") // Prefix 'must' be /user
-                    .failureUrl("/auth/userLogin?error=1")
+                    .failureUrl("/auth/userLogin?error=1") // Probably not need with authenticationFailureHandler
+                    .failureHandler(authenticationFailureHandler)
                     .defaultSuccessUrl("/user/home")
                     .and()
                     .logout()
@@ -72,6 +77,9 @@ public class SecurityConfig {
         @Autowired
         private PasswordEncoder mPasswordEncoder;
 
+        @Autowired
+        private AuthenticationFailureHandler authenticationFailureHandler;
+
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
             auth.userDetailsService(mAdminUserDetailsService)
@@ -87,7 +95,8 @@ public class SecurityConfig {
                     .formLogin()
                     .loginPage("/auth/adminLogin")
                     .loginProcessingUrl("/admin/login") // Prefix 'must' be /admin
-                    .failureUrl("/auth/adminLogin?error=1")
+                    .failureUrl("/auth/adminLogin?error=1") // Probably not need with authenticationFailureHandler
+                    .failureHandler(authenticationFailureHandler)
                     .defaultSuccessUrl("/admin/home")
                     .and()
                     .logout()
