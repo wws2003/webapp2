@@ -44,6 +44,6 @@ public class UserRoleUserDetailsServiceImpl implements UserDetailsService {
                             .roles(MendelRole.USER.getName())
                             .build();
                 })
-                .orElse(null);
+                .orElseThrow(() -> new UsernameNotFoundException(userName));
     }
 }

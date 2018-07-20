@@ -15,7 +15,8 @@ public enum MendelRole {
     INVALID(-1, "Invalid"),
     ADMIN(1, "ADMIN"),
     USER(2, "USER"),
-    DBA(3, "DBA");
+    GUEST(3, "GUEST"),
+    DBA(4, "DBA");
 
     /**
      * Authority code

@@ -1,0 +1,121 @@
+trungpt@OSD-TRUNGPT-PC MINGW64 ~/lab/mvn_modules/sample2 (master)
+$ mvn clean package war:war -am
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO]
+[INFO] Mendel2                                                            [pom]
+[INFO] Sample Multi-Modules Project Common API                            [jar]
+[INFO] Sample Multi-Modules Project Common web components                 [war]
+[INFO] Sample Multi-Modules Project Authentication module                 [war]
+[INFO] Sample Multi-Modules Project Admin module                          [war]
+[INFO] Sample Multi-Modules Project Web-all module                        [war]
+[INFO]
+[INFO] ---------------------< org.hpg.multi:hpg-web-app >----------------------
+[INFO] Building Mendel2 1.0                                               [1/6]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO]
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ hpg-web-app ---
+[INFO] Deleting C:\Users\trungpt\lab\mvn_modules\sample2\target
+[INFO]
+[INFO] --- maven-war-plugin:3.2.2:war (default-cli) @ hpg-web-app ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [hpg-web-app] in [C:\Users\trungpt\lab\mvn_modules\sample2\target\hpg-web-app-1.0]
+[INFO] Processing war project
+[INFO] Webapp assembled in [178 msecs]
+[INFO] Building war: C:\Users\trungpt\lab\mvn_modules\sample2\target\hpg-web-app-1.0.war
+[INFO]
+[INFO] ----------------------< org.hpg.multi:lib-common >----------------------
+[INFO] Building Sample Multi-Modules Project Common API 1.0               [2/6]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ lib-common ---
+[INFO] Deleting C:\Users\trungpt\lab\mvn_modules\sample2\lib-common\target
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ lib-common ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\Users\trungpt\lab\mvn_modules\sample2\lib-common\src\main\resources
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ lib-common ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 4 source files to C:\Users\trungpt\lab\mvn_modules\sample2\lib-common\target\classes
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ lib-common ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\Users\trungpt\lab\mvn_modules\sample2\lib-common\src\test\resources
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ lib-common ---
+[INFO] No sources to compile
+[INFO]
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ lib-common ---
+[INFO] No tests to run.
+[INFO]
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ lib-common ---
+[INFO] Building jar: C:\Users\trungpt\lab\mvn_modules\sample2\lib-common\target\lib-common-1.0.jar
+[INFO]
+[INFO] --- maven-war-plugin:3.2.2:war (default-cli) @ lib-common ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [lib-common] in [C:\Users\trungpt\lab\mvn_modules\sample2\lib-common\target\lib-common-1.0]
+[INFO] Processing war project
+[INFO] Webapp assembled in [169 msecs]
+[INFO] Building war: C:\Users\trungpt\lab\mvn_modules\sample2\lib-common\target\lib-common-1.0.war
+[INFO]
+[INFO] ----------------------< org.hpg.multi:web-common >----------------------
+[INFO] Building Sample Multi-Modules Project Common web components 1.0    [3/6]
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO]
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ web-common ---
+[INFO] Deleting C:\Users\trungpt\lab\mvn_modules\sample2\web-common\target
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ web-common ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 0 resource
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ web-common ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 10 source files to C:\Users\trungpt\lab\mvn_modules\sample2\web-common\target\classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING :
+[INFO] -------------------------------------------------------------
+[WARNING] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java: C:\Users\trungpt\lab\mvn_modules\sample2\web-common\src\main\java\org\hpg\common\biz\service\impl\SampleUserServiceImpl.java uses unchecked or unsafe operations.
+[WARNING] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java: Recompile with -Xlint:unchecked for details.
+[INFO] 2 warnings
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR :
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java:[17,25] package org.hpg.libcommon does not exist
+[ERROR] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java:[18,25] package org.hpg.libcommon does not exist
+[ERROR] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java:[28,31] cannot find symbol
+  symbol:   class Tuple2
+  location: class org.hpg.common.biz.service.impl.SampleUserServiceImpl
+[ERROR] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java:[31,45] cannot find symbol
+  symbol:   variable Tuple
+  location: class org.hpg.common.biz.service.impl.SampleUserServiceImpl
+[ERROR] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java:[32,44] cannot find symbol
+  symbol:   variable Tuple
+  location: class org.hpg.common.biz.service.impl.SampleUserServiceImpl
+[ERROR] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java:[33,45] cannot find symbol
+  symbol:   variable Tuple
+  location: class org.hpg.common.biz.service.impl.SampleUserServiceImpl
+[ERROR] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java:[34,45] cannot find symbol
+  symbol:   variable Tuple
+  location: class org.hpg.common.biz.service.impl.SampleUserServiceImpl
+[ERROR] /C:/Users/trungpt/lab/mvn_modules/sample2/web-common/src/main/java/org/hpg/common/biz/service/impl/SampleUserServiceImpl.java:[43,9] cannot find symbol
+  symbol:   class Tuple2
+  location: class org.hpg.common.biz.service.impl.SampleUserServiceImpl
+[INFO] 8 errors
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO]
+[INFO] Mendel2 1.0 ........................................ SUCCESS [  2.804 s]
+[INFO] Sample Multi-Modules Project Common API ............ SUCCESS [  2.535 s]
+[INFO] Sample Multi-Modules Project Common web components . FAILURE [  0.475 s]
+[INFO] Sample Multi-Modules Project Authentication module . SKIPPED
+[INFO] Sample Multi-Modules Project Admin module .......... SKIPPED
+[INFO] Sample Multi-Modules Project Web-all module 1.0 .... SKIPPED
+trungpt@OSD-TRUNGPT-PC MINGW64 ~/lab/mvn_modules/sample2 (master)
+$ ls ~/.m2/repository/org/hpg/multi/lib-common/1.0/
+_maven.repositories  _remote.repositories  lib-common-1.0.pom  lib-common-1.0.pom.lastUpdated
+
