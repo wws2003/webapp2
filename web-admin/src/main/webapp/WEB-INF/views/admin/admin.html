@@ -12,7 +12,15 @@ and open the template in the editor.
         <div>
             <label th:text="'Welcome ' + ${userName}">Username</label>
         </div>
-        <div>Content coming soon</div>
+        <div>
+            <h3>Content coming soon</h3>
+            <div>
+                <a href="#" th:href="#">User management</a>
+            </div>
+            <div>
+                <a href="#" th:href="#">System management</a>
+            </div>
+        </div>
         <form action="#" th:action="@{/admin/logout}" method="post">
             <button type="submit">Logout</button>
         </form>

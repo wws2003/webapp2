@@ -55,7 +55,6 @@ public class SecurityConfig {
                     .formLogin()
                     .loginPage("/auth/userLogin")
                     .loginProcessingUrl("/user/login") // Prefix 'must' be /user
-                    .failureUrl("/auth/userLogin?error=1") // Probably not need with authenticationFailureHandler
                     .failureHandler(authenticationFailureHandler)
                     .defaultSuccessUrl("/user/home")
                     .and()
@@ -95,7 +94,6 @@ public class SecurityConfig {
                     .formLogin()
                     .loginPage("/auth/adminLogin")
                     .loginProcessingUrl("/admin/login") // Prefix 'must' be /admin
-                    .failureUrl("/auth/adminLogin?error=1") // Probably not need with authenticationFailureHandler
                     .failureHandler(authenticationFailureHandler)
                     .defaultSuccessUrl("/admin/home")
                     .and()

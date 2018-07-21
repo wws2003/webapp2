@@ -5,7 +5,7 @@
  */
 package org.hpg.auth.biz.web;
 
-import org.hpg.common.constant.MendelRole;
+import org.hpg.auth.constant.AuthUrls;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,29 +16,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author trungpt
  */
 @Controller
-@RequestMapping("/auth")
+@RequestMapping(AuthUrls.AUTH_ROOT_URL)
 public class AuthController {
-
-    /**
-     * Login page for admin
-     *
-     * @return
-     */
-    @GetMapping("/userLogin")
-    public String userLogin() {
-        // Test reference to WEB-COMMON: Still does not work
-        return "auth/userLogin";
-    }
 
     /**
      * Login page for user
      *
      * @return
      */
-    @GetMapping("/adminLogin")
+    @GetMapping(AuthUrls.USER_LOGIN)
+    public String userLogin() {
+        return "auth/userLogin";
+    }
+
+    /**
+     * Login page for admin
+     *
+     * @return
+     */
+    @GetMapping(AuthUrls.ADMIN_LOGIN)
     public String adminLogin() {
-        // Test import
-        MendelRole e = MendelRole.ADMIN;
         return "auth/adminLogin";
     }
 }
