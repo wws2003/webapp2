@@ -6,9 +6,8 @@
 package org.hpg.admin.biz.web;
 
 import org.hpg.admin.constant.AdminUrls;
-import org.hpg.common.model.dto.principal.LoginInfo;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.hpg.common.biz.service.abstr.IUserSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(AdminUrls.ADMIN_ROOT_URL)
 public class AdminController {
 
+    // Test sample of Session
+    @Autowired
+    private IUserSession userSession;
+
     /**
      * Home page for admin
      *
@@ -30,11 +33,8 @@ public class AdminController {
      * @return
      */
     @GetMapping(AdminUrls.ADMIN_HOME)
-    public String admin(Model model) {
-        Authentication auth = SecurityContextHolder.getContext()
-                .getAuthentication();
-        LoginInfo user = (LoginInfo) auth.getPrincipal();
-        model.addAttribute("userName", user.getUsername());
+    public String home(Model model) {
+        model.addAttribute("userName", userSession.getCurrentLoginInfo().getUsername());
         return "admin/home";
     }
 

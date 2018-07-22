@@ -5,10 +5,9 @@
  */
 package org.hpg.user.biz.web;
 
-import org.hpg.common.model.dto.principal.LoginInfo;
+import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.user.constant.UserUrls;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(UserUrls.USER_ROOT_URL)
 public class UserController {
 
+    // Test sample of Session
+    @Autowired
+    private IUserSession userSession;
+
     /**
      * Home page for user
      *
@@ -30,11 +33,8 @@ public class UserController {
      * @return
      */
     @GetMapping(UserUrls.USER_HOME)
-    public String admin(Model model) {
-        Authentication auth = SecurityContextHolder.getContext()
-                .getAuthentication();
-        LoginInfo user = (LoginInfo) auth.getPrincipal();
-        model.addAttribute("userName", user.getUsername());
+    public String home(Model model) {
+        model.addAttribute("userName", userSession.getCurrentLoginInfo().getUsername());
         return "user/home";
     }
 }
