@@ -31,6 +31,7 @@
         <module>web-common</module>
         <module>web-auth</module>
         <module>web-admin</module>
+        <module>web-user</module>
         <module>web-all</module>
         <!-- TODO Enable when available
         <module>admin</module>

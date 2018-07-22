@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org">
+    <head th:replace="common/fragments/commonHeader :: frg_common_header(~{::title})">
+        <title>Home</title>
+    </head>
+    <body>
+        <div>
+            <label th:text="'Welcome ' + ${userName}">Username</label>
+        </div>
+        <div>
+            <h3>Choose action</h3>
+            <div>
+                <a href="#" th:href="@{/user/profileMgt}">Profile management</a>
+            </div>
+            <div>
+                <a href="#" th:href="@{/user/systemMgt}">Documents management</a>
+            </div>
+        </div>
+        <form action="#" th:action="@{/user/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </body>
+</html>

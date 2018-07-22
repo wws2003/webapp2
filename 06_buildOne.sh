@@ -6,7 +6,8 @@
 # Module code map
 # 2: web-auth
 # 3: web-admin
-# 4: web-search
+# 4: web-user
+# 5: web-search
 
 # Check arguments
 if [ $# -lt 1 -o $# -gt 2 ]
@@ -30,7 +31,7 @@ case "$2" in
 		;;
 	"3" ) module='web-admin'
 		;;
-	"4" ) module='web-search'
+	"4" ) module='web-user'
 		;;
 esac
 

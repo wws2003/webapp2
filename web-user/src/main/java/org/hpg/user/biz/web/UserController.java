@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.admin.biz.web.home;
+package org.hpg.user.biz.web;
 
-import org.hpg.admin.constant.AdminUrls;
 import org.hpg.common.model.dto.principal.LoginInfo;
+import org.hpg.user.constant.UserUrls;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,48 +15,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Controller for admin page
+ * Controller for user pages
  *
  * @author trungpt
  */
 @Controller
-@RequestMapping(AdminUrls.ADMIN_ROOT_URL)
-public class AdminController {
+@RequestMapping(UserUrls.USER_ROOT_URL)
+public class UserController {
 
     /**
-     * Home page for admin
+     * Home page for user
      *
      * @param model
      * @return
      */
-    @GetMapping(AdminUrls.ADMIN_HOME)
+    @GetMapping(UserUrls.USER_HOME)
     public String admin(Model model) {
         Authentication auth = SecurityContextHolder.getContext()
                 .getAuthentication();
         LoginInfo user = (LoginInfo) auth.getPrincipal();
         model.addAttribute("userName", user.getUsername());
-        return "admin/admin";
-    }
-
-    /**
-     * User management page
-     *
-     * @param model
-     * @return
-     */
-    @GetMapping(AdminUrls.ADMIN_USER_MANAGEMENT)
-    public String userManagement(Model model) {
-        return "admin/userManagement";
-    }
-
-    /**
-     * System management page
-     *
-     * @param model
-     * @return
-     */
-    @GetMapping(AdminUrls.ADMIN_SYSTEM_MANAGEMENT)
-    public String systemManagement(Model model) {
-        return "admin/systemManagement";
+        return "user/home";
     }
 }

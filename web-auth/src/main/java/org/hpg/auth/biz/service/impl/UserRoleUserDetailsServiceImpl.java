@@ -8,9 +8,10 @@ package org.hpg.auth.biz.service.impl;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.config.CommonQualifierConstant;
 import org.hpg.common.constant.MendelRole;
+import org.hpg.common.model.dto.principal.LoginInfo;
+import org.hpg.common.model.dto.user.MendelUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,11 +39,20 @@ public class UserRoleUserDetailsServiceImpl implements UserDetailsService {
         System.out.println("-----------------------Loading user for user role " + userName + "------------------");
 
         return mUserService.findUserByName(userName, MendelRole.USER)
+                .map(
+                        // Sample: Manually set password
+                        mendelUser -> {
+                            MendelUser user = new MendelUser();
+                            user.setId(mendelUser.getId());
+                            user.setName(mendelUser.getName());
+                            user.setEncodedPassword(mendelUser.getEncodedPassword());
+                            user.setPassword(mPasswordEncoder.encode(mendelUser.getPassword()));
+                            user.setRole(mendelUser.getRole());
+                            return user;
+                        }
+                )
                 .map(mendelUser -> {
-                    return User.withUsername(mendelUser.getName())
-                            .password(mPasswordEncoder.encode(mendelUser.getPassword()))
-                            .roles(MendelRole.USER.getName())
-                            .build();
+                    return LoginInfo.withUser(mendelUser).build();
                 })
                 .orElseThrow(() -> new UsernameNotFoundException(userName));
     }

@@ -18,7 +18,7 @@ mvn war:war -DskipTests=true -pl web-common,web-all
 # Deploy after confirming user
 read -p "To deploy ? Press y: " RESP
 if [ "$RESP" = "y" ]; then
-  mvn -DskipTests=true integration-test -pl web-all
+  mvn integration-test -DskipTests=true -pl web-all
 else
   echo "Quit without deployment"
 fi
