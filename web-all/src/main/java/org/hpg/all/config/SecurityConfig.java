@@ -34,6 +34,7 @@ public class SecurityConfig {
         private UserDetailsService mUserUserDetailsService;
 
         @Autowired
+        @Qualifier("defaultAuthenticationFailureHandlerForUserRole")
         private AuthenticationFailureHandler authenticationFailureHandler;
 
         @Autowired
@@ -77,6 +78,7 @@ public class SecurityConfig {
         private PasswordEncoder mPasswordEncoder;
 
         @Autowired
+        @Qualifier("defaultAuthenticationFailureHandlerForAdminRole")
         private AuthenticationFailureHandler authenticationFailureHandler;
 
         @Override

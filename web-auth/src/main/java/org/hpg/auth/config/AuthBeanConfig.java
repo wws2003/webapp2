@@ -9,6 +9,7 @@ import org.hpg.auth.biz.service.impl.AdminRolelUserDetailsServiceImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationFailureHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultPasswordEncoderImpl;
 import org.hpg.auth.biz.service.impl.UserRoleUserDetailsServiceImpl;
+import org.hpg.common.constant.MendelRole;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,8 +53,17 @@ public class AuthBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public AuthenticationFailureHandler getDefaultAuthenticationFailureHandler() {
+    @Qualifier("defaultAuthenticationFailureHandlerForAdminRole")
+    public AuthenticationFailureHandler getDefaultAuthenticationFailureHandlerForAdminRole() {
         // TODO Confirm: Is it possible to wire dependency via new operator ?
-        return new DefaultAuthenticationFailureHandlerImpl();
+        return new DefaultAuthenticationFailureHandlerImpl(MendelRole.ADMIN);
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @Qualifier("defaultAuthenticationFailureHandlerForUserRole")
+    public AuthenticationFailureHandler getDefaultAuthenticationFailureHandlerForUserRole() {
+        // TODO Confirm: Is it possible to wire dependency via new operator ?
+        return new DefaultAuthenticationFailureHandlerImpl(MendelRole.USER);
     }
 }

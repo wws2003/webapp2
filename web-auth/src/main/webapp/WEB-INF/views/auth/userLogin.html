@@ -9,10 +9,9 @@ and open the template in the editor.
         <title>Login as normal user</title>
     </head>
     <body>
-        <!--        <div th:replace="fragments/layout :: header"></div>-->
         <form class="form-narrow form-horizontal" action="#" method="post" th:action="@{/user/login}">
             <th:block th:if="${param.error != null}">
-                <div th:replace="common/fragments/components :: alert (type='danger', message='Sign in error. Please try again.')"> Alert</div>
+                <div th:replace="common/fragments/components :: alert (type='danger', message='Please try again. Login error code: ' + ${param.error} )">Alert</div>
             </th:block>
             <fieldset>
                 <legend>Please input information for normal user</legend>
@@ -46,6 +45,5 @@ and open the template in the editor.
                 </div>
             </fieldset>
         </form>
-        <div th:replace="common/fragments/layout :: footer"></div>
     </body>
 </html>

@@ -33,4 +33,9 @@ public class AuthUrls {
      * Admin login failed action URL
      */
     public static final String ADMIN_LOGIN_ERROR = "/adminLogin";
+
+    /**
+     * User login failed action URL
+     */
+    public static final String USER_LOGIN_ERROR = "/userLogin";
 }
