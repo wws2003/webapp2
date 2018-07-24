@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.biz.service.impl;
 
+import java.io.Serializable;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.model.dto.principal.LoginInfo;
 import org.springframework.security.core.Authentication;
@@ -15,7 +16,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
  *
  * @author wws2003
  */
-public class AuthenticatedUserSessionImpl implements IUserSession {
+public class AuthenticatedUserSessionImpl implements IUserSession, Serializable {
+
+    public AuthenticatedUserSessionImpl() {
+        // For investigation purpose
+        System.out.println("-------------------------------------------org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl.<init>()-------------------------------------------");
+    }
 
     @Override
     public LoginInfo getCurrentLoginInfo() {

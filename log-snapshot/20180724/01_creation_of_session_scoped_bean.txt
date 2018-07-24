@@ -1,0 +1,45 @@
+[#|2018-07-24T08:10:37.542+0700|INFO|glassfish 4.1|javax.enterprise.resource.webcontainer.jsf.config|_ThreadID=47;_ThreadName=admin-listener(4);_TimeMillis=1532394637542;_LevelValue=800;_MessageID=jsf.config.listener.version;|
+  Initializing Mojarra 2.2.14 ( 20161114-2152 unable to get svn info) for context '/mendel-all'|#]
+
+[#|2018-07-24T08:10:37.812+0700|INFO|glassfish 4.1|javax.enterprise.web|_ThreadID=47;_ThreadName=admin-listener(4);_TimeMillis=1532394637812;_LevelValue=800;|
+  WebModule[null] ServletContext.log():Initializing Spring root WebApplicationContext|#]
+
+[#|2018-07-24T08:10:41.469+0700|INFO|glassfish 4.1|javax.enterprise.web|_ThreadID=47;_ThreadName=admin-listener(4);_TimeMillis=1532394641469;_LevelValue=800;|
+  WebModule[null] ServletContext.log():Initializing Spring FrameworkServlet 'dispatcher'|#]
+
+[#|2018-07-24T08:10:41.553+0700|INFO|glassfish 4.1|javax.enterprise.web|_ThreadID=47;_ThreadName=admin-listener(4);_TimeMillis=1532394641553;_LevelValue=800;_MessageID=AS-WEB-GLUE-00172;|
+  Loading application [mendel-all-1.0] at [/mendel-all]|#]
+
+[#|2018-07-24T08:10:41.616+0700|INFO|glassfish 4.1|javax.enterprise.system.core|_ThreadID=47;_ThreadName=admin-listener(4);_TimeMillis=1532394641616;_LevelValue=800;|
+  mendel-all-1.0 was successfully deployed in 39,904 milliseconds.|#]
+
+[#|2018-07-24T08:10:51.042+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1532394651042;_LevelValue=800;|
+  -----------------------Loading user for admin role admin------------------|#]
+
+[#|2018-07-24T08:10:51.043+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1532394651043;_LevelValue=800;|
+  -----------------------Trying to find user with name admin------------------|#]
+
+[#|2018-07-24T08:11:13.052+0700|INFO|glassfish 4.1||_ThreadID=29;_ThreadName=Thread-8;_TimeMillis=1532394673052;_LevelValue=800;|
+  -------------------------------------------org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl.<init>()-------------------------------------------|#]
+
+[#|2018-07-24T08:11:15.363+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1532394675363;_LevelValue=800;|
+  -----------------------Loading user for admin role admin------------------|#]
+
+[#|2018-07-24T08:11:15.364+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1532394675364;_LevelValue=800;|
+  -----------------------Trying to find user with name admin------------------|#]
+
+[#|2018-07-24T08:11:15.507+0700|INFO|glassfish 4.1||_ThreadID=29;_ThreadName=Thread-8;_TimeMillis=1532394675507;_LevelValue=800;|
+  -------------------------------------------org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl.<init>()-------------------------------------------|#]
+
+[#|2018-07-24T08:11:19.745+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1532394679745;_LevelValue=800;|
+  -----------------------Loading user for admin role adminsd------------------|#]
+
+[#|2018-07-24T08:11:31.051+0700|INFO|glassfish 4.1||_ThreadID=30;_ThreadName=Thread-8;_TimeMillis=1532394691051;_LevelValue=800;|
+  -----------------------Loading user for admin role admin------------------|#]
+
+[#|2018-07-24T08:11:31.051+0700|INFO|glassfish 4.1||_ThreadID=30;_ThreadName=Thread-8;_TimeMillis=1532394691051;_LevelValue=800;|
+  -----------------------Trying to find user with name admin------------------|#]
+
+[#|2018-07-24T08:11:31.197+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1532394691197;_LevelValue=800;|
+  -------------------------------------------org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl.<init>()-------------------------------------------|#]
+

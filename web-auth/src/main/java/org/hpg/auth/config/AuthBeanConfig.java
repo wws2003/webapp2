@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -70,8 +71,9 @@ public class AuthBeanConfig {
     }
 
     @Bean
-    @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST)
+    @Scope(scopeName = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public IUserSession getAuthenticatedUserSession() {
+        // TODO Try session/request scope instead
         return new AuthenticatedUserSessionImpl();
     }
 }
