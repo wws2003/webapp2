@@ -36,8 +36,8 @@ case "$2" in
 esac
 
 echo "======================================To build "$module"======================================"
-mvn clean package -DskipTests=true -pl $module -am
-mvn war:war -DskipTests=true -pl web-common,$module,web-all
+mvn clean package -ff -DskipTests=true -pl $module -am
+mvn war:war -ff -DskipTests=true -pl web-common,$module,web-all
 
 # Check artifacts
 ./04_checkArtifact.sh
@@ -45,7 +45,7 @@ mvn war:war -DskipTests=true -pl web-common,$module,web-all
 # Deploy after confirming user
 read -p "To deploy ? Press y: " RESP
 if [ "$RESP" = "y" ]; then
-	mvn integration-test -DskipTests=true -pl web-all
+	mvn integration-test -ff -DskipTests=true -pl web-all
 else
  	echo "Quit without deployment"
 fi

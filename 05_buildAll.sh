@@ -4,13 +4,13 @@ if [ $# -gt 0 ]
 then
     if [ $1 -eq 1 ]
     then
-        mvn clean install -DskipTests=true -pl web-common -am
+        mvn clean install -ff -DskipTests=true -pl web-common -am
     fi
 fi
 # Package web-all
-mvn clean package -DskipTests=true -pl web-all -am
+mvn clean package -ff -DskipTests=true -pl web-all -am
 # Final package (to include web-common)
-mvn war:war -DskipTests=true -pl web-common,web-all 
+mvn war:war -ff -DskipTests=true -pl web-common,web-all 
 
 # Check artifacts
 ./04_checkArtifact.sh
@@ -18,7 +18,7 @@ mvn war:war -DskipTests=true -pl web-common,web-all
 # Deploy after confirming user
 read -p "To deploy ? Press y: " RESP
 if [ "$RESP" = "y" ]; then
-  mvn integration-test -DskipTests=true -pl web-all
+  mvn integration-test -ff -DskipTests=true -pl web-all
 else
   echo "Quit without deployment"
 fi

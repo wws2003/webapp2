@@ -70,17 +70,6 @@
             <artifactId>spring-webflux</artifactId>
             <version>5.0.5.RELEASE</version>
         </dependency>
-        <!-- Security -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
         <!-- Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>

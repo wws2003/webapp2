@@ -42,6 +42,17 @@
 
     <!-- Dependencies -->
     <dependencies>
+        <!-- Security -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
         <!-- Dependency on lib-common module -->
         <dependency>
             <groupId>org.hpg.multi</groupId>

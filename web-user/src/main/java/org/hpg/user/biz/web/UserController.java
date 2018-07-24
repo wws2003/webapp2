@@ -34,7 +34,7 @@ public class UserController {
      */
     @GetMapping(UserUrls.USER_HOME)
     public String home(Model model) {
-        model.addAttribute("userName", userSession.getCurrentLoginInfo().getUsername());
+        model.addAttribute("userName", userSession.getCurrentLoginInfo().getLoginUser().getName());
         return "user/home";
     }
 }

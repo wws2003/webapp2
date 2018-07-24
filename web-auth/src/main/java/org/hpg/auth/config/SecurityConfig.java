@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.all.config;
+package org.hpg.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
- * Security configuration file for the whole application
+ * Implementation of Security policy using Spring-sec libraries
  *
  * @author wws2003
  */
