@@ -8,6 +8,7 @@ package org.hpg.auth.config;
 import org.hpg.auth.biz.service.impl.AdminRolelUserDetailsServiceImpl;
 import org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationFailureHandlerImpl;
+import org.hpg.auth.biz.service.impl.DefaultAuthenticationSuccessHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultPasswordEncoderImpl;
 import org.hpg.auth.biz.service.impl.UserRoleUserDetailsServiceImpl;
 import org.hpg.common.biz.service.abstr.IUserSession;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
@@ -73,7 +75,14 @@ public class AuthBeanConfig {
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public IUserSession getAuthenticatedUserSession() {
-        // TODO Try session/request scope instead
+        // TODO Probably move to common module
         return new AuthenticatedUserSessionImpl();
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public AuthenticationSuccessHandler getAuthenticationSuccessHandler() {
+        // TODO Confirm: Is it possible to wire dependency via new operator ?
+        return new DefaultAuthenticationSuccessHandlerImpl();
     }
 }

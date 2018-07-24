@@ -8,8 +8,6 @@ package org.hpg.auth.biz.service.impl;
 import java.io.Serializable;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.model.dto.principal.LoginInfo;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Implementation for UserSession
@@ -18,6 +16,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class AuthenticatedUserSessionImpl implements IUserSession, Serializable {
 
+    /**
+     * Current login info
+     */
+    private LoginInfo mCurrentLoginInfo;
+
     public AuthenticatedUserSessionImpl() {
         // For investigation purpose
         System.out.println("-------------------------------------------org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl.<init>()-------------------------------------------");
@@ -25,9 +28,17 @@ public class AuthenticatedUserSessionImpl implements IUserSession, Serializable 
 
     @Override
     public LoginInfo getCurrentLoginInfo() {
-        // TODO Implement properly colaborating with AuthenticationSuccessHandler
-        Authentication auth = SecurityContextHolder.getContext()
-                .getAuthentication();
-        return (LoginInfo) auth.getPrincipal();
+        return mCurrentLoginInfo;
+    }
+
+    @Override
+    public void setCurrentLoginInfo(LoginInfo loginInfo) {
+        mCurrentLoginInfo = loginInfo;
+    }
+
+    @Override
+    public String getSessionId() {
+        // TODO Implement
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

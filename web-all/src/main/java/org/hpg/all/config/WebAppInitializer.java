@@ -6,7 +6,10 @@
 package org.hpg.all.config;
 
 import javax.servlet.Filter;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -16,6 +19,13 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  * @author trungpt
  */
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        super.onStartup(servletContext);
+        // Aware of request context in current thread
+        servletContext.addListener(new RequestContextListener());
+    }
 
     @Override
     protected String[] getServletMappings() {

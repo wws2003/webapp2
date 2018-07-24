@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
  * Security configuration file for the whole application
@@ -34,11 +35,14 @@ public class SecurityConfig {
         private UserDetailsService mUserUserDetailsService;
 
         @Autowired
-        @Qualifier("defaultAuthenticationFailureHandlerForUserRole")
-        private AuthenticationFailureHandler authenticationFailureHandler;
+        private PasswordEncoder mPasswordEncoder;
 
         @Autowired
-        private PasswordEncoder mPasswordEncoder;
+        private AuthenticationSuccessHandler authenticationSuccessHandler;
+
+        @Autowired
+        @Qualifier("defaultAuthenticationFailureHandlerForUserRole")
+        private AuthenticationFailureHandler authenticationFailureHandler;
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -57,7 +61,7 @@ public class SecurityConfig {
                     .loginPage("/auth/userLogin")
                     .loginProcessingUrl("/user/login") // Prefix 'must' be /user
                     .failureHandler(authenticationFailureHandler)
-                    .defaultSuccessUrl("/user/home")
+                    .successHandler(authenticationSuccessHandler)
                     .and()
                     .logout()
                     .logoutUrl("/user/logout") // Prefix 'must' be /user (?), default is clearing authentication and httpsession
@@ -76,6 +80,9 @@ public class SecurityConfig {
 
         @Autowired
         private PasswordEncoder mPasswordEncoder;
+
+        @Autowired
+        private AuthenticationSuccessHandler authenticationSuccessHandler;
 
         @Autowired
         @Qualifier("defaultAuthenticationFailureHandlerForAdminRole")
@@ -97,7 +104,7 @@ public class SecurityConfig {
                     .loginPage("/auth/adminLogin")
                     .loginProcessingUrl("/admin/login") // Prefix 'must' be /admin
                     .failureHandler(authenticationFailureHandler)
-                    .defaultSuccessUrl("/admin/home")
+                    .successHandler(authenticationSuccessHandler)//.defaultSuccessUrl("/admin/home") // Call this cause specified authenticationSuccessHandler ignored
                     .and()
                     .logout()
                     .logoutUrl("/admin/logout") // Prefix 'must' be /admin (?), default is clearing authentication and httpsession

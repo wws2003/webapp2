@@ -22,5 +22,19 @@ public interface IUserSession {
      */
     public LoginInfo getCurrentLoginInfo();
 
+    /**
+     * Set current login info
+     *
+     * @param loginInfo
+     */
+    public void setCurrentLoginInfo(LoginInfo loginInfo);
+
+    /**
+     * Get current session id
+     *
+     * @return
+     */
+    public String getSessionId();
+
     // TODO Add more methods
 }
