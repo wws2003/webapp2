@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.hpg.auth.model.MendelUserDetails;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.model.dto.principal.LoginInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,6 @@ public class DefaultAuthenticationSuccessHandlerImpl extends SavedRequestAwareAu
      */
     public DefaultAuthenticationSuccessHandlerImpl(String defaultTargetUrl) {
         super();
-        // TODO Wiring properly
         this.setDefaultTargetUrl(defaultTargetUrl);
     }
 
@@ -44,7 +44,7 @@ public class DefaultAuthenticationSuccessHandlerImpl extends SavedRequestAwareAu
     public void onAuthenticationSuccess(HttpServletRequest hsr, HttpServletResponse hsr1, Authentication a) throws IOException, ServletException {
         super.onAuthenticationSuccess(hsr, hsr1, a);
         // Retrieve login info
-        LoginInfo authenticatedLoginInfo = (LoginInfo) a.getPrincipal();
+        LoginInfo authenticatedLoginInfo = ((MendelUserDetails) a.getPrincipal()).getLoginInfo();
         userSession.setCurrentLoginInfo(authenticatedLoginInfo);
     }
 

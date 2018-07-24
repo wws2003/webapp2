@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.biz.service.impl;
 
+import org.hpg.auth.model.MendelUserDetails;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.principal.LoginInfo;
@@ -58,7 +59,7 @@ public class DefaultUserDetailsServiceImpl implements UserDetailsService {
                         }
                 )
                 .map(mendelUser -> {
-                    return LoginInfo.withUser(mendelUser).build();
+                    return new MendelUserDetails(LoginInfo.withUser(mendelUser).build());
                 })
                 .orElseThrow(() -> new UsernameNotFoundException(userName));
     }

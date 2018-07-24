@@ -6,20 +6,14 @@
 package org.hpg.common.model.dto.principal;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import org.hpg.common.model.dto.user.MendelUser;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 /**
  * Login info model (to act as principal)
  *
  * @author trungpt
  */
-public class LoginInfo extends User implements Serializable {
+public class LoginInfo implements Serializable {
 
     /**
      * Login user
@@ -32,28 +26,26 @@ public class LoginInfo extends User implements Serializable {
      */
     private final boolean mIsAuthenticated;
 
+    // TODO Think of moving to MendelUser class
     /**
-     * Constructor for non-authenticated login
-     *
-     * @param loginUser
+     * Account non-expired flag
      */
-    private LoginInfo(MendelUser loginUser, boolean isAuthenticated) {
-        super(loginUser.getName(), loginUser.getPassword(), new ArrayList());
-        mLoginUser = loginUser;
-        mIsAuthenticated = isAuthenticated;
-    }
+    private final boolean mAccountNonExpired;
 
     /**
-     * Constructor
-     *
-     * @param loginUser
-     * @param authorities
+     * Account non-locked flag
      */
-    private LoginInfo(MendelUser loginUser, boolean isAuthenticated, Collection<? extends GrantedAuthority> authorities) {
-        super(loginUser.getName(), loginUser.getPassword(), authorities);
-        mLoginUser = loginUser;
-        mIsAuthenticated = isAuthenticated;
-    }
+    private final boolean mAccountNonLocked;
+
+    /**
+     * Credentials non-expired flag
+     */
+    private final boolean mCredentialsNonExpired;
+
+    /**
+     * Enabled flag
+     */
+    private final boolean mEnabled;
 
     /**
      * Constructor
@@ -65,10 +57,13 @@ public class LoginInfo extends User implements Serializable {
      * @param accountNonLocked
      * @param authorities
      */
-    private LoginInfo(MendelUser loginUser, boolean isAuthenticated, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
-        super(loginUser.getName(), loginUser.getPassword(), enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+    private LoginInfo(MendelUser loginUser, boolean isAuthenticated, boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled) {
         mLoginUser = loginUser;
         mIsAuthenticated = isAuthenticated;
+        mAccountNonExpired = accountNonExpired;
+        mAccountNonLocked = accountNonLocked;
+        mCredentialsNonExpired = credentialsNonExpired;
+        mEnabled = enabled;
     }
 
     /**
@@ -99,6 +94,37 @@ public class LoginInfo extends User implements Serializable {
         return new Builder().withUser(loginUser);
     }
 
+    /**
+     * @return the mAccountNonExpired
+     */
+    public boolean isAccountNonExpired() {
+        return mAccountNonExpired;
+    }
+
+    /**
+     * @return the mAccountNonLocked
+     */
+    public boolean isAccountNonLocked() {
+        return mAccountNonLocked;
+    }
+
+    /**
+     * @return the mCredentialsNonExpired
+     */
+    public boolean isCredentialsNonExpired() {
+        return mCredentialsNonExpired;
+    }
+
+    /**
+     * @return the mEnabled
+     */
+    public boolean isEnabled() {
+        return mEnabled;
+    }
+
+    /**
+     * Builder class
+     */
     public static class Builder {
 
         // The instance to build
@@ -149,9 +175,7 @@ public class LoginInfo extends User implements Serializable {
          * @return
          */
         public LoginInfo build() {
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + mLoginUser.getRole().getName()));
-            return new LoginInfo(mLoginUser, isAuthenticated, !disabled, !accountExpired, !credentialsExpired, !accountLocked, authorities);
+            return new LoginInfo(mLoginUser, isAuthenticated, !accountExpired, !accountLocked, !credentialsExpired, !disabled);
         }
     }
 }
