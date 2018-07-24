@@ -30,12 +30,14 @@ public class DefaultAuthenticationSuccessHandlerImpl extends SavedRequestAwareAu
     private IUserSession userSession;
 
     /**
-     * Empty constructor
+     * Constructor with default URL
+     *
+     * @param defaultTargetUrl
      */
-    public DefaultAuthenticationSuccessHandlerImpl() {
+    public DefaultAuthenticationSuccessHandlerImpl(String defaultTargetUrl) {
         super();
         // TODO Wiring properly
-        this.setDefaultTargetUrl("/admin/home");
+        this.setDefaultTargetUrl(defaultTargetUrl);
     }
 
     @Override

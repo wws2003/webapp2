@@ -7,7 +7,6 @@ package org.hpg.common.config;
 
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.impl.SampleUserServiceImpl;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -24,15 +23,7 @@ public class CommonBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier(CommonQualifierConstant.USER_SERVICE_FOR_ADMIN)
     public IUserService getUserServiceForAdmin() {
-        return new SampleUserServiceImpl();
-    }
-
-    @Bean
-    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier(CommonQualifierConstant.USER_SERVICE_FOR_USER)
-    public IUserService getUserServiceForUser() {
         return new SampleUserServiceImpl();
     }
 }

@@ -6,39 +6,45 @@
 package org.hpg.auth.biz.service.impl;
 
 import org.hpg.common.biz.service.abstr.IUserService;
-import org.hpg.common.config.CommonQualifierConstant;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.principal.LoginInfo;
 import org.hpg.common.model.dto.user.MendelUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Spring-provided UserDetailsService implementation class for normal user role
+ * Spring-sec provided UserDetailsService implementation class
  *
  * @author trungpt
  */
-public class UserRoleUserDetailsServiceImpl implements UserDetailsService {
+public class DefaultUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    @Qualifier(CommonQualifierConstant.USER_SERVICE_FOR_USER)
     private IUserService mUserService;
 
     @Autowired
     private PasswordEncoder mPasswordEncoder;
+
+    /**
+     * Role
+     */
+    private final MendelRole mRole;
+
+    public DefaultUserDetailsServiceImpl(MendelRole role) {
+        this.mRole = role;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         // TODO Implement properly
         // Test debug
 
-        System.out.println("-----------------------Loading user for user role " + userName + "------------------");
+        System.out.println("-----------------------Loading user for role " + userName + "------------------" + " for role " + mRole.getName());
 
-        return mUserService.findUserByName(userName, MendelRole.USER)
+        return mUserService.findUserByName(userName, this.mRole)
                 .map(
                         // Sample: Manually set password
                         mendelUser -> {

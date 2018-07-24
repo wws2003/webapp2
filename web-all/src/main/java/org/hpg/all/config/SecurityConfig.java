@@ -38,6 +38,7 @@ public class SecurityConfig {
         private PasswordEncoder mPasswordEncoder;
 
         @Autowired
+        @Qualifier("authenticationSuccessHandlerForUserRole")
         private AuthenticationSuccessHandler authenticationSuccessHandler;
 
         @Autowired
@@ -63,6 +64,9 @@ public class SecurityConfig {
                     .failureHandler(authenticationFailureHandler)
                     .successHandler(authenticationSuccessHandler)
                     .and()
+                    .exceptionHandling()
+                    .accessDeniedPage("/auth/forbidden")
+                    .and()
                     .logout()
                     .logoutUrl("/user/logout") // Prefix 'must' be /user (?), default is clearing authentication and httpsession
                     .permitAll()
@@ -82,6 +86,7 @@ public class SecurityConfig {
         private PasswordEncoder mPasswordEncoder;
 
         @Autowired
+        @Qualifier("authenticationSuccessHandlerForAdminRole")
         private AuthenticationSuccessHandler authenticationSuccessHandler;
 
         @Autowired
@@ -105,6 +110,9 @@ public class SecurityConfig {
                     .loginProcessingUrl("/admin/login") // Prefix 'must' be /admin
                     .failureHandler(authenticationFailureHandler)
                     .successHandler(authenticationSuccessHandler)//.defaultSuccessUrl("/admin/home") // Call this cause specified authenticationSuccessHandler ignored
+                    .and()
+                    .exceptionHandling()
+                    .accessDeniedPage("/auth/forbidden")
                     .and()
                     .logout()
                     .logoutUrl("/admin/logout") // Prefix 'must' be /admin (?), default is clearing authentication and httpsession

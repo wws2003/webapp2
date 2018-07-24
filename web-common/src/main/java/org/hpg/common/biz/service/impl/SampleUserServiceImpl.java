@@ -41,6 +41,9 @@ public class SampleUserServiceImpl implements IUserService {
             return Optional.empty();
         }
         Tuple2<String, MendelRole> userData = tmpUserNamePasswordMap.get(userName);
+        if (userData.getItem2() != role) {
+            return Optional.empty();
+        }
         MendelUser user = new MendelUser();
         user.setName(userName);
         user.setRole(userData.getItem2());

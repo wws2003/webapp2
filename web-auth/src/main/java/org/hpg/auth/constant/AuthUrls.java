@@ -38,4 +38,9 @@ public class AuthUrls {
      * User login failed action URL
      */
     public static final String USER_LOGIN_ERROR = "/userLogin";
+
+    /**
+     * 403 error
+     */
+    public static final String FORBIDDEN = "/forbidden";
 }

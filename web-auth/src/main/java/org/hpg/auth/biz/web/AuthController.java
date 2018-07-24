@@ -38,4 +38,14 @@ public class AuthController {
     public String adminLogin() {
         return "auth/adminLogin";
     }
+
+    /**
+     * 403-error page
+     *
+     * @return
+     */
+    @GetMapping(AuthUrls.FORBIDDEN)
+    public String forbiden() {
+        return "auth/forbidden";
+    }
 }
