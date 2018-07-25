@@ -12,11 +12,9 @@ package org.hpg.common.constant;
  */
 public enum MendelPrivilege {
     INVALID(-1, "NONE", "Invalid"),
-    // User-related
-    PRIV_CREATE_USER(1, "M001", "Create user"),
-    PRIV_DELETE_USER(2, "M002", "Delete user"),
-    PRIV_UPDATE_USER(3, "M003", "Update user"),
-    PRIV_LIST_USER(4, "M004", "List user"),
+    // Admin-related
+    PRIV_MANAGE_USER(1, "M001", "Create user"),
+    PRIV_MANAGE_SYSTEM(2, "M002", "Manage system"),
     // Document-related
     PRIV_CREATE_DOCUMENT(5, "M005", "Create document"),
     PRIV_UPDATE_DOCUMENT(6, "M006", "Update document"),

@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.config;
 
+import org.hpg.common.constant.MendelRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -56,7 +57,7 @@ public class SecurityConfig {
             http
                     .antMatcher("/user/**")
                     .authorizeRequests()
-                    .antMatchers("/user/**").hasRole("USER")
+                    .antMatchers("/user/**").hasRole(MendelRole.USER.getName())
                     .and()
                     .formLogin()
                     .loginPage("/auth/userLogin")
@@ -101,9 +102,11 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            // Role config
             http
                     .authorizeRequests()
-                    .antMatchers("/admin/**").hasRole("ADMIN")
+                    .antMatchers("/admin/userMgt").hasAuthority("NEVER")
+                    .antMatchers("/admin/**").hasRole(MendelRole.ADMIN.getName())
                     .and()
                     .formLogin()
                     .loginPage("/auth/adminLogin")
