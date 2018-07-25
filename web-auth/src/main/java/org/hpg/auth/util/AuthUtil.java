@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 import org.hpg.auth.config.UrlPrivilegeConfig;
 import org.hpg.common.biz.annotation.MendelAction;
 import org.hpg.common.constant.MendelPrivilege;
+import org.hpg.common.constant.MendelRole;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
  * Utilities for Auth module
@@ -44,5 +47,25 @@ public class AuthUtil {
                         field -> Arrays.asList(field.getAnnotation(MendelAction.class).privileges()),
                         (s1, s2) -> s1
                 ));
+    }
+
+    /**
+     * Get Spring-sec form authorities from app-domain role and privileges
+     *
+     * @param role
+     * @param privileges
+     * @return
+     */
+    public static List<GrantedAuthority> getGrantedAuthoritiesFromRoleAndPrivileges(MendelRole role, List<MendelPrivilege> privileges) {
+        List<GrantedAuthority> authorities = privileges
+                .stream()
+                .distinct()
+                .map(priv -> new SimpleGrantedAuthority(priv.getCode()))
+                .collect(Collectors.toList());
+
+        // Manually add the default role - a trick for Spring-sec ?
+        authorities.add(new SimpleGrantedAuthority(("ROLE_" + role.getName())));
+
+        return authorities;
     }
 }

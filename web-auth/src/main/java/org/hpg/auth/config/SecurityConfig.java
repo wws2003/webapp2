@@ -5,7 +5,15 @@
  */
 package org.hpg.auth.config;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import org.hpg.auth.util.AuthUtil;
+import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
+import org.hpg.libcommon.Tuple;
+import org.hpg.libcommon.Tuple2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +22,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -54,11 +63,24 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http
-                    .antMatcher("/user/**")
-                    .authorizeRequests()
-                    .antMatchers("/user/**").hasRole(MendelRole.USER.getName())
-                    .and()
+            // Authorize request registry
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authorizeReg = http.antMatcher("/user/**")
+                    .authorizeRequests();
+
+            // Privileges config
+            Map<String, List<MendelPrivilege>> urlPrivilegesMap = AuthUtil.getUrlPrivilesMap();
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry interceptForPrivs = SecurityConfig.getUrlInterceptRegistryForPrivilges(
+                    authorizeReg,
+                    urlPrivilegesMap
+            );
+
+            // Role config
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry interceptForPrivRols = interceptForPrivs
+                    .antMatchers("/user/**")
+                    .hasRole(MendelRole.USER.getName());
+
+            // Login, logout URL config
+            interceptForPrivRols.and()
                     .formLogin()
                     .loginPage("/auth/userLogin")
                     .loginProcessingUrl("/user/login") // Prefix 'must' be /user
@@ -102,12 +124,23 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            // Authorize request registry
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authorizeReg = http.authorizeRequests();
+
+            // Privileges config
+            Map<String, List<MendelPrivilege>> urlPrivilegesMap = AuthUtil.getUrlPrivilesMap();
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry interceptForPrivs = SecurityConfig.getUrlInterceptRegistryForPrivilges(
+                    authorizeReg,
+                    urlPrivilegesMap
+            );
+
             // Role config
-            http
-                    .authorizeRequests()
-                    .antMatchers("/admin/userMgt").hasAuthority("NEVER")
-                    .antMatchers("/admin/**").hasRole(MendelRole.ADMIN.getName())
-                    .and()
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry interceptForPrivRols = interceptForPrivs
+                    .antMatchers("/admin/**")
+                    .hasRole(MendelRole.ADMIN.getName());
+
+            // Login, logout URL config
+            interceptForPrivRols.and()
                     .formLogin()
                     .loginPage("/auth/adminLogin")
                     .loginProcessingUrl("/admin/login") // Prefix 'must' be /admin
@@ -122,5 +155,33 @@ public class SecurityConfig {
                     .permitAll()
                     .logoutSuccessUrl("/auth/adminLogin");
         }
+    }
+
+    /**
+     * Get URL interceptor registry privileges
+     *
+     * @param reg
+     * @param urlPrivilegesMap
+     * @return
+     */
+    private static ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry getUrlInterceptRegistryForPrivilges(
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry reg,
+            Map<String, List<MendelPrivilege>> urlPrivilegesMap) {
+
+        BiFunction<ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry, Tuple2<String, List<MendelPrivilege>>, ExpressionUrlAuthorizationConfigurer.ExpressionInterceptUrlRegistry> accessStrConfFunc = (rg, urlPrivTuple) -> {
+            // Sample: hasAuthority('A1') and hasAuthority('A2')
+            String accessStr = urlPrivTuple.getItem2().stream()
+                    .map(MendelPrivilege::getCode)
+                    .map(priv -> "hasAuthority('" + priv + "')")
+                    .collect(Collectors.joining(" and "));
+            return reg.antMatchers(urlPrivTuple.getItem1()).access(accessStr);
+        };
+
+        // Stream API 'reduce' method does not guarantee to execute sequentially so temporary need to use for loop
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry ret = reg;
+        for (Map.Entry<String, List<MendelPrivilege>> entry : urlPrivilegesMap.entrySet()) {
+            ret = accessStrConfFunc.apply(ret, Tuple.newTuple(entry.getKey(), entry.getValue()));
+        }
+        return ret;
     }
 }

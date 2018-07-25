@@ -6,10 +6,10 @@
 package org.hpg.auth.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
+import org.hpg.auth.util.AuthUtil;
+import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.model.dto.principal.LoginInfo;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 /**
@@ -28,13 +28,13 @@ public class MendelUserDetails extends User implements Serializable {
      * Constructor
      *
      * @param loginInfo
+     * @param privileges
      */
-    public MendelUserDetails(LoginInfo loginInfo) {
-        // TODO Implement properly to separate role and privileges
+    public MendelUserDetails(LoginInfo loginInfo, List<MendelPrivilege> privileges) {
         super(loginInfo.getLoginUser().getName(),
                 loginInfo.getLoginUser().getPassword(),
-                new ArrayList(Arrays.asList(new SimpleGrantedAuthority("ROLE_" + loginInfo.getLoginUser().getRole().getName())))
-        );
+                AuthUtil.getGrantedAuthoritiesFromRoleAndPrivileges(loginInfo.getLoginUser().getRole(), privileges));
+
         this.mLoginInfo = loginInfo;
     }
 

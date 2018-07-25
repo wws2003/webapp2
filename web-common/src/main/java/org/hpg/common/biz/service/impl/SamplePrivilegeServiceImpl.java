@@ -5,6 +5,7 @@
  */
 package org.hpg.common.biz.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.constant.MendelPrivilege;
@@ -19,7 +20,8 @@ public class SamplePrivilegeServiceImpl implements IPrivilegeService {
 
     @Override
     public List<MendelPrivilege> getUserGrantedPrivileges(long userId) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO Implement properly
+        return Arrays.asList(MendelPrivilege.PRIV_LIST_DOCUMENT, MendelPrivilege.PRIV_MANAGE_USER);
     }
 
     @Override
