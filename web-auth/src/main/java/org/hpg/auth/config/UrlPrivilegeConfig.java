@@ -9,7 +9,7 @@ import org.hpg.common.biz.annotation.MendelAction;
 import org.hpg.common.constant.MendelPrivilege;
 
 /**
- * Privilege config for URLs. Possibly move to another module ?
+ * Privilege config for URLs. Possibly move to web-all module ?
  *
  * @author trungpt
  */

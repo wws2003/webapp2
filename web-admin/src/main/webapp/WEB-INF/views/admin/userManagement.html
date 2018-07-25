@@ -4,13 +4,65 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org">
+    <head th:replace="common/fragments/commonHeader :: frg_common_header(~{::title})">
+        <title>User management</title>
     </head>
     <body>
-        <div>TODO write content</div>
+        <!-- Paging/Add area  -->
+        <div>
+            <button id="btnAddUser" class="pull-right">Add user</button>
+            <button id="btnDeleteUser" class="pull-right">Delete users</button>
+            <button id="btnForceUserLogout" class="pull-right">Force logout</button>
+        </div>
+        <!-- User list area  -->
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User name</th>
+                        <th>Role</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                        <th>Force logout</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- TODO Inject data -->
+                    <tr>
+                        <td>Admin1</td>
+                        <td>ADMIN</td>
+                        <td>
+                            <button>Update</button>
+                        </td>
+                        <td>
+                            <input type="checkbox"/>
+                        </td>
+                        <td>
+                            <input type="checkbox"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>User1</td>
+                        <td>USER</td>
+                        <td>
+                            <button>Update</button>
+                        </td>
+                        <td>
+                            <input type="checkbox"/>
+                        </td>
+                        <td>
+                            <input type="checkbox"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Logout button area -->
+        <div>
+            <form action="#" th:action="@{/admin/logout}" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
     </body>
 </html>

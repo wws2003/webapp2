@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Valid arguments: 
+# Valid arguments:
 # 06_buildOne.sh module_code -> Build single module
 # 06_buildOne.sh 1 module_code -> Build the specified module along with web-common
 # Module code map
@@ -19,14 +19,22 @@ fi
 # Build and install web-common if needed
 if [ $# -eq 2 -a $1 -eq 1 ]
 then
-	echo "======================================To build web-common======================================"
-    #mvn clean install -pl web-common -am
+    echo "======================================To build web-common======================================"
+    mvn clean install -pl web-common -am
+fi
+
+module_code=2
+if [ $# -eq 2 ]
+then
+	module_code="$2"
+else
+	module_code="$1"
 fi
 
 # Build specified module
 module='web-auth'
 
-case "$2" in
+case $module_code in
 	"2" ) module='web-auth'
 		;;
 	"3" ) module='web-admin'
