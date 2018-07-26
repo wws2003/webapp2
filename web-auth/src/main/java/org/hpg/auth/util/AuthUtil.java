@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.hpg.auth.config.UrlPrivilegeConfig;
 import org.hpg.common.biz.annotation.MendelAction;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
@@ -29,10 +28,12 @@ public class AuthUtil {
     /**
      * Parse UrlPrivilegeConfig for mapping from URL string to privileges
      *
+     * @param urlPrivilegeConfigClass Class ofwhich static fields declare URL
+     * and privileges setting
      * @return
      */
-    public static Map<String, List<MendelPrivilege>> getUrlPrivilesMap() {
-        List<Field> urlFields = Arrays.asList(UrlPrivilegeConfig.class.getDeclaredFields());
+    public static Map<String, List<MendelPrivilege>> getUrlPrivilesMap(Class urlPrivilegeConfigClass) {
+        List<Field> urlFields = Arrays.asList(urlPrivilegeConfigClass.getDeclaredFields());
         return urlFields.stream()
                 .collect(Collectors.toMap(
                         field -> {

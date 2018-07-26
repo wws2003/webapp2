@@ -28,6 +28,21 @@ public class AdminUrls {
     public static final String ADMIN_USER_MANAGEMENT = "/userMgt";
 
     /**
+     * User manager root URL
+     */
+    public static final String ADMIN_USER_MANAGEMENT_ROOT_URL = "/userMgt";
+
+    /**
+     * User manager: Add/update
+     */
+    public static final String ADMIN_USER_MANAGEMENT_ADD_UPDATE = "/addUpdate";
+
+    /**
+     * User manager: Delete
+     */
+    public static final String ADMIN_USER_MANAGEMENT_DELETE = "/delete";
+
+    /**
      * System manager URL
      */
     public static final String ADMIN_SYSTEM_MANAGEMENT = "/systemMgt";

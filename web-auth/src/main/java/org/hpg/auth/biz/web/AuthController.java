@@ -26,6 +26,7 @@ public class AuthController {
      */
     @GetMapping(AuthUrls.USER_LOGIN)
     public String userLogin() {
+        // TODO Auto logout
         return "auth/userLogin";
     }
 
@@ -36,6 +37,7 @@ public class AuthController {
      */
     @GetMapping(AuthUrls.ADMIN_LOGIN)
     public String adminLogin() {
+        // TODO Auto logout
         return "auth/adminLogin";
     }
 
