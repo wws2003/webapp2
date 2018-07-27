@@ -6,6 +6,8 @@
 package org.hpg.auth.biz.web;
 
 import org.hpg.auth.constant.AuthUrls;
+import org.hpg.common.biz.service.abstr.IUserSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(AuthUrls.AUTH_ROOT_URL)
 public class AuthController {
 
+    @Autowired
+    private IUserSession session;
+
     /**
      * Login page for user
      *
@@ -26,7 +31,8 @@ public class AuthController {
      */
     @GetMapping(AuthUrls.USER_LOGIN)
     public String userLogin() {
-        // TODO Auto logout
+        // Auto logout
+        session.invalidate();
         return "auth/userLogin";
     }
 
@@ -37,7 +43,8 @@ public class AuthController {
      */
     @GetMapping(AuthUrls.ADMIN_LOGIN)
     public String adminLogin() {
-        // TODO Auto logout
+        // Auto logout
+        session.invalidate();
         return "auth/adminLogin";
     }
 

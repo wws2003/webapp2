@@ -15,10 +15,18 @@ import org.hpg.common.constant.MendelPrivilege;
  */
 public class UrlPrivilegeConfig {
 
-    // TODO Add more URLs
-    @MendelAction(privileges = {MendelPrivilege.PRIV_MANAGE_USER})
-    public static final String ADMIN_USER_MGT = "/admin/userMgt";
+    public static class AdminRole {
+        // TODO Add more URLs
 
-    @MendelAction(privileges = {MendelPrivilege.PRIV_MANAGE_SYSTEM})
-    public static final String ADMIN_SYSTEM_MGT = "/admin/systemMgt";
+        @MendelAction(privileges = {MendelPrivilege.PRIV_MANAGE_USER})
+        public static final String ADMIN_USER_MGT = "/admin/userMgt";
+
+        @MendelAction(privileges = {MendelPrivilege.PRIV_MANAGE_SYSTEM})
+        public static final String ADMIN_SYSTEM_MGT = "/admin/systemMgt";
+    }
+
+    public static class UserRole {
+        // TODO Add  URLs
+    }
+
 }

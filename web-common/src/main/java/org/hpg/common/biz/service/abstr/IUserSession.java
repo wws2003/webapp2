@@ -36,5 +36,10 @@ public interface IUserSession {
      */
     public String getSessionId();
 
+    /**
+     * Terminate the current session
+     */
+    public void invalidate();
+
     // TODO Add more methods
 }
