@@ -5,8 +5,10 @@
  */
 package org.hpg.admin.biz.web;
 
+import org.hpg.admin.biz.web.form.UserAddUpdateForm;
 import org.hpg.admin.constant.AdminUrls;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -18,4 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(AdminUrls.ADMIN_USER_MANAGEMENT_ROOT_URL)
 public class UserMgtController {
 
+    /**
+     * Add/Update user action
+     *
+     * @param form
+     * @return
+     */
+    @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_ADD_UPDATE)
+    public String addUpdateUser(UserAddUpdateForm form) {
+        // TODO Implement
+        return "admin/userAddUpdate";
+    }
 }

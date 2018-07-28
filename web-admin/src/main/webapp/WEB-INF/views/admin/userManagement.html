@@ -9,60 +9,138 @@ and open the template in the editor.
         <title>User management</title>
     </head>
     <body>
-        <!-- Paging/Add area  -->
-        <div>
-            <button id="btnAddUser" class="pull-right">Add user</button>
-            <button id="btnDeleteUser" class="pull-right">Delete users</button>
-            <button id="btnForceUserLogout" class="pull-right">Force logout</button>
-        </div>
-        <!-- User list area  -->
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>User name</th>
-                        <th>Role</th>
-                        <th>Update</th>
-                        <th>Delete</th>
-                        <th>Force logout</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- TODO Inject data -->
-                    <tr>
-                        <td>Admin1</td>
-                        <td>ADMIN</td>
-                        <td>
-                            <button>Update</button>
-                        </td>
-                        <td>
-                            <input type="checkbox"/>
-                        </td>
-                        <td>
-                            <input type="checkbox"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>User1</td>
-                        <td>USER</td>
-                        <td>
-                            <button>Update</button>
-                        </td>
-                        <td>
-                            <input type="checkbox"/>
-                        </td>
-                        <td>
-                            <input type="checkbox"/>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Logout button area -->
-        <div>
-            <form action="#" th:action="@{/admin/logout}" method="post">
-                <button type="submit">Logout</button>
-            </form>
+        <!-- Main -->
+        <main class="row">
+            <section class="col-xs-12">
+                <h2>User management</h2>
+                <!-- Paging/Add area  -->
+                <div>
+                    <button id="btnForceUserLogout" class="btn btn-info pull-right">Force logout</button>
+                    <button id="btnDeleteUser" class="btn btn-info pull-right">Delete users</button>
+                    <button id="btnAddUser" class="btn btn-info pull-right" data-toggle="modal" data-target="#mdlUserAddUpdate">Add user</button>
+                </div>
+                <!-- User list area  -->
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User name</th>
+                                <th>Role</th>
+                                <th>Update</th>
+                                <th>Delete</th>
+                                <th>Force logout</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- TODO Inject data -->
+                            <tr>
+                                <td>Admin1</td>
+                                <td>ADMIN</td>
+                                <td>
+                                    <button>Update</button>
+                                </td>
+                                <td>
+                                    <input type="checkbox"/>
+                                </td>
+                                <td>
+                                    <input type="checkbox"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>User1</td>
+                                <td>USER</td>
+                                <td>
+                                    <button>Update</button>
+                                </td>
+                                <td>
+                                    <input type="checkbox"/>
+                                </td>
+                                <td>
+                                    <input type="checkbox"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Logout button area -->
+                <div>
+                    <form action="#" th:action="@{/admin/logout}" method="post">
+                        <button type="submit">Logout</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+        <!-- User add/update modal -->
+        <div id="mdlUserAddUpdate" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <!-- Modal header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Input user info</h4>
+                        <button id="btnUserAddUpdateDone" type="button">Done</button>
+                        <button type="button" class="close" data-dismiss="modal">Cancel</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div>
+                            <!-- Username -->
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input id="txtUserName" type="text" class="form-control"/>
+                            </div>
+                            <!-- Dispname -->
+                            <div class="form-group">
+                                <label>Display name</label>
+                                <input id="txtDispName" type="text" class="form-control"/>
+                            </div>
+                            <!-- Password -->
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input id="txtPassword" type="password" class="form-control"/>
+                            </div>
+                            <!-- Password confirm -->
+                            <div class="form-group">
+                                <label>Password confirmation</label>
+                                <input id="txtPasswordConfirm" type="password" class="form-control"/>
+                            </div>
+                            <!-- Role -->
+                            <div class="form-group">
+                                <label>Role</label>
+                                <input type="radio" value="rdAdmin"/>ADMIN
+                                <input type="radio" value="rdUser"/>USER
+                            </div>
+                            <!-- Privileges -->
+                            <div class="form-group">
+                                <label>Granted privileges</label>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <!-- Not-granted privileges -->
+                                        <div class="col-xs-5">
+                                            <select multiple="multiple" size="12">
+                                                <option>User management</option>
+                                                <option>System management</option>
+                                            </select>
+                                        </div>
+                                        <!-- Grant/Revoke buttons -->
+                                        <div class="col-xs-2">
+                                            <button id="btnGrant" type="button">Grant</button>
+                                            <button id="btnRevoke" type="button">Revoke</button>
+                                        </div>
+                                        <!-- Granted privileges -->
+                                        <div class="col-xs-5">
+                                            <select multiple="multiple" size="12">
+                                                <option>Create documents</option>
+                                                <option>Search documents</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

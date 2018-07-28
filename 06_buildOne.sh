@@ -19,7 +19,7 @@ fi
 # Build and install web-common if needed
 if [ $# -eq 2 -a $1 -eq 1 ]
 then
-    echo "======================================To build web-common======================================"
+    echo "======================================To build and install web-common======================================"
     mvn clean install -pl web-common -am
 fi
 
@@ -32,27 +32,35 @@ else
 fi
 
 # Build specified module
-module='web-auth'
+module="web-auth"
 
 case $module_code in
-	"2" ) module='web-auth'
+	"1" ) module="web-common"
 		;;
-	"3" ) module='web-admin'
+	"2" ) module="web-auth"
 		;;
-	"4" ) module='web-user'
+	"3" ) module="web-admin"
+		;;
+	"4" ) module="web-user"
 		;;
 esac
 
 echo "======================================To build "$module"======================================"
 mvn clean package -ff -DskipTests=true -pl $module -am
-mvn war:war -ff -DskipTests=true -pl web-common,$module,web-all
+if [ "$module" == "web-common" ]
+then
+	mvn war:war -ff -DskipTests=true -pl web-common,web-all
+else
+	mvn war:war -ff -DskipTests=true -pl web-common,$module,web-all
+fi
 
 # Check artifacts
 ./04_checkArtifact.sh
 
 # Deploy after confirming user
 read -p "To deploy ? Press y: " RESP
-if [ "$RESP" = "y" ]; then
+if [ "$RESP" = "y" ]
+then
 	mvn integration-test -ff -DskipTests=true -pl web-all
 else
  	echo "Quit without deployment"
