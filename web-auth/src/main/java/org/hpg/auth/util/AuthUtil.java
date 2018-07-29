@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.hpg.common.biz.annotation.MendelAction;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
+import org.hpg.common.model.dto.sec.MendelActionSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -32,7 +33,7 @@ public class AuthUtil {
      * and privileges setting
      * @return
      */
-    public static Map<String, List<MendelPrivilege>> getUrlPrivilesMap(Class urlPrivilegeConfigClass) {
+    public static Map<String, MendelActionSecurity> getUrlPrivilesMap(Class urlPrivilegeConfigClass) {
         List<Field> urlFields = Arrays.asList(urlPrivilegeConfigClass.getDeclaredFields());
         return urlFields.stream()
                 .collect(Collectors.toMap(
@@ -45,7 +46,10 @@ public class AuthUtil {
                                 return "unknown";
                             }
                         },
-                        field -> Arrays.asList(field.getAnnotation(MendelAction.class).privileges()),
+                        field -> new MendelActionSecurity(
+                                Arrays.asList(field.getAnnotation(MendelAction.class).privileges()),
+                                field.getAnnotation(MendelAction.class).requiredAllPrivileges()
+                        ),
                         (s1, s2) -> s1
                 ));
     }

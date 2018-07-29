@@ -5,12 +5,12 @@
  */
 package org.hpg.auth.config;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
+import org.hpg.common.model.dto.sec.MendelActionSecurity;
 import org.hpg.libcommon.Tuple;
 import org.hpg.libcommon.Tuple2;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -55,7 +55,7 @@ public class HttpSecurityRolePrivsConfigurer {
         return this;
     }
 
-    public HttpSecurityRolePrivsConfigurer forUrlPrivileges(Map<String, List<MendelPrivilege>> urlPrivilegesMap) throws Exception {
+    public HttpSecurityRolePrivsConfigurer forUrlPrivileges(Map<String, MendelActionSecurity> urlPrivilegesMap) throws Exception {
         // TODO Implement
         mAuthorizeReg = this.getUrlInterceptRegistryForPrivilges(mAuthorizeReg, urlPrivilegesMap);
         // Finallize with role-dependent setting
@@ -86,20 +86,23 @@ public class HttpSecurityRolePrivsConfigurer {
      */
     private ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry getUrlInterceptRegistryForPrivilges(
             ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry reg,
-            Map<String, List<MendelPrivilege>> urlPrivilegesMap) {
+            Map<String, MendelActionSecurity> urlPrivilegesMap) {
 
-        BiFunction<ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry, Tuple2<String, List<MendelPrivilege>>, ExpressionUrlAuthorizationConfigurer.ExpressionInterceptUrlRegistry> accessStrConfFunc = (rg, urlPrivTuple) -> {
+        BiFunction<ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry, Tuple2<String, MendelActionSecurity>, ExpressionUrlAuthorizationConfigurer.ExpressionInterceptUrlRegistry> accessStrConfFunc = (rg, urlPrivTuple) -> {
             // Sample: hasAuthority('A1') and hasAuthority('A2')
-            String accessStr = urlPrivTuple.getItem2().stream()
+            String privDelim = urlPrivTuple.getItem2().isAllPrivilegesRequired() ? " and " : " or ";
+            String accessStr = urlPrivTuple.getItem2()
+                    .getPrivileges()
+                    .stream()
                     .map(MendelPrivilege::getCode)
                     .map(priv -> "hasAuthority('" + priv + "')")
-                    .collect(Collectors.joining(" and "));
+                    .collect(Collectors.joining(privDelim));
             return reg.antMatchers(urlPrivTuple.getItem1()).access(accessStr);
         };
 
         // Stream API 'reduce' method does not guarantee to execute sequentially so temporary need to use for loop
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry ret = reg;
-        for (Map.Entry<String, List<MendelPrivilege>> entry : urlPrivilegesMap.entrySet()) {
+        for (Map.Entry<String, MendelActionSecurity> entry : urlPrivilegesMap.entrySet()) {
             ret = accessStrConfFunc.apply(ret, Tuple.newTuple(entry.getKey(), entry.getValue()));
         }
         return ret;

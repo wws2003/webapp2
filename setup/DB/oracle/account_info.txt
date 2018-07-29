@@ -1,0 +1,4 @@
+Postgres
+- root user: postgres, password: pass001
+- app user: mendel, password: pass001
+- Port: 5432

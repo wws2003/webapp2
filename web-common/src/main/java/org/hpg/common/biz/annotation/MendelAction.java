@@ -22,6 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 public @interface MendelAction {
 
     /**
+     * Required all specified privileges flag
+     *
+     * @return TRUE: All specified required to execute the action. FALSE: One
+     * specified required to execute the action
+     */
+    boolean requiredAllPrivileges() default true;
+
+    /**
      * Required privileges to use the action
      *
      * @return
