@@ -13,15 +13,14 @@ package org.hpg.common.constant;
 public enum MendelPrivilege {
     INVALID(-1, "NONE", "Invalid"),
     // Admin-related
-    PRIV_MANAGE_USER(1, "M001", "Create user"),
+    PRIV_MANAGE_USER(1, "M001", "Manage users"),
     PRIV_MANAGE_SYSTEM(2, "M002", "Manage system"),
     // Document-related
     PRIV_CREATE_DOCUMENT(5, "M005", "Create document"),
-    PRIV_UPDATE_DOCUMENT(6, "M006", "Update document"),
-    PRIV_DELETE_DOCUMENT(7, "M007", "Delete document"),
-    PRIV_LIST_DOCUMENT(8, "M008", "List document"),
-    PRIV_SHARE_DOCUMENT(9, "M009", "List document"),
-    PRIV_SEARCH_DOCUMENT(10, "M010", "Search document");
+    PRIV_SHARE_DOCUMENT(6, "M006", "Index document (for fulltext search)"),
+    PRIV_UPDATE_DOCUMENT(7, "M007", "Comment public document"),
+    PRIV_LIST_DOCUMENT(8, "M008", "List public document"),
+    PRIV_SEARCH_DOCUMENT(9, "M009", "Search public document");
 
     /**
      * Privilege id
