@@ -36,7 +36,7 @@ public interface ICrudRepository<T, ID extends Serializable> extends Repository<
      * @return
      * @throws MendelRuntimeException When find failed
      */
-    Optional<T> findByPK(ID key) throws MendelRuntimeException;
+    public Optional<T> findByPK(ID key) throws MendelRuntimeException;
 
     /**
      * Delete entity
@@ -45,7 +45,7 @@ public interface ICrudRepository<T, ID extends Serializable> extends Repository<
      * @return Number of record deleted
      * @throws MendelRuntimeException When delete failed
      */
-    int delete(T entity) throws MendelRuntimeException;
+    public int delete(T entity) throws MendelRuntimeException;
 
     /**
      * Update entity
@@ -54,7 +54,7 @@ public interface ICrudRepository<T, ID extends Serializable> extends Repository<
      * @return Number of record updated
      * @throws MendelRuntimeException When update failed
      */
-    int update(T entity) throws MendelRuntimeException;
+    public int update(T entity) throws MendelRuntimeException;
 
     /**
      * Count all records
@@ -62,7 +62,7 @@ public interface ICrudRepository<T, ID extends Serializable> extends Repository<
      * @return
      * @throws MendelRuntimeException When couting failed
      */
-    long count() throws MendelRuntimeException;
+    public long count() throws MendelRuntimeException;
 
     // TODO Add methods
 }

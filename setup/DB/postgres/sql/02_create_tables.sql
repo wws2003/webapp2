@@ -1,3 +1,6 @@
+-- Choose the Database
+\c mendel_db;
+
 -- Roles
 --  ID (8-bytes auto incremental, PK)
 --  Name

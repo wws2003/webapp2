@@ -5,7 +5,10 @@
  */
 package org.hpg.common.dao.repository;
 
+import java.util.Optional;
+import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.user.MendelUser;
+import org.hpg.common.model.exception.MendelRuntimeException;
 
 /**
  * Repository for user
@@ -14,4 +17,13 @@ import org.hpg.common.model.dto.user.MendelUser;
  */
 public interface IUserRepository extends ICrudRepository<MendelUser, Long> {
 
+    /**
+     * Find user by user name and role
+     *
+     * @param userName
+     * @param role
+     * @return
+     * @throws MendelRuntimeException When find operation failed
+     */
+    Optional<MendelUser> findUserByName(String userName, MendelRole role) throws MendelRuntimeException;
 }
