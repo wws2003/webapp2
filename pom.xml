@@ -140,7 +140,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.3-1102-jdbc41</version>
-            <scope>runtime</scope>
         </dependency>
         <!-- Avoid: javax.validation.ValidationException: HV000183: Unable to load 'javax.el.ExpressionFactory' -->
         <dependency>
