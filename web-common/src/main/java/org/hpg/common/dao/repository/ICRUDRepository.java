@@ -17,7 +17,7 @@ import org.springframework.data.repository.Repository;
  * @param <T>
  * @param <ID>
  */
-public interface ICrudRepository<T, ID extends Serializable> extends Repository<T, ID> {
+public interface ICRUDRepository<T, ID extends Serializable> extends Repository<T, ID> {
 
     /**
      * Save entiry

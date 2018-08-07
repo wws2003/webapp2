@@ -15,7 +15,7 @@ import org.hpg.common.model.exception.MendelRuntimeException;
  *
  * @author trungpt
  */
-public interface IUserRepository extends ICrudRepository<MendelUser, Long> {
+public interface IUserRepository extends ICRUDRepository<MendelUser, Long> {
 
     /**
      * Find user by user name and role
