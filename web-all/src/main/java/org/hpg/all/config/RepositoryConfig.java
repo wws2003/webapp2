@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.common.config;
+package org.hpg.all.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -15,9 +15,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @Configuration
 @EnableJpaRepositories(
+        // TODO Add packages from other modules apart from web-common
         basePackages = {"org.hpg.common.dao.repository"},
-        entityManagerFactoryRef = CommonQualifierConstant.ENTITY_MANAGER_FACTORY,
-        transactionManagerRef = CommonQualifierConstant.TRANSACTION_MANAGER
+        entityManagerFactoryRef = "jtaEntityManagerFactory",
+        transactionManagerRef = "jtaPlatformTransactionManager"
 )
-public class CommonRepostitoryConfig {
+public class RepositoryConfig {
+
 }

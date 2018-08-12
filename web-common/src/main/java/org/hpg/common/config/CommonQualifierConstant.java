@@ -15,8 +15,4 @@ public class CommonQualifierConstant {
     public static final String USER_SERVICE_FOR_USER = "userServiceForUser";
 
     public static final String USER_SERVICE_FOR_ADMIN = "userServiceForAdmin";
-
-    public static final String ENTITY_MANAGER_FACTORY = "jtaEntityManagerFactory";
-
-    public static final String TRANSACTION_MANAGER = "jtaPlatformTransactionManager";
 }

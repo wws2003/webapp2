@@ -3,48 +3,61 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.common.config;
+package org.hpg.all.config;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
+import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
- * Configuration class for repositories in module web-common (currently aimed to
- * use for JTA datasource)
+ * Configuration class for repositories in module web-common (used as
+ * alternative for persistence.xml, but this class is not suitable for JTA
+ * datasource but Resource-local). Currently unused
  *
  * @author trungpt
  */
-@Configuration
 @PropertySources({
-    @PropertySource("classpath:datasource_jta.properties")
+    @PropertySource("classpath:datasource_postgres.properties")
 })
-public class CommonJTAPersistenceConfig {
+public class ResourceLocalPersistenceConfig {
+// TODO Add methods for entityManagerFactory
 
     @Autowired
     private Environment environment;
 
+    // DataSource bean
+    @Bean
+    public DataSource getDataSourceBean() throws Exception {
+        // TODO Implement properly
+        // QUESTION: Where is the name of Glassfish-set datasource ? Looks like ignored ?
+        PGSimpleDataSource ds = new PGSimpleDataSource();
+        ds.setUrl(environment.getProperty("spring.datasource.url"));//URL includes server address, port name, database name
+        ds.setUser(environment.getProperty("spring.datasource.username"));
+        ds.setPassword(environment.getProperty("spring.datasource.password"));
+        ds.setTcpKeepAlive(true);
+        return ds;
+    }
+
     // Entity manager factory
-    @Bean(name = CommonQualifierConstant.ENTITY_MANAGER_FACTORY)
+    @Bean
     public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() throws Exception {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         // TODO Implement properly
 
         // Datasource
-        emf.setJtaDataSource(getDataSource());
+        emf.setDataSource(getDataSourceBean());
 
         // What about packages in other modules ?
         emf.setPackagesToScan("org.hpg.common.model.entity");
@@ -55,11 +68,9 @@ public class CommonJTAPersistenceConfig {
 
         // JPA and Hibernate properties
         List<String> jpaPropertyNames = Arrays.asList(
-                "hibernate.transaction.jta.platform",
-                "hibernate.hbm2ddl.auto",
-                "hibernate.dialect",
-                "hibernate.show_sql",
-                "hibernate.format_sql"
+                "spring.jpa.hibernate.ddl-auto",
+                "spring.jpa.properties.hibernate.dialect",
+                "spring.jpa.show-sql"
         );
         Map<String, Object> jpaPropertiesMap = getPropertiesMap(jpaPropertyNames);
 
@@ -72,23 +83,10 @@ public class CommonJTAPersistenceConfig {
     }
 
     // Transaction manager
-    @Bean(name = CommonQualifierConstant.TRANSACTION_MANAGER)
-    public PlatformTransactionManager getJtaTransactionManager() throws Exception {
-        // Default constructor, i.e. delegate to the server the job of managing transaction ?
-        JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
-        // Finallize
-        jtaTransactionManager.afterPropertiesSet();
-        return jtaTransactionManager;
-    }
-
-    /**
-     * Create XA-data source name
-     *
-     * @return
-     */
     @Bean
-    public DataSource getDataSource() {
-        return createJndiDataSource(environment.getProperty("spring.datasource.datasource-name"));
+    public PlatformTransactionManager getPlatformTransactionManagerBean() throws Exception {
+        // TODO Implement
+        return new JpaTransactionManager(getEntityManagerFactoryBean().getObject());
     }
 
     /**
@@ -103,16 +101,5 @@ public class CommonJTAPersistenceConfig {
                 .collect(Collectors.toMap(propertyName -> propertyName,
                         propertyName -> environment.getProperty(propertyName))
                 );
-    }
-
-    /**
-     * Create data source by JNDI name
-     *
-     * @param jndiName
-     * @return
-     */
-    private DataSource createJndiDataSource(String jndiName) {
-        JndiDataSourceLookup lookup = new JndiDataSourceLookup();
-        return lookup.getDataSource(jndiName);
     }
 }
