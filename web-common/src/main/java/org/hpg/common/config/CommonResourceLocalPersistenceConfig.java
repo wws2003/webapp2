@@ -13,7 +13,6 @@ import javax.sql.DataSource;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
@@ -23,13 +22,12 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
- * Configuration class for repositories in module web-common (currently used as
+ * Configuration class for repositories in module web-common (used as
  * alternative for persistence.xml, but this class is not suitable for JTA
- * datasource but Resource-local)
+ * datasource but Resource-local). Currently unused
  *
  * @author trungpt
  */
-@Configuration
 @PropertySources({
     @PropertySource("classpath:datasource_postgres.properties")
 })

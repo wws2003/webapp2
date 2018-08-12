@@ -12,6 +12,7 @@ import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.dao.repository.IUserRepository;
 import org.hpg.common.model.dto.user.MendelUser;
+import org.hpg.common.model.entity.RoleEntity;
 import org.hpg.common.model.entity.UserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public Optional<MendelUser> findUserByName(String userName, MendelRole role) throws MendelRuntimeException {
-        return userRepository.findUserByName(userName, role)
+        return userRepository.findByUserNameAndRoleId(userName, role.getCode())
                 .map(this::getDtoFromEntity);
     }
 
@@ -56,8 +57,15 @@ public class UserServiceImpl implements IUserService {
      * @return
      */
     private MendelUser getDtoFromEntity(UserEntity entity) {
-        // TODO Implement
-        return null;
+        MendelUser dto = new MendelUser();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        // Currently set both passwords to be the same
+        dto.setPassword(entity.getEncryptedPassword());
+        dto.setEncodedPassword(entity.getEncryptedPassword());
+        dto.setDispName(entity.getDisplayedName());
+        dto.setRole(MendelRole.getRoleFromCode((entity.getRole().getId())));
+        return dto;
     }
 
     /**
@@ -67,7 +75,16 @@ public class UserServiceImpl implements IUserService {
      * @return
      */
     private UserEntity getEntityFromDto(MendelUser user) {
-        // TODO Implement
-        return null;
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setId(user.getRole().getCode());
+        roleEntity.setName(user.getRole().getName());
+
+        UserEntity entity = new UserEntity();
+        entity.setId(user.getId());
+        entity.setName(user.getName());
+        entity.setRole(roleEntity);
+        entity.setEncryptedPassword(user.getEncodedPassword());
+        entity.setDisplayedName(user.getDispName());
+        return entity;
     }
 }

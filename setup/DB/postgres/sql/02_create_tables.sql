@@ -2,7 +2,7 @@
 \c mendel_db;
 
 -- Roles
---  ID (8-bytes auto incremental, PK)
+--  ID (2-bytes auto incremental, PK)
 --  Name
 DROP TABLE IF EXISTS TBL_ROLE;
 CREATE TABLE TBL_ROLE(
@@ -11,7 +11,7 @@ CREATE TABLE TBL_ROLE(
 );
 
 -- Privileges
---  ID (8-bytes auto incremental, PK)
+--  ID (2-bytes auto incremental, PK)
 --  Name
 DROP TABLE IF EXISTS TBL_PRIVILEGE;
 CREATE TABLE TBL_PRIVILEGE(

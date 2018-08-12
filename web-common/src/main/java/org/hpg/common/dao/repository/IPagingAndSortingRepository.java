@@ -9,14 +9,17 @@ import java.io.Serializable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.NoRepositoryBean;
 
 /**
- * Interface for paging and sorting repository
+ * Interface for paging and sorting repository (do not create instance at
+ * runtime)
  *
  * @author trungpt
  * @param <T>
  * @param <ID>
  */
+@NoRepositoryBean
 public interface IPagingAndSortingRepository<T, ID extends Serializable> extends ICRUDRepository<T, ID> {
 
     /**

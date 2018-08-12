@@ -8,7 +8,9 @@ package org.hpg.common.model.entity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -35,9 +37,9 @@ public class UserEntity implements Serializable {
     @Column(name = "password")
     private String encryptedPassword;
 
-    @Column(name = "role_id")
-    @ManyToOne(targetEntity = RoleEntity.class)
-    private int roleId;
+    @ManyToOne(targetEntity = RoleEntity.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
 
     public Long getId() {
         return id;
@@ -71,11 +73,16 @@ public class UserEntity implements Serializable {
         this.encryptedPassword = encryptedPassword;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public RoleEntity getRole() {
+        return role;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setRole(RoleEntity role) {
+        this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" + "id=" + id + ", name=" + name + ", displayedName=" + displayedName + ", encryptedPassword=" + encryptedPassword + ", role=" + role + '}';
     }
 }

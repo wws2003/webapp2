@@ -8,6 +8,7 @@ package org.hpg.common.dao.repository;
 import java.io.Serializable;
 import java.util.Optional;
 import org.hpg.common.model.exception.MendelRuntimeException;
+import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
 
 /**
@@ -17,6 +18,7 @@ import org.springframework.data.repository.Repository;
  * @param <T>
  * @param <ID>
  */
+@NoRepositoryBean
 public interface ICRUDRepository<T, ID extends Serializable> extends Repository<T, ID> {
 
     /**
@@ -36,25 +38,15 @@ public interface ICRUDRepository<T, ID extends Serializable> extends Repository<
      * @return
      * @throws MendelRuntimeException When find failed
      */
-    public Optional<T> findByPK(ID key) throws MendelRuntimeException;
+    public Optional<T> findById(ID key) throws MendelRuntimeException;
 
     /**
      * Delete entity
      *
      * @param entity
-     * @return Number of record deleted
      * @throws MendelRuntimeException When delete failed
      */
-    public int delete(T entity) throws MendelRuntimeException;
-
-    /**
-     * Update entity
-     *
-     * @param entity
-     * @return Number of record updated
-     * @throws MendelRuntimeException When update failed
-     */
-    public int update(T entity) throws MendelRuntimeException;
+    public void delete(T entity) throws MendelRuntimeException;
 
     /**
      * Count all records
@@ -64,5 +56,13 @@ public interface ICRUDRepository<T, ID extends Serializable> extends Repository<
      */
     public long count() throws MendelRuntimeException;
 
+    /**
+     * Existence check
+     *
+     * @param primaryKey
+     * @return
+     * @throws MendelRuntimeException When check failed
+     */
+    public boolean existsById(ID primaryKey) throws MendelRuntimeException;
     // TODO Add methods
 }

@@ -8,17 +8,18 @@ package org.hpg.common.config;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collectors;
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
-import org.springframework.jndi.JndiTemplate;
+import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
@@ -37,14 +38,13 @@ public class CommonJTAPersistenceConfig {
     private Environment environment;
 
     // Entity manager factory
-    @Bean
+    @Bean(name = CommonQualifierConstant.ENTITY_MANAGER_FACTORY)
     public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() throws Exception {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         // TODO Implement properly
 
         // Datasource
-        // emf.setDataSource(getDataSourceBean());
-        emf.setJtaDataSource(null);
+        emf.setJtaDataSource(getDataSource());
 
         // What about packages in other modules ?
         emf.setPackagesToScan("org.hpg.common.model.entity");
@@ -55,9 +55,11 @@ public class CommonJTAPersistenceConfig {
 
         // JPA and Hibernate properties
         List<String> jpaPropertyNames = Arrays.asList(
-                "spring.jpa.hibernate.ddl-auto",
-                "spring.jpa.properties.hibernate.dialect",
-                "spring.jpa.show-sql"
+                "hibernate.transaction.jta.platform",
+                "hibernate.hbm2ddl.auto",
+                "hibernate.dialect",
+                "hibernate.show_sql",
+                "hibernate.format_sql"
         );
         Map<String, Object> jpaPropertiesMap = getPropertiesMap(jpaPropertyNames);
 
@@ -70,18 +72,23 @@ public class CommonJTAPersistenceConfig {
     }
 
     // Transaction manager
-    @Bean
-    public JtaTransactionManager getJtaTransactionManager() throws Exception {
+    @Bean(name = CommonQualifierConstant.TRANSACTION_MANAGER)
+    public PlatformTransactionManager getJtaTransactionManager() throws Exception {
         // Default constructor, i.e. delegate to the server the job of managing transaction ?
         JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
-        // Set properties TODO
-        JndiTemplate template = new JndiTemplate();
-        template.lookup("jta-data-source");
-        Properties jndiProperties = new Properties();
-        jtaTransactionManager.setJndiEnvironment(jndiProperties);
         // Finallize
         jtaTransactionManager.afterPropertiesSet();
         return jtaTransactionManager;
+    }
+
+    /**
+     * Create XA-data source name
+     *
+     * @return
+     */
+    @Bean
+    public DataSource getDataSource() {
+        return createJndiDataSource(environment.getProperty("spring.datasource.datasource-name"));
     }
 
     /**
@@ -96,5 +103,16 @@ public class CommonJTAPersistenceConfig {
                 .collect(Collectors.toMap(propertyName -> propertyName,
                         propertyName -> environment.getProperty(propertyName))
                 );
+    }
+
+    /**
+     * Create data source by JNDI name
+     *
+     * @param jndiName
+     * @return
+     */
+    private DataSource createJndiDataSource(String jndiName) {
+        JndiDataSourceLookup lookup = new JndiDataSourceLookup();
+        return lookup.getDataSource(jndiName);
     }
 }

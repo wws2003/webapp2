@@ -5,6 +5,8 @@
  */
 package org.hpg.common.constant;
 
+import java.util.Arrays;
+
 /**
  * Roles in Mendel system
  *
@@ -49,5 +51,19 @@ public enum MendelRole {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get the enumeration value by specifying code
+     *
+     * @param roleCode
+     * @return
+     */
+    public static MendelRole getRoleFromCode(int roleCode) {
+        return Arrays.asList(MendelRole.values())
+                .stream()
+                .filter(role -> role.getCode() == roleCode)
+                .findFirst()
+                .orElse(INVALID);
     }
 }

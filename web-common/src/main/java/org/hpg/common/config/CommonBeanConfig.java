@@ -8,7 +8,7 @@ package org.hpg.common.config;
 import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.impl.SamplePrivilegeServiceImpl;
-import org.hpg.common.biz.service.impl.SampleUserServiceImpl;
+import org.hpg.common.biz.service.impl.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -25,9 +25,8 @@ public class CommonBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public IUserService getUserServiceForAdmin() {
-        // TODO Implement properly
-        return new SampleUserServiceImpl();
+    public IUserService getUserService() {
+        return new UserServiceImpl();
     }
 
     @Bean

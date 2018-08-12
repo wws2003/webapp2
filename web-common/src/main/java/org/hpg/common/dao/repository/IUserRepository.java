@@ -6,24 +6,27 @@
 package org.hpg.common.dao.repository;
 
 import java.util.Optional;
-import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.entity.UserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
- * Repository for user
+ * Repository for user (do not create instance at runtime)
  *
  * @author trungpt
  */
-public interface IUserRepository extends ICRUDRepository<UserEntity, Long> {
+public interface IUserRepository extends IPagingAndSortingRepository<UserEntity, Long> {
 
     /**
      * Find user by user name and role
      *
      * @param userName
-     * @param role
+     * @param roleId
      * @return
      * @throws MendelRuntimeException When find operation failed
      */
-    Optional<UserEntity> findUserByName(String userName, MendelRole role) throws MendelRuntimeException;
+    @Query("select u from UserEntity u where u.name = :userName and u.role.id = :roleId")
+    Optional<UserEntity> findByUserNameAndRoleId(@Param("userName") String userName,
+            @Param("roleId") int roleId) throws MendelRuntimeException;
 }
