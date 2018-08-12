@@ -1,3 +1,6 @@
+-- Choose the Database
+\c mendel_db;
+
 -- POSTIT
 DROP TABLE IF EXISTS TBL_POSTIT;
 
