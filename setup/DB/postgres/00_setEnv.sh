@@ -11,11 +11,17 @@ export PSQL_OPERATION_USER=mendel_user
 export PSQL_OPERATION_USER_PASSWORD=pass001
 export PSQL_OPERATION_DB=mendel_db
 
+# PostgreSQL driver
+export PSQL_DRIVER_JAR_NAME=postgresql-9.3-1102-jdbc41.jar
+
 # Glassfish containing folder
 export usr_glassfish_home_prefix=$HOME/servers
 
 # Glassfish bin folder
 export usr_glassfish_bin_path=$usr_glassfish_home_prefix/glassfish4/bin
+
+# Glassfish domain lib folder
+export usr_glassfish_domain_lib_path=$usr_glassfish_home_prefix/glassfish4/glassfish/domains/domain1/lib/
 
 # Glassfish connection pool name
 export glf_connection_pool_name=glf_mendel_connection_pool

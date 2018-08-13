@@ -61,7 +61,7 @@ INSERT INTO TBL_USER(
 INSERT INTO TBL_USER(
 	name, displayed_name, role_id, password
 ) VALUES (
-	'UserAdmin', 
+	'admin', 
 	'User Administrator', 
 	(SELECT id FROM TBL_ROLE WHERE name = 'ADMIN'), 
 	'$2y$12$E.fVBrWVykcXsFxXLu4s/eNpAXFc5z5rXqKRceB/gO66wna0sXENu'
