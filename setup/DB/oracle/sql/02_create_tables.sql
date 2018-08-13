@@ -1,20 +1,20 @@
 -- Roles
---  ID (8-bytes auto incremental, PK)
+--  ID (2-bytes auto incremental, PK)
 --  Name
 DROP TABLE IF EXISTS TBL_ROLE;
 CREATE TABLE TBL_ROLE(
-	id smallserial PRIMARY KEY NOT NULL,
-	name varchar(40) UNIQUE NOT NULL
+	id NUMBER(2,0) PRIMARY KEY NOT NULL,
+	name varchar2(40) UNIQUE NOT NULL
 );
 
 -- Privileges
---  ID (8-bytes auto incremental, PK)
+--  ID (2-bytes auto incremental, PK)
 --  Name
 DROP TABLE IF EXISTS TBL_PRIVILEGE;
 CREATE TABLE TBL_PRIVILEGE(
-	id smallserial PRIMARY KEY NOT NULL,
-	code varchar(40) UNIQUE NOT NULL,
-	name varchar(40) NOT NULL
+	id NUMBER(2,0) PRIMARY KEY NOT NULL,
+	code varchar2(40) UNIQUE NOT NULL,
+	name varchar2(40) NOT NULL
 );
 
 -- User
@@ -28,11 +28,11 @@ CREATE TABLE TBL_PRIVILEGE(
 --  Enabled (TRUE/FALSE)
 DROP TABLE IF EXISTS TBL_USER;
 CREATE TABLE TBL_USER(
-	id bigserial PRIMARY KEY NOT NULL,
-	name varchar(20) NOT NULL UNIQUE,
-	displayed_name varchar(40) NOT NULL,
+	id NUMBER(10,0) PRIMARY KEY NOT NULL,
+	name varchar2(20) NOT NULL UNIQUE,
+	displayed_name varchar2(40) NOT NULL,
 	role_id smallserial NOT NULL,
-	password varchar(256) NOT NULL,
+	password varchar2(256) NOT NULL,
 	FOREIGN KEY (role_id) REFERENCES TBL_ROLE(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -43,8 +43,8 @@ CREATE TABLE TBL_USER(
 --  User_ID + Privilege_ID -> Unique key
 DROP TABLE IF EXISTS TBL_USER_PRIV;
 CREATE TABLE TBL_USER_PRIV(
-	id bigserial PRIMARY KEY NOT NULL,
-	user_id bigint NOT NULL,
+	id NUMBER(10,0) PRIMARY KEY NOT NULL,
+	user_id NUMBER(10,0) NOT NULL,
 	privilege_id smallserial NOT NULL,
 	FOREIGN KEY (user_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (privilege_id) REFERENCES TBL_PRIVILEGE(id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -62,8 +62,8 @@ CREATE TABLE TBL_USER_PRIV(
 --  MDate
 DROP TABLE IF EXISTS TBL_DOCUMENT;
 CREATE TABLE TBL_DOCUMENT(
-	id bigserial PRIMARY KEY NOT NULL, 
-	name varchar(20) NOT NULL,
+	id NUMBER(10,0) PRIMARY KEY NOT NULL, 
+	name varchar2(20) NOT NULL,
 	type smallint NOT NULL,
 	author_id bigint NOT NULL,
 	content text NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE TBL_DOCUMENT(
 --  DocID2 (foreign key -> document)
 DROP TABLE IF EXISTS TBL_DOCUMENT_REFERENCE;
 CREATE TABLE TBL_DOCUMENT_REFERENCE(
-	id bigserial PRIMARY KEY NOT NULL,
+	id NUMBER(10,0) PRIMARY KEY NOT NULL,
 	doc1_id bigint NOT NULL,
 	doc2_id bigint NOT NULL,
 	FOREIGN KEY (doc1_id) REFERENCES TBL_DOCUMENT(id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -98,10 +98,10 @@ CREATE TABLE TBL_DOCUMENT_REFERENCE(
 --  ...
 DROP TABLE IF EXISTS TBL_POSTIT;
 CREATE TABLE TBL_POSTIT(
-	id bigserial PRIMARY KEY NOT NULL,
+	id NUMBER(10,0) PRIMARY KEY NOT NULL,
 	document_id bigint NOT NULL,
 	creator_id bigint NOT NULL,
-	content varchar(256) NOT NULL,
+	content varchar2(256) NOT NULL,
 	comment text NOT NULL,
 	color integer NOT NULL,
 	border_color integer NOT NULL,
