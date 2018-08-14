@@ -10,12 +10,10 @@ import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.principal.LoginInfo;
-import org.hpg.common.model.dto.user.MendelUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Spring-sec provided UserDetailsService implementation class
@@ -29,9 +27,6 @@ public class DefaultUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private IUserService mUserService;
-
-    @Autowired
-    private PasswordEncoder mPasswordEncoder;
 
     /**
      * Role
@@ -50,18 +45,6 @@ public class DefaultUserDetailsServiceImpl implements UserDetailsService {
         System.out.println("-----------------------Loading user for role " + userName + "------------------" + " for role " + mRole.getName());
 
         return mUserService.findUserByName(userName, this.mRole)
-                .map(
-                        // Sample: Manually set password
-                        mendelUser -> {
-                            MendelUser user = new MendelUser();
-                            user.setId(mendelUser.getId());
-                            user.setName(mendelUser.getName());
-                            user.setEncodedPassword(mendelUser.getEncodedPassword());
-                            user.setPassword(mPasswordEncoder.encode(mendelUser.getPassword()));
-                            user.setRole(mendelUser.getRole());
-                            return user;
-                        }
-                )
                 .map(mendelUser -> {
                     return new MendelUserDetails(LoginInfo.withUser(mendelUser).build(), mPrivilegeService.getUserGrantedPrivileges(mendelUser.getId()));
                 })

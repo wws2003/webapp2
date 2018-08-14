@@ -17,6 +17,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
+import org.springframework.orm.jpa.AbstractEntityManagerFactoryBean;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -39,36 +41,19 @@ public class JTAPersistenceConfig {
 
     // Entity manager factory
     @Bean(name = "jtaEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() throws Exception {
-        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
-        // TODO Implement properly
+    public AbstractEntityManagerFactoryBean getEntityManagerFactoryBean() throws Exception {
 
-        // Datasource
-        emf.setJtaDataSource(getDataSource());
-
-        // What about packages in other modules ?
-        emf.setPackagesToScan("org.hpg.common.model.entity");
-        emf.setPersistenceUnitName("pu-common");
-
-        // Vendor adapter
-        emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-
-        // JPA and Hibernate properties
-        List<String> jpaPropertyNames = Arrays.asList(
-                "hibernate.transaction.jta.platform",
-                "hibernate.hbm2ddl.auto",
-                "hibernate.dialect",
-                "hibernate.show_sql",
-                "hibernate.format_sql"
-        );
-        Map<String, Object> jpaPropertiesMap = getPropertiesMap(jpaPropertyNames);
-
-        emf.setJpaPropertyMap(jpaPropertiesMap);
-
-        // Finallize
-        emf.afterPropertiesSet();
-
-        return emf;
+        return EntityManagerFactoryBuilder.instanceForDataSource(getDataSource())
+                .packagesToScan(Arrays.asList("org.hpg.common.model.entity"))
+                .persistenceUnitName("pu1")
+                .jpaVendorAdapter(new HibernateJpaVendorAdapter())
+                .propertiesMap(getPropertiesMap(Arrays.asList(
+                        "hibernate.transaction.jta.platform",
+                        "hibernate.dialect",
+                        "hibernate.show_sql",
+                        "hibernate.format_sql"
+                )))
+                .build();
     }
 
     // Transaction manager
@@ -114,5 +99,78 @@ public class JTAPersistenceConfig {
     private DataSource createJndiDataSource(String jndiName) {
         JndiDataSourceLookup lookup = new JndiDataSourceLookup();
         return lookup.getDataSource(jndiName);
+    }
+
+    private static class EntityManagerFactoryBuilder {
+
+        /**
+         * Data source
+         */
+        private DataSource mDataSource = null;
+
+        /**
+         * Persistence unit name
+         */
+        private String mPersistenceUnitName = null;
+
+        /**
+         * Packages to scan for entities
+         */
+        private List<String> mPackagesToScan = null;
+
+        /**
+         * Vendor adapter, such as Hibernate
+         */
+        private JpaVendorAdapter mJpaVendorAdapter = null;
+
+        /**
+         * Properties map
+         */
+        private Map<String, Object> mPropertiesMap = null;
+
+        private EntityManagerFactoryBuilder(DataSource dataSource) {
+            mDataSource = dataSource;
+        }
+
+        public static EntityManagerFactoryBuilder instanceForDataSource(DataSource dataSource) {
+            return new EntityManagerFactoryBuilder(dataSource);
+        }
+
+        public EntityManagerFactoryBuilder persistenceUnitName(String persistenceUnitName) {
+            mPersistenceUnitName = persistenceUnitName;
+            return this;
+        }
+
+        public EntityManagerFactoryBuilder packagesToScan(List<String> packagesToScan) {
+            mPackagesToScan = packagesToScan;
+            return this;
+        }
+
+        public EntityManagerFactoryBuilder jpaVendorAdapter(JpaVendorAdapter jpaVendorAdapter) {
+            mJpaVendorAdapter = jpaVendorAdapter;
+            return this;
+        }
+
+        public EntityManagerFactoryBuilder propertiesMap(Map<String, Object> propertiesMap) {
+            mPropertiesMap = propertiesMap;
+            return this;
+        }
+
+        public AbstractEntityManagerFactoryBean build() {
+            // TODO Implement
+            LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+            // Data source
+            emf.setDataSource(mDataSource);
+            // Persistence unit
+            emf.setPackagesToScan(mPackagesToScan.toArray(new String[mPackagesToScan.size()]));
+            emf.setPersistenceUnitName(mPersistenceUnitName);
+            // Vendor adapter
+            emf.setJpaVendorAdapter(mJpaVendorAdapter);
+            // Properties
+            emf.setJpaPropertyMap(mPropertiesMap);
+            // Finallize
+            emf.afterPropertiesSet();
+            return emf;
+        }
     }
 }

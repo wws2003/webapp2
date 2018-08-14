@@ -55,7 +55,7 @@ INSERT INTO TBL_USER(
 	'ROOT', 
 	'Root Administrator', 
 	(SELECT id FROM TBL_ROLE WHERE name = 'ADMIN'), 
-	'$2y$12$E.fVBrWVykcXsFxXLu4s/eNpAXFc5z5rXqKRceB/gO66wna0sXENu'
+	'$2a$10$VQWHAxM4PokPGX/L7I8dQefCw.QMmssZ754ISsRrkC7.EWis9bBMG'
 );
 
 INSERT INTO TBL_USER(
@@ -64,7 +64,7 @@ INSERT INTO TBL_USER(
 	'admin', 
 	'User Administrator', 
 	(SELECT id FROM TBL_ROLE WHERE name = 'ADMIN'), 
-	'$2y$12$E.fVBrWVykcXsFxXLu4s/eNpAXFc5z5rXqKRceB/gO66wna0sXENu'
+	'$2a$10$VQWHAxM4PokPGX/L7I8dQefCw.QMmssZ754ISsRrkC7.EWis9bBMG'
 );
 
 -- ================================User-Privilegs map: Privileges for root and user admin
