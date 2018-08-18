@@ -35,7 +35,7 @@ public class UserEntity implements Serializable {
     private String displayedName;
 
     @Column(name = "password")
-    private String encryptedPassword;
+    private String encodedPassword;
 
     @ManyToOne(targetEntity = RoleEntity.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
@@ -65,12 +65,12 @@ public class UserEntity implements Serializable {
         this.displayedName = displayedName;
     }
 
-    public String getEncryptedPassword() {
-        return encryptedPassword;
+    public String getEncodedPassword() {
+        return encodedPassword;
     }
 
-    public void setEncryptedPassword(String encryptedPassword) {
-        this.encryptedPassword = encryptedPassword;
+    public void setEncodedPassword(String encodedPassword) {
+        this.encodedPassword = encodedPassword;
     }
 
     public RoleEntity getRole() {
@@ -83,6 +83,6 @@ public class UserEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "UserEntity{" + "id=" + id + ", name=" + name + ", displayedName=" + displayedName + ", encryptedPassword=" + encryptedPassword + ", role=" + role + '}';
+        return "UserEntity{" + "id=" + id + ", name=" + name + ", displayedName=" + displayedName + ", encryptedPassword=" + encodedPassword + ", role=" + role + '}';
     }
 }
