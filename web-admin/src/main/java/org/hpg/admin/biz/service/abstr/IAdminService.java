@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.admin.biz.service;
+package org.hpg.admin.biz.service.abstr;
 
 /**
  * Interface for the admin page service

@@ -44,6 +44,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public int updateUser(MendelUser user) throws MendelRuntimeException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public int deleteUsers(List<Long> userIds) throws MendelRuntimeException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

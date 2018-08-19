@@ -118,3 +118,5 @@ GRANT ALL PRIVILEGES
 ON ALL TABLES IN SCHEMA public
 TO mendel_role WITH GRANT OPTION;
 
+-- TODO: Tables for log database (for experimental 2-phase commit)
+

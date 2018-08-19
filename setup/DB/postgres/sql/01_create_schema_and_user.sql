@@ -20,3 +20,5 @@ CREATE USER mendel_user PASSWORD 'pass001';
 
 GRANT mendel_role
 TO mendel_user;
+
+-- TODO: Table space, database, schema, role, privileges for log database (for experimental 2-phase commit)

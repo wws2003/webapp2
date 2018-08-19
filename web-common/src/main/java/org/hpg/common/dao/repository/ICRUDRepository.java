@@ -22,10 +22,10 @@ import org.springframework.data.repository.Repository;
 public interface ICRUDRepository<T, ID extends Serializable> extends Repository<T, ID> {
 
     /**
-     * Save entiry
+     * Save entity
      *
      * @param <S>
-     * @param entity The persisted entiry
+     * @param entity The persisted entity
      * @return
      * @throws MendelRuntimeException When save failed
      */
@@ -52,7 +52,7 @@ public interface ICRUDRepository<T, ID extends Serializable> extends Repository<
      * Count all records
      *
      * @return
-     * @throws MendelRuntimeException When couting failed
+     * @throws MendelRuntimeException When counting failed
      */
     public long count() throws MendelRuntimeException;
 

@@ -6,18 +6,26 @@
 package org.hpg.common.dao.mapper.impl;
 
 import org.hpg.common.constant.MendelRole;
+import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.entity.RoleEntity;
 import org.hpg.common.model.entity.UserEntity;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Test for user entity-DTO mapper
  *
  * @author wws2003
  */
+@RunWith(SpringJUnit4ClassRunner.class)
 public class UserEntityDtoMapperImplTest {
+
+    @Autowired
+    private IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper;
 
     public UserEntityDtoMapperImplTest() {
     }
@@ -35,8 +43,7 @@ public class UserEntityDtoMapperImplTest {
         entity.setRole(roleEntity);
         entity.setName("Name");
 
-        UserEntityDtoMapperImpl mapper = new UserEntityDtoMapperImpl();
-        MendelUser dto = mapper.getDtoFromEntity(entity);
+        MendelUser dto = entityDtoMapper.getDtoFromEntity(entity);
 
         Assert.assertTrue(entity.getId() == dto.getId());
         Assert.assertTrue(entity.getName().equals(dto.getName()));
@@ -56,8 +63,7 @@ public class UserEntityDtoMapperImplTest {
         dto.setEncodedPassword("pass"); //Must be the same as password
         dto.setRole(MendelRole.USER);
 
-        UserEntityDtoMapperImpl mapper = new UserEntityDtoMapperImpl();
-        UserEntity entity = mapper.getEntityFromDto(dto);
+        UserEntity entity = entityDtoMapper.getEntityFromDto(dto);
 
         Assert.assertTrue(entity.getId() == dto.getId());
         Assert.assertTrue(entity.getName().equals(dto.getName()));

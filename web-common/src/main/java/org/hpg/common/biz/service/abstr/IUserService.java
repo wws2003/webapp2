@@ -39,6 +39,15 @@ public interface IUserService {
     int createUser(MendelUser user) throws MendelRuntimeException;
 
     /**
+     * Update existing user
+     *
+     * @param user
+     * @return Number of updated user
+     * @throws MendelRuntimeException When update operation failed
+     */
+    int updateUser(MendelUser user) throws MendelRuntimeException;
+
+    /**
      * Delete list of users by id
      *
      * @param userIds
