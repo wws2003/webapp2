@@ -37,14 +37,21 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public int createUser(MendelUser user) throws MendelRuntimeException {
-        // TODO Implement properly
+    public MendelUser createUser(MendelUser user) throws MendelRuntimeException {
+        // TODO Need detached the entity ?
         UserEntity savedUser = userRepository.save(entityDtoMapper.getEntityFromDto(user));
-        return (savedUser != null) ? 1 : 0;
+        return Optional.ofNullable(savedUser).map(entityDtoMapper::getDtoFromEntity).orElse(null);
     }
 
     @Override
-    public int updateUser(MendelUser user) throws MendelRuntimeException {
+    public MendelUser updateUser(MendelUser user) throws MendelRuntimeException {
+        // TODO Need detached the entity ?
+        UserEntity savedUser = userRepository.save(entityDtoMapper.getEntityFromDto(user));
+        return Optional.ofNullable(savedUser).map(entityDtoMapper::getDtoFromEntity).orElse(null);
+    }
+
+    @Override
+    public void grantUserWithPrivileges(MendelUser user, List<MendelPrivilege> privileges) throws MendelRuntimeException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -56,12 +56,17 @@ public class SampleUserServiceImpl implements IUserService {
     }
 
     @Override
-    public int createUser(MendelUser user) throws MendelRuntimeException {
+    public MendelUser createUser(MendelUser user) throws MendelRuntimeException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int updateUser(MendelUser user) throws MendelRuntimeException {
+    public MendelUser updateUser(MendelUser user) throws MendelRuntimeException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void grantUserWithPrivileges(MendelUser user, List<MendelPrivilege> privileges) throws MendelRuntimeException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

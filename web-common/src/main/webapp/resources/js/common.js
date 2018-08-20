@@ -54,3 +54,17 @@ let MendelCommon = {
         return rootUrl + (paramPart ? ('?' + paramPart) : '');
     }
 };
+
+function MendelAjaxExecutor() {
+    // TODO Implement
+}
+
+MendelAjaxExecutor.prototype.url = function (url) {
+    this.url = url;
+    return this;
+};
+
+MendelAjaxExecutor.prototype.formData = function (form) {
+    // TODO Implement
+    return this;
+};

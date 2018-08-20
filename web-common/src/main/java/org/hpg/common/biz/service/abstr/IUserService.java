@@ -33,19 +33,28 @@ public interface IUserService {
      * Create new user
      *
      * @param user
-     * @return Number of created user
+     * @return Saved user instance (id set)
      * @throws MendelRuntimeException When create operation failed
      */
-    int createUser(MendelUser user) throws MendelRuntimeException;
+    MendelUser createUser(MendelUser user) throws MendelRuntimeException;
 
     /**
      * Update existing user
      *
      * @param user
-     * @return Number of updated user
+     * @return Updated user instance
      * @throws MendelRuntimeException When update operation failed
      */
-    int updateUser(MendelUser user) throws MendelRuntimeException;
+    MendelUser updateUser(MendelUser user) throws MendelRuntimeException;
+
+    /**
+     * Grant user with specified privileges (revoke all other privileges)
+     *
+     * @param user
+     * @param privileges
+     * @throws MendelRuntimeException
+     */
+    void grantUserWithPrivileges(MendelUser user, List<MendelPrivilege> privileges) throws MendelRuntimeException;
 
     /**
      * Delete list of users by id

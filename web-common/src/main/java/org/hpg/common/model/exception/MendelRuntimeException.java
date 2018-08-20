@@ -12,4 +12,11 @@ package org.hpg.common.model.exception;
  */
 public class MendelRuntimeException extends RuntimeException {
 
+    // TODO Add more methods and fields
+    public MendelRuntimeException() {
+    }
+
+    public MendelRuntimeException(Throwable cause) {
+        super(cause);
+    }
 }
