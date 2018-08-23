@@ -23,6 +23,11 @@ public class AjaxResultBuilder<T> {
     private final boolean success;
 
     /**
+     * Request caused fatal error (i.e. no further operations allowed) or not
+     */
+    private final boolean fatalError;
+
+    /**
      * Result object
      */
     private T resultObject = null;
@@ -42,8 +47,9 @@ public class AjaxResultBuilder<T> {
      *
      * @param success
      */
-    private AjaxResultBuilder(boolean success) {
+    private AjaxResultBuilder(boolean success, boolean fatalError) {
         this.success = success;
+        this.fatalError = fatalError;
     }
 
     /**
@@ -52,16 +58,17 @@ public class AjaxResultBuilder<T> {
      * @return
      */
     public static final AjaxResultBuilder successInstance() {
-        return new AjaxResultBuilder(true);
+        return new AjaxResultBuilder(true, false);
     }
 
     /**
      * Create new instance for failed case
      *
+     * @param fatalError
      * @return
      */
-    public static final AjaxResultBuilder failedInstance() {
-        return new AjaxResultBuilder(false);
+    public static final AjaxResultBuilder failedInstance(boolean fatalError) {
+        return new AjaxResultBuilder(false, fatalError);
     }
 
     /**
@@ -129,6 +136,7 @@ public class AjaxResultBuilder<T> {
         result.setErrorMessages(errorMessages);
         result.setResultObject(resultObject);
         result.setSuccess(success);
+        result.setFatalError(fatalError);
         result.setSuccessMessages(successMessages);
         return result;
     }

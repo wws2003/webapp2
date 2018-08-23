@@ -13,13 +13,13 @@ import org.hpg.libcommon.CH;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Executor for transactional operations
+ * Executor for operations processing form for result (possibly transactional)
  *
  * @author wws2003
  * @param <FormType>
  * @param <ResponseType>
  */
-public class TransactionalFormProcessor<FormType, ResponseType> {
+public class BaseFormProcessor<FormType, ResponseType> {
 
     /**
      * Flag to determine to execute in transaction
@@ -40,28 +40,28 @@ public class TransactionalFormProcessor<FormType, ResponseType> {
      * Form validate checker (check the form and return validation error
      * messages)
      */
-    private Function<FormType, List<String>> formValidator = null;
+    protected Function<FormType, List<String>> formValidator = null;
 
     /**
      * Process validation error messages for final result
      */
-    private Function<List<String>, ResponseType> validationErrorMessagesProcessor = null;
+    protected Function<List<String>, ResponseType> validationErrorMessagesProcessor = null;
 
     /**
      * Processor for result
      */
-    private Function<FormType, ResponseType> formProcessor = null;
+    protected Function<FormType, ResponseType> formProcessor = null;
 
     /**
      * Process for execution raised exception
      */
-    private Function<Exception, ResponseType> executeExceptionProcessor = null;
+    protected Function<Exception, ResponseType> executeExceptionProcessor = null;
 
-    protected TransactionalFormProcessor() {
+    protected BaseFormProcessor() {
     }
 
-    public static TransactionalFormProcessor instance() {
-        return new TransactionalFormProcessor();
+    public static <FT, RT> BaseFormProcessor<FT, RT> instance() {
+        return new BaseFormProcessor();
     }
 
     /**
@@ -70,7 +70,7 @@ public class TransactionalFormProcessor<FormType, ResponseType> {
      * @param readOnly TRUE: Read-only transaction, FALSE: Normal transaction
      * @return
      */
-    public TransactionalFormProcessor transactional(boolean readOnly) {
+    public BaseFormProcessor transactional(boolean readOnly) {
         this.transactional = true;
         this.readOnlyTransaction = readOnly;
         return this;
@@ -82,7 +82,7 @@ public class TransactionalFormProcessor<FormType, ResponseType> {
      * @param formType
      * @return
      */
-    public TransactionalFormProcessor consume(FormType formType) {
+    public BaseFormProcessor consume(FormType formType) {
         this.form = formType;
         return this;
     }
@@ -93,7 +93,7 @@ public class TransactionalFormProcessor<FormType, ResponseType> {
      * @param validator
      * @return
      */
-    public TransactionalFormProcessor formValidator(Function<FormType, List<String>> validator) {
+    public BaseFormProcessor formValidator(Function<FormType, List<String>> validator) {
         this.formValidator = validator;
         return this;
     }
@@ -104,7 +104,7 @@ public class TransactionalFormProcessor<FormType, ResponseType> {
      * @param validationErrorMessagesProcessor
      * @return
      */
-    public TransactionalFormProcessor validationErrorMessagesProcessor(Function<List<String>, ResponseType> validationErrorMessagesProcessor) {
+    public BaseFormProcessor validationErrorMessagesProcessor(Function<List<String>, ResponseType> validationErrorMessagesProcessor) {
         this.validationErrorMessagesProcessor = validationErrorMessagesProcessor;
         return this;
     }
@@ -115,7 +115,7 @@ public class TransactionalFormProcessor<FormType, ResponseType> {
      * @param processor
      * @return
      */
-    public TransactionalFormProcessor formProcessor(Function<FormType, ResponseType> processor) {
+    public BaseFormProcessor formProcessor(Function<FormType, ResponseType> processor) {
         this.formProcessor = processor;
         return this;
     }
@@ -126,7 +126,7 @@ public class TransactionalFormProcessor<FormType, ResponseType> {
      * @param executeExceptionProcessor
      * @return
      */
-    public TransactionalFormProcessor executeExceptionProcessor(Function<Exception, ResponseType> executeExceptionProcessor) {
+    public BaseFormProcessor executeExceptionProcessor(Function<Exception, ResponseType> executeExceptionProcessor) {
         this.executeExceptionProcessor = executeExceptionProcessor;
         return this;
     }
@@ -185,7 +185,7 @@ public class TransactionalFormProcessor<FormType, ResponseType> {
          * @param processor
          * @return
          */
-        public ResponseType execute(TransactionalFormProcessor<FormType, ResponseType> processor) {
+        public ResponseType execute(BaseFormProcessor<FormType, ResponseType> processor) {
             return processor.internalExecute();
         }
     }

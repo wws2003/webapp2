@@ -22,6 +22,11 @@ public class AjaxResult<T> implements Serializable {
     private boolean success;
 
     /**
+     * Request caused fatal error (i.e. no further operations allowed) or not
+     */
+    private boolean fatalError;
+
+    /**
      * Result object
      */
     private T resultObject;
@@ -42,6 +47,14 @@ public class AjaxResult<T> implements Serializable {
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public boolean getFatalError() {
+        return fatalError;
+    }
+
+    public void setFatalError(boolean fatalError) {
+        this.fatalError = fatalError;
     }
 
     public T getResultObject() {
@@ -68,4 +81,8 @@ public class AjaxResult<T> implements Serializable {
         this.errorMessages = errorMessages;
     }
 
+    @Override
+    public String toString() {
+        return "AjaxResult{" + "success=" + success + ", fatalError=" + fatalError + ", resultObject=" + resultObject + ", successMessages=" + successMessages + ", errorMessages=" + errorMessages + '}';
+    }
 }
