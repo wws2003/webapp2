@@ -36,6 +36,12 @@ public class UserServiceImpl implements IUserService {
     private IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper;
 
     @Override
+    public Optional<MendelUser> findUserById(long userId) throws MendelRuntimeException {
+        return userRepository.findById(userId)
+                .map(entityDtoMapper::getDtoFromEntity);
+    }
+
+    @Override
     public Optional<MendelUser> findUserByName(String userName, MendelRole role) throws MendelRuntimeException {
         return userRepository.findByUserNameAndRoleId(userName, role.getCode())
                 .map(entityDtoMapper::getDtoFromEntity);

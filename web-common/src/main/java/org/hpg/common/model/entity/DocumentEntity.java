@@ -5,11 +5,41 @@
  */
 package org.hpg.common.model.entity;
 
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 /**
  * Entity for document record
  *
  * @author trungpt
  */
-public class DocumentEntity {
+@Entity
+@Table(name = "TBL_DOCUMENT")
+public class DocumentEntity implements Serializable {
 
+    @Id
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "type")
+    private Integer type;
+
+    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "author_id")
+    private UserEntity role;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "public")
+    private Boolean publicDoc;
 }

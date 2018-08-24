@@ -20,6 +20,15 @@ import org.hpg.common.model.exception.MendelRuntimeException;
 public interface IUserService {
 
     /**
+     * Find user by id
+     *
+     * @param userId
+     * @return
+     * @throws MendelRuntimeException When find operation failed
+     */
+    Optional<MendelUser> findUserById(long userId) throws MendelRuntimeException;
+
+    /**
      * Find user by user name and role
      *
      * @param userName

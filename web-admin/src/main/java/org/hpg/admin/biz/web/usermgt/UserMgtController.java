@@ -11,7 +11,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
+import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
+import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserDetail;
+import org.hpg.admin.biz.web.usermgt.scrnmodel.UsersIndexModel;
 import org.hpg.admin.constant.AdminUrls;
 import org.hpg.common.biz.service.abstr.IFormValidator;
 import org.hpg.common.biz.service.abstr.IPasswordService;
@@ -59,9 +62,34 @@ public class UserMgtController {
         return BaseFormProcessorForAjaxResult.<UsersIndexForm>instanceForAjaxResult()
                 .formValidator(formValidator)
                 .formProcessor(fm -> {
+                    // TODO Get model properly
+                    UsersIndexModel model = new UsersIndexModel();
                     // Return sucess result. TODO Set message properly
                     return AjaxResultBuilder.successInstance()
-                            .resultObject(null)
+                            .resultObject(model)
+                            .build();
+                })
+                .execute(form);
+    }
+
+    /**
+     * Get user detail info
+     *
+     * @param form
+     * @return
+     */
+    @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_USER_DETAILS)
+    @ResponseBody
+    public AjaxResult getUserDetailInfo(UserDetailForm form) {
+        return BaseFormProcessorForAjaxResult.<UserDetailForm>instanceForAjaxResult()
+                .formValidator(formValidator)
+                .formProcessor(fm -> {
+                    // TODO Get model properly
+                    MendelUser user = userService.findUserById(fm.getUserId()).orElse(null);
+                    ScrnUserDetail model = new ScrnUserDetail();
+                    // Return sucess result. TODO Set message properly
+                    return AjaxResultBuilder.successInstance()
+                            .resultObject(model)
                             .build();
                 })
                 .execute(form);

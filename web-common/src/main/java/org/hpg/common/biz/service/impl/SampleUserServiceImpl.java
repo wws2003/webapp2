@@ -35,6 +35,11 @@ public class SampleUserServiceImpl implements IUserService {
     }
 
     @Override
+    public Optional<MendelUser> findUserById(long userId) throws MendelRuntimeException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public Optional<MendelUser> findUserByName(String userName, MendelRole role) throws MendelRuntimeException {
         // TODO Implement properly
         if (!tmpUserNamePasswordMap.containsKey(userName)) {

@@ -38,6 +38,11 @@ public class AdminUrls {
     public static final String ADMIN_USER_MANAGEMENT_INDEX = "/index";
 
     /**
+     * User manager: detail info of one user
+     */
+    public static final String ADMIN_USER_MANAGEMENT_USER_DETAILS = "/detail";
+
+    /**
      * User manager: Add/update
      */
     public static final String ADMIN_USER_MANAGEMENT_ADD_UPDATE = "/addUpdate";
