@@ -5,6 +5,8 @@
  */
 package org.hpg.common.constant;
 
+import java.util.Arrays;
+
 /**
  * Privilege for Mendel system
  *
@@ -75,4 +77,17 @@ public enum MendelPrivilege {
         return dispName;
     }
 
+    /**
+     * Get the enumeration value by specifying id
+     *
+     * @param privId
+     * @return
+     */
+    public static MendelPrivilege getPrivilegeFromId(int privId) {
+        return Arrays.asList(MendelPrivilege.values())
+                .stream()
+                .filter(role -> role.getId() == privId)
+                .findFirst()
+                .orElse(INVALID);
+    }
 }

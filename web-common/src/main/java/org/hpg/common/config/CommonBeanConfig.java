@@ -5,9 +5,11 @@
  */
 package org.hpg.common.config;
 
+import org.hpg.common.biz.service.abstr.IFormValidator;
 import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.impl.SamplePrivilegeServiceImpl;
+import org.hpg.common.biz.service.impl.StdFormValidatorImpl;
 import org.hpg.common.biz.service.impl.UserServiceImpl;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.dao.mapper.impl.UserEntityDtoMapperImpl;
@@ -44,5 +46,11 @@ public class CommonBeanConfig {
     public IPrivilegeService getPrivilegeService() {
         // TODO Implement properly
         return new SamplePrivilegeServiceImpl();
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IFormValidator getFormValidator() {
+        return new StdFormValidatorImpl();
     }
 }

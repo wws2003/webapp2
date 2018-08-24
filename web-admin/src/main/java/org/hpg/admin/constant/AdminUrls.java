@@ -33,6 +33,11 @@ public class AdminUrls {
     public static final String ADMIN_USER_MANAGEMENT_ROOT_URL = "/userMgt";
 
     /**
+     * User manager: index (TODO including paging)
+     */
+    public static final String ADMIN_USER_MANAGEMENT_INDEX = "/index";
+
+    /**
      * User manager: Add/update
      */
     public static final String ADMIN_USER_MANAGEMENT_ADD_UPDATE = "/addUpdate";

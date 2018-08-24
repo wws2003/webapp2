@@ -8,6 +8,7 @@ package org.hpg.common.framework;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import org.hpg.common.biz.service.abstr.IFormValidator;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.libcommon.CH;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,15 +33,10 @@ public class BaseFormProcessor<FormType, ResponseType> {
     private boolean readOnlyTransaction = false;
 
     /**
-     * User submission form (or any input)
-     */
-    private FormType form = null;
-
-    /**
      * Form validate checker (check the form and return validation error
      * messages)
      */
-    protected Function<FormType, List<String>> formValidator = null;
+    protected IFormValidator formValidator = null;
 
     /**
      * Process validation error messages for final result
@@ -70,20 +66,9 @@ public class BaseFormProcessor<FormType, ResponseType> {
      * @param readOnly TRUE: Read-only transaction, FALSE: Normal transaction
      * @return
      */
-    public BaseFormProcessor transactional(boolean readOnly) {
+    public BaseFormProcessor<FormType, ResponseType> transactional(boolean readOnly) {
         this.transactional = true;
         this.readOnlyTransaction = readOnly;
-        return this;
-    }
-
-    /**
-     * Set input (typically user submitted form)
-     *
-     * @param formType
-     * @return
-     */
-    public BaseFormProcessor consume(FormType formType) {
-        this.form = formType;
         return this;
     }
 
@@ -93,7 +78,7 @@ public class BaseFormProcessor<FormType, ResponseType> {
      * @param validator
      * @return
      */
-    public BaseFormProcessor formValidator(Function<FormType, List<String>> validator) {
+    public BaseFormProcessor<FormType, ResponseType> formValidator(IFormValidator validator) {
         this.formValidator = validator;
         return this;
     }
@@ -104,7 +89,7 @@ public class BaseFormProcessor<FormType, ResponseType> {
      * @param validationErrorMessagesProcessor
      * @return
      */
-    public BaseFormProcessor validationErrorMessagesProcessor(Function<List<String>, ResponseType> validationErrorMessagesProcessor) {
+    public BaseFormProcessor<FormType, ResponseType> validationErrorMessagesProcessor(Function<List<String>, ResponseType> validationErrorMessagesProcessor) {
         this.validationErrorMessagesProcessor = validationErrorMessagesProcessor;
         return this;
     }
@@ -115,7 +100,7 @@ public class BaseFormProcessor<FormType, ResponseType> {
      * @param processor
      * @return
      */
-    public BaseFormProcessor formProcessor(Function<FormType, ResponseType> processor) {
+    public BaseFormProcessor<FormType, ResponseType> formProcessor(Function<FormType, ResponseType> processor) {
         this.formProcessor = processor;
         return this;
     }
@@ -126,7 +111,7 @@ public class BaseFormProcessor<FormType, ResponseType> {
      * @param executeExceptionProcessor
      * @return
      */
-    public BaseFormProcessor executeExceptionProcessor(Function<Exception, ResponseType> executeExceptionProcessor) {
+    public BaseFormProcessor<FormType, ResponseType> executeExceptionProcessor(Function<Exception, ResponseType> executeExceptionProcessor) {
         this.executeExceptionProcessor = executeExceptionProcessor;
         return this;
     }
@@ -134,16 +119,17 @@ public class BaseFormProcessor<FormType, ResponseType> {
     /**
      * Execute and return final result
      *
+     * @param form
      * @return
      */
-    public ResponseType execute() {
+    public ResponseType execute(FormType form) {
         BaseExecuteWrapper wrapper = transactional
                 ? (readOnlyTransaction ? new ReadOnlyTransactionalExecuteWrapper() : new TransactionalExecuteWrapper())
                 : new BaseExecuteWrapper();
 
         try {
             // Execute. Auto rollback and commit
-            return wrapper.execute(this);
+            return wrapper.execute(this, form);
         } catch (Exception e) {
             // TODO Logging
             return Optional.ofNullable(executeExceptionProcessor)
@@ -157,11 +143,11 @@ public class BaseFormProcessor<FormType, ResponseType> {
      *
      * @return
      */
-    private ResponseType internalExecute() {
+    private ResponseType internalExecute(FormType form) {
         // TODO Implement
         // Validate
         List<String> validationErrorMessages = Optional.ofNullable(formValidator)
-                .map(validator -> validator.apply(form))
+                .map(validator -> validator.validate(form))
                 .orElse(null);
 
         if (!CH.isEmpty(validationErrorMessages) && validationErrorMessagesProcessor != null) {
@@ -185,8 +171,8 @@ public class BaseFormProcessor<FormType, ResponseType> {
          * @param processor
          * @return
          */
-        public ResponseType execute(BaseFormProcessor<FormType, ResponseType> processor) {
-            return processor.internalExecute();
+        public ResponseType execute(BaseFormProcessor<FormType, ResponseType> processor, FormType form) {
+            return processor.internalExecute(form);
         }
     }
 

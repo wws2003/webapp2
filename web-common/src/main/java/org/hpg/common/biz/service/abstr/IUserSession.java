@@ -9,7 +9,7 @@ import org.hpg.common.model.dto.principal.LoginInfo;
 
 /**
  * Session storage: To provide access to current login user info and related
- * info
+ * info. Concrete instance provided by security implementing class
  *
  * @author wws2003
  */

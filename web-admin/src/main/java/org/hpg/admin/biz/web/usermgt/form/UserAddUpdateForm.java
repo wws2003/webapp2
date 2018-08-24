@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.admin.biz.web.form;
+package org.hpg.admin.biz.web.usermgt.form;
 
 import java.io.Serializable;
 import java.util.List;
