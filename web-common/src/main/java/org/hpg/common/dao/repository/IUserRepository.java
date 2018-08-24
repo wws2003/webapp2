@@ -5,9 +5,11 @@
  */
 package org.hpg.common.dao.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.hpg.common.model.entity.UserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,6 +29,15 @@ public interface IUserRepository extends IPagingAndSortingRepository<UserEntity,
      * @throws MendelRuntimeException When find operation failed
      */
     @Query("select u from UserEntity u where u.name = :userName and u.role.id = :roleId")
-    Optional<UserEntity> findByUserNameAndRoleId(@Param("userName") String userName,
-            @Param("roleId") int roleId) throws MendelRuntimeException;
+    Optional<UserEntity> findByUserNameAndRoleId(@Param("userName") String userName, @Param("roleId") int roleId) throws MendelRuntimeException;
+
+    /**
+     * Delete in bulk by ID
+     *
+     * @param userIds
+     * @throws MendelRuntimeException When delete operation failed
+     */
+    @Modifying
+    @Query("delete from UserEntity u where user.id in (?1)")
+    void deleteInBulkById(List<Long> userIds) throws MendelRuntimeException;
 }

@@ -11,9 +11,11 @@ import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
+import org.hpg.common.dao.repository.IUserPrivRepository;
 import org.hpg.common.dao.repository.IUserRepository;
 import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.entity.UserEntity;
+import org.hpg.common.model.entity.UserPrivEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,6 +28,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IUserPrivRepository userPrivRepository;
 
     @Autowired
     private IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper;
@@ -45,19 +50,27 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public MendelUser updateUser(MendelUser user) throws MendelRuntimeException {
-        // TODO Need detached the entity ?
+        // TODO Need detached the returned entity ?
         UserEntity savedUser = userRepository.save(entityDtoMapper.getEntityFromDto(user));
         return Optional.ofNullable(savedUser).map(entityDtoMapper::getDtoFromEntity).orElse(null);
     }
 
     @Override
     public void grantUserWithPrivileges(MendelUser user, List<MendelPrivilege> privileges) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final long userId = user.getId();
+        privileges.stream().forEach(priv -> {
+            UserPrivEntity entity = new UserPrivEntity();
+            entity.setPrivilegeId(priv.getId());
+            entity.setUserId(userId);
+            userPrivRepository.save(entity);
+        });
     }
 
     @Override
     public int deleteUsers(List<Long> userIds) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO Implement properly for return value
+        userRepository.deleteInBulkById(userIds);
+        return 0;
     }
 
     @Override
