@@ -5,12 +5,19 @@
  */
 package org.hpg.common.framework;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.hpg.common.biz.service.abstr.IFormValidator;
+import org.hpg.common.biz.service.abstr.ILogger;
+import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.libcommon.CH;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -23,20 +30,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class BaseFormProcessor<FormType, ResponseType> {
 
     /**
-     * Flag to determine to execute in transaction
+     * User submission form (or any input)
      */
-    private boolean transactional = false;
+    private FormType form = null;
 
     /**
-     * Flag to determine a read only transaction
+     * Transactional level
      */
-    private boolean readOnlyTransaction = false;
+    private MendelTransactionalLevel transactionalLevel = MendelTransactionalLevel.NONE;
 
     /**
      * Form validate checker (check the form and return validation error
      * messages)
      */
     protected IFormValidator formValidator = null;
+
+    /**
+     * Logger
+     */
+    protected ILogger logger = null;
+
+    /**
+     * Info message generating function
+     */
+    protected BiFunction<FormType, ResponseType, String> infoMessageFunc = null;
 
     /**
      * Process validation error messages for final result
@@ -53,23 +70,24 @@ public class BaseFormProcessor<FormType, ResponseType> {
      */
     protected Function<Exception, ResponseType> executeExceptionProcessor = null;
 
-    protected BaseFormProcessor() {
-    }
-
-    public static <FT, RT> BaseFormProcessor<FT, RT> instance() {
-        return new BaseFormProcessor();
-    }
-
     /**
-     * Set to execute in transactional context
-     *
-     * @param readOnly TRUE: Read-only transaction, FALSE: Normal transaction
-     * @return
+     * Map to detect executor
      */
-    public BaseFormProcessor<FormType, ResponseType> transactional(boolean readOnly) {
-        this.transactional = true;
-        this.readOnlyTransaction = readOnly;
-        return this;
+    private final Map<Integer, BaseExecuteWrapper> executorMap = new HashMap();
+
+    protected BaseFormProcessor(FormType form) {
+        this.form = form;
+        // Executors map based on transactional level
+        executorMap.put(MendelTransactionalLevel.DEFAULT.getCode(), new DefaultTransactionalExecuteWrapper());
+        executorMap.put(MendelTransactionalLevel.DEFAULT_READONLY.getCode(), new DefaultReadOnlyTransactionalExecuteWrapper());
+        executorMap.put(MendelTransactionalLevel.CURRENT.getCode(), new CurrentTransactionalExecuteWrapper());
+        executorMap.put(MendelTransactionalLevel.CURRENT_READONLY.getCode(), new CurrentReadOnlyTransactionalExecuteWrapper());
+        executorMap.put(MendelTransactionalLevel.NEW.getCode(), new NewTransactionalExecuteWrapper());
+        executorMap.put(MendelTransactionalLevel.NEW_READONLY.getCode(), new NewReadOnlyTransactionalExecuteWrapper());
+    }
+
+    public static <FT, RT> BaseFormProcessor<FT, RT> instance(FT form) {
+        return new BaseFormProcessor(form);
     }
 
     /**
@@ -80,6 +98,39 @@ public class BaseFormProcessor<FormType, ResponseType> {
      */
     public BaseFormProcessor<FormType, ResponseType> formValidator(IFormValidator validator) {
         this.formValidator = validator;
+        return this;
+    }
+
+    /**
+     * Set logger
+     *
+     * @param logger
+     * @return
+     */
+    public BaseFormProcessor<FormType, ResponseType> logger(ILogger logger) {
+        this.logger = logger;
+        return this;
+    }
+
+    /**
+     * Set to execute in transactional context
+     *
+     * @param transactionalLevel
+     * @return
+     */
+    public BaseFormProcessor<FormType, ResponseType> transactional(MendelTransactionalLevel transactionalLevel) {
+        this.transactionalLevel = transactionalLevel;
+        return this;
+    }
+
+    /**
+     * Set info message generating function in the case of success
+     *
+     * @param infoMessageFunc
+     * @return
+     */
+    public BaseFormProcessor<FormType, ResponseType> infoMessageFunc(BiFunction<FormType, ResponseType, String> infoMessageFunc) {
+        this.infoMessageFunc = infoMessageFunc;
         return this;
     }
 
@@ -119,19 +170,25 @@ public class BaseFormProcessor<FormType, ResponseType> {
     /**
      * Execute and return final result
      *
-     * @param form
      * @return
      */
-    public ResponseType execute(FormType form) {
-        BaseExecuteWrapper wrapper = transactional
-                ? (readOnlyTransaction ? new ReadOnlyTransactionalExecuteWrapper() : new TransactionalExecuteWrapper())
-                : new BaseExecuteWrapper();
+    public ResponseType execute() {
+        BaseExecuteWrapper wrapper = Optional.ofNullable(executorMap.get(transactionalLevel.getCode()))
+                .orElse(new BaseExecuteWrapper());
 
         try {
             // Execute. Auto rollback and commit
-            return wrapper.execute(this, form);
+            ResponseType ret = wrapper.execute(this, form);
+            // Logging
+            if (logger != null && infoMessageFunc != null) {
+                logger.info(() -> infoMessageFunc.apply(form, ret));
+            }
+            return ret;
         } catch (Exception e) {
-            // TODO Logging
+            // Logging
+            Optional.ofNullable(logger)
+                    .ifPresent(lg -> lg.error(e));
+            // Return
             return Optional.ofNullable(executeExceptionProcessor)
                     .map(func -> func.apply(e))
                     .orElseThrow(() -> new MendelRuntimeException(e));
@@ -143,12 +200,11 @@ public class BaseFormProcessor<FormType, ResponseType> {
      *
      * @return
      */
-    private ResponseType internalExecute(FormType form) {
-        // TODO Implement
+    private ResponseType internalExecute(FormType frm) {
         // Validate
         List<String> validationErrorMessages = Optional.ofNullable(formValidator)
-                .map(validator -> validator.validate(form))
-                .orElse(null);
+                .map(validator -> validator.validate(frm))
+                .orElse(new ArrayList());
 
         if (!CH.isEmpty(validationErrorMessages) && validationErrorMessagesProcessor != null) {
             return validationErrorMessagesProcessor.apply(validationErrorMessages);
@@ -156,7 +212,7 @@ public class BaseFormProcessor<FormType, ResponseType> {
 
         // Execute
         ResponseType res = Optional.ofNullable(formProcessor)
-                .map(processor -> processor.apply(form))
+                .map(processor -> processor.apply(frm))
                 .orElse(null);
 
         return res;
@@ -180,13 +236,41 @@ public class BaseFormProcessor<FormType, ResponseType> {
      * Class to execute the processor in transactional context
      */
     @Transactional(rollbackFor = Exception.class)
-    private class TransactionalExecuteWrapper extends BaseExecuteWrapper {
+    private class DefaultTransactionalExecuteWrapper extends BaseExecuteWrapper {
     }
 
     /**
      * Class to execute the processor in readonly transactional context
      */
     @Transactional(rollbackFor = Exception.class, readOnly = true)
-    private class ReadOnlyTransactionalExecuteWrapper extends BaseExecuteWrapper {
+    private class DefaultReadOnlyTransactionalExecuteWrapper extends BaseExecuteWrapper {
+    }
+
+    /**
+     * Class to execute the processor in readonly transactional context
+     */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    private class NewTransactionalExecuteWrapper extends BaseExecuteWrapper {
+    }
+
+    /**
+     * Class to execute the processor in readonly transactional context
+     */
+    @Transactional(rollbackFor = Exception.class, readOnly = true, propagation = Propagation.REQUIRES_NEW)
+    private class NewReadOnlyTransactionalExecuteWrapper extends BaseExecuteWrapper {
+    }
+
+    /**
+     * Class to execute the processor in transactional context
+     */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
+    private class CurrentTransactionalExecuteWrapper extends BaseExecuteWrapper {
+    }
+
+    /**
+     * Class to execute the processor in transactional context
+     */
+    @Transactional(rollbackFor = Exception.class, readOnly = true, propagation = Propagation.MANDATORY)
+    private class CurrentReadOnlyTransactionalExecuteWrapper extends BaseExecuteWrapper {
     }
 }

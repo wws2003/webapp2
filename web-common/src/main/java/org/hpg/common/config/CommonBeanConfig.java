@@ -6,9 +6,11 @@
 package org.hpg.common.config;
 
 import org.hpg.common.biz.service.abstr.IFormValidator;
+import org.hpg.common.biz.service.abstr.ILogger;
 import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.impl.SamplePrivilegeServiceImpl;
+import org.hpg.common.biz.service.impl.SimpleLoggerImpl;
 import org.hpg.common.biz.service.impl.StdFormValidatorImpl;
 import org.hpg.common.biz.service.impl.UserServiceImpl;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
@@ -52,5 +54,11 @@ public class CommonBeanConfig {
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public IFormValidator getFormValidator() {
         return new StdFormValidatorImpl();
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public ILogger getLogger() {
+        return new SimpleLoggerImpl();
     }
 }

@@ -15,4 +15,7 @@ import org.hpg.common.model.dto.web.WebPageModel;
  */
 public class BaseFormProcessorForWebPageModel<FormType> extends BaseFormProcessor<FormType, WebPageModel> {
 
+    private BaseFormProcessorForWebPageModel(FormType form) {
+        super(form);
+    }
 }

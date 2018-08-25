@@ -17,9 +17,14 @@ import org.hpg.common.util.AjaxResultBuilder;
  */
 public class BaseFormProcessorForAjaxResult<FormType> extends BaseFormProcessor<FormType, AjaxResult> {
 
-    private BaseFormProcessorForAjaxResult() {
+    /**
+     * Constructor default
+     *
+     * @param form
+     */
+    private BaseFormProcessorForAjaxResult(FormType form) {
         // Initialize
-        super();
+        super(form);
         // Validation error result creator
         validationErrorMessagesProcessor = this::createAjaxResultForValidationError;
         // Fatal error result creator
@@ -30,10 +35,11 @@ public class BaseFormProcessorForAjaxResult<FormType> extends BaseFormProcessor<
      * Instance creator
      *
      * @param <FT>
+     * @param form
      * @return
      */
-    public static <FT> BaseFormProcessorForAjaxResult<FT> instanceForAjaxResult() {
-        return new BaseFormProcessorForAjaxResult();
+    public static <FT> BaseFormProcessorForAjaxResult<FT> instanceForAjaxResult(FT form) {
+        return new BaseFormProcessorForAjaxResult(form);
     }
 
     /**
