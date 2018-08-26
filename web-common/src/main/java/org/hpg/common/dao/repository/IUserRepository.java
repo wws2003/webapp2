@@ -37,7 +37,7 @@ public interface IUserRepository extends IPagingAndSortingRepository<UserEntity,
      * @param userIds
      * @throws MendelRuntimeException When delete operation failed
      */
-    @Modifying
-    @Query("delete from UserEntity u where user.id in (?1)")
-    void deleteInBulkById(List<Long> userIds) throws MendelRuntimeException;
+    @Modifying(flushAutomatically = true)
+    @Query("delete from UserEntity u where u.id in ?1")
+    void deleteUsersById(List<Long> userIds) throws MendelRuntimeException;
 }

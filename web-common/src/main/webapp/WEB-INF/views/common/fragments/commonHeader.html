@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <!-- /* Common styles and scripts, along with title passes as parameter */ -->
-    <head th:fragment="frg_common_header(title)">
+    <head th:fragment="frg_common_header(title,links,scripts)">
         <title th:replace="${title}">Title</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,5 +17,10 @@ and open the template in the editor.
         <script src="../../../resources/assets/js/bootstrap.min.js" th:src="@{/resources/assets/js/bootstrap.min.js}"></script>
         <!-- /* Common resources */ -->
         <script src="../../../resources/js/common.js" th:src="@{'/resources/js/common.js?' + ${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}}"></script>
+        <script src="../../../resources/js/Rx.min.js" th:src="@{'/resources/js/Rx.min.js?' + ${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}}"></script>
+        <!--/* Per-page placeholder for additional links */-->
+        <th:block th:replace="${links}"></th:block>
+        <!--/* Per-page placeholder for additional scripts */-->
+        <th:block th:replace="${scripts}"></th:block>
     </head>
 </html>

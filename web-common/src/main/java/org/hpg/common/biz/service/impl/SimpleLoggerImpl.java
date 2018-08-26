@@ -12,10 +12,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.hpg.common.biz.service.abstr.ILogger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
-import org.springframework.core.env.Environment;
 
 /**
  * Simplest logger implementation
@@ -27,12 +25,18 @@ import org.springframework.core.env.Environment;
 })
 public class SimpleLoggerImpl implements ILogger {
 
-    @Autowired
-    private Environment environment;
-
     private static final Logger LOGGER = Logger.getLogger(SimpleLoggerImpl.class.getName());
 
-    private final int maxTraceLevel = environment.getProperty("logger.max-trace-level", Integer.class);
+    private final int maxTraceLevel;
+
+    /**
+     * Constructor
+     *
+     * @param maxTraceLevel
+     */
+    public SimpleLoggerImpl(int maxTraceLevel) {
+        this.maxTraceLevel = maxTraceLevel;
+    }
 
     @Override
     public void trace(Supplier<String> messegeSupplier) {

@@ -17,9 +17,13 @@ import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.dao.mapper.impl.UserEntityDtoMapperImpl;
 import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.entity.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
@@ -29,7 +33,13 @@ import org.springframework.web.context.WebApplicationContext;
  * @author trungpt
  */
 @Configuration
+@PropertySources({
+    @PropertySource("classpath:application.properties")
+})
 public class CommonBeanConfig {
+
+    @Autowired
+    private Environment environment;
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
@@ -59,6 +69,7 @@ public class CommonBeanConfig {
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public ILogger getLogger() {
-        return new SimpleLoggerImpl();
+        int maxTraceLevel = environment.getProperty("logger.max-trace-level", Integer.class);
+        return new SimpleLoggerImpl(maxTraceLevel);
     }
 }
