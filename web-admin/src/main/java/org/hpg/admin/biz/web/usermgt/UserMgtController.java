@@ -182,7 +182,7 @@ public class UserMgtController {
     private MendelUser parseUserDtoFromForm(UserAddUpdateForm form) {
         // TODO Implement properly based on annotations
         MendelUser user = new MendelUser();
-        user.setDispName(form.getUserDipsName());
+        user.setDispName(form.getUserDispName());
         user.setId(form.getUserId());
         user.setName(form.getUserName());
         user.setEncodedPassword(Optional.ofNullable(passwordService).map(srv -> srv.getEncodedPassword(form.getRawPassword())).orElse(form.getRawPassword()));

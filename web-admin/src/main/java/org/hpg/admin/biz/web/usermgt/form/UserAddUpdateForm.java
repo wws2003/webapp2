@@ -33,7 +33,7 @@ public class UserAddUpdateForm implements Serializable {
     /**
      * Displayed user name
      */
-    private String userDipsName;
+    private String userDispName;
 
     /**
      * Raw password
@@ -74,12 +74,12 @@ public class UserAddUpdateForm implements Serializable {
         this.userName = userName;
     }
 
-    public String getUserDipsName() {
-        return userDipsName;
+    public String getUserDispName() {
+        return userDispName;
     }
 
-    public void setUserDipsName(String userDipsName) {
-        this.userDipsName = userDipsName;
+    public void setUserDispName(String userDispName) {
+        this.userDispName = userDispName;
     }
 
     public String getRawPassword() {
@@ -108,6 +108,6 @@ public class UserAddUpdateForm implements Serializable {
 
     @Override
     public String toString() {
-        return "UserAddUpdateForm{" + "toUpdateUser=" + toCreateUser + ", userId=" + userId + ", userName=" + userName + ", userDipsName=" + userDipsName + ", rawPassword=" + rawPassword + ", confirmedRawPassword=" + confirmedRawPassword + ", grantedPrivilegeIds=" + grantedPrivilegeIds + '}';
+        return "UserAddUpdateForm{" + "toUpdateUser=" + toCreateUser + ", userId=" + userId + ", userName=" + userName + ", userDipsName=" + userDispName + ", rawPassword=" + rawPassword + ", confirmedRawPassword=" + confirmedRawPassword + ", grantedPrivilegeIds=" + grantedPrivilegeIds + '}';
     }
 }

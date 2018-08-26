@@ -30,7 +30,7 @@ public class AdminUrls {
     /**
      * User manager root URL
      */
-    public static final String ADMIN_USER_MANAGEMENT_ROOT_URL = "/userMgt";
+    public static final String ADMIN_USER_MANAGEMENT_ROOT_URL = ADMIN_ROOT_URL + "/userMgt";
 
     /**
      * User manager: index (TODO including paging)

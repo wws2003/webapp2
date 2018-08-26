@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+Rx = Rx || {};
 
 /**
  * Based urls
  * @type Map
  */
 let Urls = {
-    BASE_URL: '/userMgt'
+    BASE_URL: location.protocol + '//' + location.hostname + ':' + location.port + location.pathname
 };
 
 /**
@@ -38,9 +39,28 @@ var UserMgtController = {
     },
 
     saveUser: function () {
-        // TODO Implement: Ajax call then reload/show error
-        let saveForm = {};
+        // TODO Implement properly. Below is just experimental code
+        let saveForm = {
+            toCreateUser: true,
+            userName: $('#txtUserName').val(),
+            userDispName: $('#txtDispName').val(),
+            rawPassword: $('#txtPassword').val(),
+            confirmedRawPassword: $('#txtPatxtPasswordConfirmssword').val(),
+            grantedPrivilegeIds: []
+        };
         let saveUrl = Urls.BASE_URL + '/addUpdate';
+        let promise = $.ajax({
+            url: saveUrl,
+            type: "POST",
+            dataType: "json",
+            contentType: "text/xml; charset=\"utf-8\"",
+            connection: "Keep-Alive",
+            data: JSON.stringify({userAddUpdateForm: saveForm})
+        });
+        // Create
+        let observable = Rx.Observable.fromPromise(promise);
+        // Subscribe
+        observable.subscribe(response => console.log(response));
     },
 
     deleteUser: function () {
