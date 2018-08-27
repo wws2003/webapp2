@@ -53,9 +53,9 @@ var UserMgtController = {
             url: saveUrl,
             type: "POST",
             dataType: "json",
-            contentType: "text/xml; charset=\"utf-8\"",
+            contentType: "application/json",
             connection: "Keep-Alive",
-            data: JSON.stringify({userAddUpdateForm: saveForm})
+            data: JSON.stringify(saveForm)
         });
         // Create
         let observable = Rx.Observable.fromPromise(promise);
