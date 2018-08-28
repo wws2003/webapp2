@@ -6,6 +6,7 @@
 package org.hpg.common.model.dto.document;
 
 import java.io.Serializable;
+import org.hpg.common.model.dto.user.MendelUser;
 
 /**
  * Class for document model
@@ -20,33 +21,19 @@ public class Document implements Serializable {
     private long id;
 
     /**
+     * Author
+     */
+    private MendelUser author;
+
+    /**
      * Document name
      */
     private String name;
 
     /**
-     * Comment for document
+     * Document content
      */
-    private String comment;
-
-    /**
-     * Constructor
-     *
-     * @param id
-     * @param name
-     * @param comment
-     */
-    public Document(long id, String name, String comment) {
-        this.id = id;
-        this.name = name;
-        this.comment = comment;
-    }
-
-    // TODO Add owner info
-    @Override
-    public String toString() {
-        return "Document{" + "id=" + getId() + ", name=" + getName() + ", comment=" + getComment() + '}';
-    }
+    private String content;
 
     /**
      * Get document id
@@ -85,20 +72,43 @@ public class Document implements Serializable {
     }
 
     /**
-     * Get document comment
+     * Get author
      *
-     * @return the comment
+     * @return
      */
-    public String getComment() {
-        return comment;
+    public MendelUser getAuthor() {
+        return author;
     }
 
     /**
-     * Set document comment
+     * Set author
      *
-     * @param comment the comment to set
+     * @param author
      */
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setAuthor(MendelUser author) {
+        this.author = author;
+    }
+
+    /**
+     * Get content
+     *
+     * @return
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * Set content
+     *
+     * @param content
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "Document{" + "id=" + id + ", author=" + author + ", name=" + name + ", content=" + content + '}';
     }
 }

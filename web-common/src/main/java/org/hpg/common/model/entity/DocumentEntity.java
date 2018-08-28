@@ -6,6 +6,7 @@
 package org.hpg.common.model.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,5 +42,76 @@ public class DocumentEntity implements Serializable {
     private String content;
 
     @Column(name = "public")
-    private Boolean publicDoc;
+    private Boolean publishedDoc;
+
+    // TODO Add proper annotations
+    private List<DocumentEntity> referringDocuments;
+
+    // TODO Add proper annotations
+    private List<DocumentEntity> referredDocuments;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public UserEntity getRole() {
+        return role;
+    }
+
+    public void setRole(UserEntity role) {
+        this.role = role;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Boolean getPublishedDoc() {
+        return publishedDoc;
+    }
+
+    public void setPublishedDoc(Boolean publishedDoc) {
+        this.publishedDoc = publishedDoc;
+    }
+
+    public List<DocumentEntity> getReferringDocuments() {
+        return referringDocuments;
+    }
+
+    public void setReferringDocuments(List<DocumentEntity> referringDocuments) {
+        this.referringDocuments = referringDocuments;
+    }
+
+    public List<DocumentEntity> getReferredDocuments() {
+        return referredDocuments;
+    }
+
+    public void setReferredDocuments(List<DocumentEntity> referredDocuments) {
+        this.referredDocuments = referredDocuments;
+    }
+
 }

@@ -21,4 +21,14 @@ public class UserUrls {
      * Home URL
      */
     public static final String USER_HOME = "/home";
+
+    /**
+     * Change password screen URL
+     */
+    public static final String USER_CHANGE_PASSWORD_INDEX = "/changePassword";
+
+    /**
+     * Change password action URL
+     */
+    public static final String USER_CHANGE_PASSWORD = "/save";
 }
