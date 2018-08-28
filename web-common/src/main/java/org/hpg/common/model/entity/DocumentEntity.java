@@ -6,10 +6,10 @@
 package org.hpg.common.model.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,6 +26,7 @@ public class DocumentEntity implements Serializable {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue
     private Integer id;
 
     @Column(name = "name")
@@ -43,12 +44,6 @@ public class DocumentEntity implements Serializable {
 
     @Column(name = "public")
     private Boolean publishedDoc;
-
-    // TODO Add proper annotations
-    private List<DocumentEntity> referringDocuments;
-
-    // TODO Add proper annotations
-    private List<DocumentEntity> referredDocuments;
 
     public Integer getId() {
         return id;
@@ -97,21 +92,4 @@ public class DocumentEntity implements Serializable {
     public void setPublishedDoc(Boolean publishedDoc) {
         this.publishedDoc = publishedDoc;
     }
-
-    public List<DocumentEntity> getReferringDocuments() {
-        return referringDocuments;
-    }
-
-    public void setReferringDocuments(List<DocumentEntity> referringDocuments) {
-        this.referringDocuments = referringDocuments;
-    }
-
-    public List<DocumentEntity> getReferredDocuments() {
-        return referredDocuments;
-    }
-
-    public void setReferredDocuments(List<DocumentEntity> referredDocuments) {
-        this.referredDocuments = referredDocuments;
-    }
-
 }

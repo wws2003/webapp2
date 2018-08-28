@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+/* MendelApp is initialized by let and therefore can not be redeclared here */
+/* global MendelApp  */
+
 var Rx = Rx || {};
-var MendelApp = MendelApp || {};
 
 /**
  * Based urls
@@ -47,7 +50,7 @@ var UserMgtController = {
             userName: $('#txtUserName').val(),
             userDispName: $('#txtDispName').val(),
             rawPassword: $('#txtPassword').val(),
-            confirmedRawPassword: $('#txtPatxtPasswordConfirmssword').val(),
+            confirmedRawPassword: $('#txtPasswordConfirm').val(),
             grantedPrivilegeIds: []
         };
         let saveUrl = Urls.USER_MGT_BASE_URL + '/addUpdate';

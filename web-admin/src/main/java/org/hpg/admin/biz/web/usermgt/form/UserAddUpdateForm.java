@@ -108,6 +108,6 @@ public class UserAddUpdateForm implements Serializable {
 
     @Override
     public String toString() {
-        return "UserAddUpdateForm{" + "toUpdateUser=" + toCreateUser + ", userId=" + userId + ", userName=" + userName + ", userDipsName=" + userDispName + ", rawPassword=" + rawPassword + ", confirmedRawPassword=" + confirmedRawPassword + ", grantedPrivilegeIds=" + grantedPrivilegeIds + '}';
+        return "UserAddUpdateForm{" + "toCreateUser=" + toCreateUser + ", userId=" + userId + ", userName=" + userName + ", userDipsName=" + userDispName + ", rawPassword=" + rawPassword + ", confirmedRawPassword=" + confirmedRawPassword + ", grantedPrivilegeIds=" + grantedPrivilegeIds + '}';
     }
 }

@@ -43,14 +43,14 @@ public class SimpleLoggerImpl implements ILogger {
         // Trace
         String tracingMessageLines = getMessageLinesForStackTrace(Thread.currentThread().getStackTrace(),
                 maxTraceLevel);
-        LOGGER.log(Level.FINEST, tracingMessageLines);
+        LOGGER.log(Level.FINE, tracingMessageLines);
         // Message
-        LOGGER.log(Level.FINEST, messegeSupplier);
+        LOGGER.log(Level.FINE, messegeSupplier);
     }
 
     @Override
     public void debug(Supplier<String> messegeSupplier) {
-        LOGGER.log(Level.FINER, messegeSupplier);
+        LOGGER.log(Level.FINE, messegeSupplier);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class SimpleLoggerImpl implements ILogger {
         // Trace
         String tracingMessageLines = getMessageLinesForStackTrace(e.getStackTrace(),
                 maxTraceLevel);
-        LOGGER.log(Level.FINEST, tracingMessageLines);
+        LOGGER.log(Level.SEVERE, tracingMessageLines);
     }
 
     /**
@@ -89,6 +89,6 @@ public class SimpleLoggerImpl implements ILogger {
                                 stackTraceElement.getMethodName(),
                                 stackTraceElement.getLineNumber())
                 )
-                .collect(Collectors.joining("¥n"));
+                .collect(Collectors.joining("\n"));
     }
 }

@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
+import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.model.mapping.EntityDtoMap;
 import org.hpg.libcommon.CH;
 import org.hpg.libcommon.CV;
@@ -190,7 +191,8 @@ public abstract class BaseEntityDtoMapper<EC, DC> implements IEntityDtoMapper<EC
                     try {
                         setter.invoke(instanceToSet, getter.invoke(instanceToGet));
                     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                        Logger.getLogger(BaseEntityDtoMapper.class.getName()).log(Level.SEVERE, null, ex);
+                        // Just throw
+                        throw new MendelRuntimeException(ex);
                     }
                 });
     }

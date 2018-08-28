@@ -8,6 +8,7 @@ package org.hpg.common.model.entity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -22,6 +23,7 @@ public class RoleEntity implements Serializable {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue
     private Integer id;
 
     @Column(name = "name")

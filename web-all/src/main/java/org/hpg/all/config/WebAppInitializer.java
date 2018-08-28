@@ -48,6 +48,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
 
+        // Think over: Why can refer to springSecurityFilterChain can be hard coded here without any reference ?
         DelegatingFilterProxy securityFilterChain = new DelegatingFilterProxy("springSecurityFilterChain");
 
         return new Filter[]{characterEncodingFilter, securityFilterChain};

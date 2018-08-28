@@ -8,11 +8,12 @@ package org.hpg.common.model.entity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Entity forn user-privilege mapping
+ * Entity for user-privilege mapping
  *
  * @author trungpt
  */
@@ -22,6 +23,7 @@ public class UserPrivEntity implements Serializable {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue
     private Long id;
 
     @Column(name = "user_id")

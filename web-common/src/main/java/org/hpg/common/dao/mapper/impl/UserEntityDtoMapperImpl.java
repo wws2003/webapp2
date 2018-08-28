@@ -20,17 +20,25 @@ import org.hpg.common.model.mapping.EntityDtoMap;
         entityClass = UserEntity.class,
         dtoClass = MendelUser.class,
         entityToDtoMappings = {
-            "id",
             "name",
             "encodedPassword",
             "encodedPassword,password",
             "displayedName,dispName"
+        },
+        dtoToEntityMappings = {
+            "id",
+            "name",
+            "password,encodedPassword",
+            "password,encodedPassword",
+            "dispName,displayedName"
         }
 )
 public class UserEntityDtoMapperImpl extends BaseEntityDtoMapper<UserEntity, MendelUser> {
 
     @Override
     protected void finalizeEntityFromDto(MendelUser dto, UserEntity entity) {
+        // ID 0 -> null (temporary fix)
+        entity.setId(dto.getId() <= 0 ? null : dto.getId());
         // Role
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setId(dto.getRole().getCode());
