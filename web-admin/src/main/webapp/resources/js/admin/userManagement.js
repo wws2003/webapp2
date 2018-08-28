@@ -3,14 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-Rx = Rx || {};
+var Rx = Rx || {};
+var MendelApp = MendelApp || {};
 
 /**
  * Based urls
  * @type Map
  */
 let Urls = {
-    BASE_URL: location.protocol + '//' + location.hostname + ':' + location.port + location.pathname
+    USER_MGT_BASE_URL: MendelApp.BASE_URL + location.pathname
 };
 
 /**
@@ -39,6 +40,7 @@ var UserMgtController = {
     },
 
     saveUser: function () {
+        // EXPERIMENTAL CODE. TODO MOVE TO COMMON
         // TODO Implement properly. Below is just experimental code
         let saveForm = {
             toCreateUser: true,
@@ -48,7 +50,7 @@ var UserMgtController = {
             confirmedRawPassword: $('#txtPatxtPasswordConfirmssword').val(),
             grantedPrivilegeIds: []
         };
-        let saveUrl = Urls.BASE_URL + '/addUpdate';
+        let saveUrl = Urls.USER_MGT_BASE_URL + '/addUpdate';
         let promise = $.ajax({
             url: saveUrl,
             type: "POST",

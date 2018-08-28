@@ -3,6 +3,34 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+$(document).ready(function () {
+    // TODO Implement
+    MendelApp.initialize();
+});
+
+let MendelApp = {
+
+    /**
+     * Base URLs for all actions in the app
+     * @type String
+     */
+    BASE_URL: location.protocol + '//' + location.hostname + ':' + location.port,
+
+    /**
+     * Initial setup
+     * @returns {undefined}
+     */
+    initialize: function () {
+        // CSRF action for AJAX POST. TODO Think of moving to ajax stuffs
+        $(document).ajaxSend(function (e, xhr, options) {
+            // Get token from meta tag
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            xhr.setRequestHeader(header, token);
+        });
+    }
+};
+
 let MendelCommon = {
 
     /**
