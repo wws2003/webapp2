@@ -51,6 +51,7 @@ public class JTAPersistenceConfig {
                         "hibernate.transaction.jta.platform",
                         "hibernate.dialect",
                         "hibernate.show_sql",
+                        "hibernate.current_session_context_class",
                         "hibernate.format_sql"
                 )))
                 .build();
@@ -60,10 +61,7 @@ public class JTAPersistenceConfig {
     @Bean(name = "jtaPlatformTransactionManager")
     public PlatformTransactionManager getJtaTransactionManager() throws Exception {
         // Default constructor, i.e. delegate to the server the job of managing transaction ?
-        JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
-        // Finallize
-        jtaTransactionManager.afterPropertiesSet();
-        return jtaTransactionManager;
+        return new JtaTransactionManager();
     }
 
     /**
@@ -159,8 +157,9 @@ public class JTAPersistenceConfig {
         public AbstractEntityManagerFactoryBean build() {
             // TODO Implement
             LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+            // emf.setPersistenceProviderClass(org.hibernate.ejb.HibernatePersistence.class);
             // Data source
-            emf.setDataSource(mDataSource);
+            emf.setJtaDataSource(mDataSource);
             // Persistence unit
             emf.setPackagesToScan(mPackagesToScan.toArray(new String[mPackagesToScan.size()]));
             emf.setPersistenceUnitName(mPersistenceUnitName);
