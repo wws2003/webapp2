@@ -85,7 +85,7 @@ INSERT INTO TBL_USER_PRIV(
 INSERT INTO TBL_USER_PRIV(
 	user_id, privilege_id
 ) VALUES (
-	(SELECT id FROM TBL_USER WHERE name = 'UserAdmin'),
+	(SELECT id FROM TBL_USER WHERE name = 'admin'),
 	(SELECT id FROM TBL_PRIVILEGE WHERE code = 'M001')
 );
 

@@ -3,17 +3,19 @@ echo "1. Setting environment variables"
 source 00_setEnv.sh
 
 # Temporary store password
-export pg_pass_file=~/.pgpass
+mkdir -p $PSQL_PASS_DIR
+export pg_pass_file=$PSQL_PASS_DIR/$PSQL_PASS_FILENAME
 export pg_db_password_line=$PSQL_HOST:$PSQL_PORT:postgres:$PSQL_SETUP_USER:$PSQL_POSTGRES_PASSWORD
 echo $pg_db_password_line > $pg_pass_file
 chmod 0600 $pg_pass_file
 
-# Set ownership permisison for tablespace directory
+# Create and set ownership permisison for tablespace directory
+mkdir -p $PSQL_TABLESPACE_PATH
 sudo chown -R $PSQL_SETUP_USER $PSQL_TABLESPACE_PATH
 
 # Create DB, user
 echo "2. Creating DB and user"
-psql -h $PSQL_HOST -p $PSQL_PORT -U $PSQL_SETUP_USER -w -f sql/01_create_schema_and_user.sql
+psql -h $PSQL_HOST -p $PSQL_PORT -U $PSQL_SETUP_USER -w -f sql/01_create_schema_and_user.sql -v v1="'$PSQL_TABLESPACE_PATH'"
 
 # Create tables
 echo "3. Creating tables"

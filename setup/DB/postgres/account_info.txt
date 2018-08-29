@@ -2,3 +2,5 @@ Postgres
 - root user: postgres, password: pass001
 - app user: MENDEL_USER, password: pass001
 - Port: 5432
+
+# In Windows 7~, the location folder for tablespace must be set permissions for Network Service.

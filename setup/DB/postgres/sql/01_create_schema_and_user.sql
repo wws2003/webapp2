@@ -1,6 +1,5 @@
 -- Table space
---  TODO: Use setting variable (psql needed probably)
-CREATE TABLESPACE mendel_tbsp LOCATION '/Users/wws2003/Desktop/Apps/WEBAPPS/Mendel/lab/multi-modules/R2/setup/DB/postgres/dataspace';
+CREATE TABLESPACE mendel_tbsp LOCATION :v1;
 
 -- Database
 CREATE DATABASE mendel_db TABLESPACE mendel_tbsp;
