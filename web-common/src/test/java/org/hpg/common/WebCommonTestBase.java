@@ -5,28 +5,29 @@
  */
 package org.hpg.common;
 
-import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
-import org.hpg.common.dao.mapper.impl.UserEntityDtoMapperImpl;
-import org.hpg.common.model.dto.user.MendelUser;
-import org.hpg.common.model.entity.UserEntity;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  * Base class for tests in web-common module
  *
  * @author wws2003
  */
-@Configuration
-@ContextConfiguration
+@ContextConfiguration(classes = WebCommonTestBase.class)
+@PropertySources({
+    @PropertySource("classpath:application.properties")
+})
+@ComponentScan(basePackages = "org.hpg")
+@WebAppConfiguration
 public class WebCommonTestBase {
 
     @Bean
-    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public IEntityDtoMapper<UserEntity, MendelUser> getEntityDtoMapperForTest() {
-        return new UserEntityDtoMapperImpl();
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 }

@@ -10,8 +10,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
@@ -36,7 +34,7 @@ public abstract class BaseEntityDtoMapper<EC, DC> implements IEntityDtoMapper<EC
         try {
             return getDtoFromEntity(entity, this.getClass().getAnnotation(EntityDtoMap.class));
         } catch (InstantiationException | IllegalAccessException ex) {
-            return null;
+            throw new MendelRuntimeException(ex);
         }
     }
 
@@ -45,7 +43,7 @@ public abstract class BaseEntityDtoMapper<EC, DC> implements IEntityDtoMapper<EC
         try {
             return getEntityFromDto(dto, this.getClass().getAnnotation(EntityDtoMap.class));
         } catch (InstantiationException | IllegalAccessException ex) {
-            return null;
+            throw new MendelRuntimeException(ex);
         }
     }
 
@@ -165,9 +163,8 @@ public abstract class BaseEntityDtoMapper<EC, DC> implements IEntityDtoMapper<EC
                         return Tuple.newTuple(propertyDescriptorForGetter.getReadMethod(),
                                 propertyDescriptorForSetter.getWriteMethod());
                     } catch (IntrospectionException ex) {
-                        Logger.getLogger(BaseEntityDtoMapper.class.getName()).log(Level.SEVERE, null, ex);
+                        throw new MendelRuntimeException(ex);
                     }
-                    return null;
                 })
                 .filter(tuple -> tuple != null)
                 .collect(Collectors.toList());

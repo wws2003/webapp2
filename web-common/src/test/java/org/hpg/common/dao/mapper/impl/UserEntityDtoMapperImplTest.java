@@ -5,6 +5,7 @@
  */
 package org.hpg.common.dao.mapper.impl;
 
+import org.hpg.common.WebCommonTestBase;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.model.dto.user.MendelUser;
@@ -14,15 +15,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Test for user entity-DTO mapper
  *
  * @author wws2003
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-public class UserEntityDtoMapperImplTest {
+@RunWith(SpringRunner.class)
+public class UserEntityDtoMapperImplTest extends WebCommonTestBase {
 
     @Autowired
     private IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper;

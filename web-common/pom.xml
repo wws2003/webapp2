@@ -86,12 +86,12 @@
 
     <!-- Dependencies -->
     <dependencies>
-        <!-- JAVAEE7 -->
+        <!-- Std validation (for compabiliy to Hibernate) -->
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
         </dependency>
         <!-- Dependency on lib-common module -->
         <dependency>
