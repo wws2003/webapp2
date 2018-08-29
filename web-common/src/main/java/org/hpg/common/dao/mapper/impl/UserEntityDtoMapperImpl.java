@@ -20,6 +20,7 @@ import org.hpg.common.model.mapping.EntityDtoMap;
         entityClass = UserEntity.class,
         dtoClass = MendelUser.class,
         entityToDtoMappings = {
+            "id",
             "name",
             "encodedPassword",
             "encodedPassword,password",
@@ -29,7 +30,7 @@ import org.hpg.common.model.mapping.EntityDtoMap;
             "id",
             "name",
             "password,encodedPassword",
-            "password,encodedPassword",
+            "encodedPassword",
             "dispName,displayedName"
         }
 )

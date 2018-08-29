@@ -68,7 +68,8 @@ public class SimpleLoggerImpl implements ILogger {
         // Trace
         String tracingMessageLines = getMessageLinesForStackTrace(e.getStackTrace(),
                 maxTraceLevel);
-        LOGGER.log(Level.SEVERE, tracingMessageLines);
+        // TODO Implement more properly
+        LOGGER.log(Level.SEVERE, "{0}\n{1}", new String[]{e.getLocalizedMessage(), tracingMessageLines});
     }
 
     /**

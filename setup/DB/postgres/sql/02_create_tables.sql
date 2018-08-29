@@ -118,5 +118,10 @@ GRANT ALL PRIVILEGES
 ON ALL TABLES IN SCHEMA public
 TO mendel_role WITH GRANT OPTION;
 
+-- Grant roles for all sequences
+GRANT ALL PRIVILEGES
+ON ALL SEQUENCES IN SCHEMA public
+TO mendel_role WITH GRANT OPTION;
+
 -- TODO: Tables for log database (for experimental 2-phase commit)
 

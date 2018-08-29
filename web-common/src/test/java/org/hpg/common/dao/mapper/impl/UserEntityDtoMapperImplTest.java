@@ -57,7 +57,7 @@ public class UserEntityDtoMapperImplTest extends WebCommonTestBase {
     @Test
     public void testDtoEntityMapper() {
         MendelUser dto = new MendelUser();
-        dto.setId(1L);
+        dto.setId(0L);
         dto.setDispName("disname");
         dto.setName("name");
         dto.setPassword("pass");
@@ -66,7 +66,7 @@ public class UserEntityDtoMapperImplTest extends WebCommonTestBase {
 
         UserEntity entity = entityDtoMapper.getEntityFromDto(dto);
 
-        Assert.assertTrue(entity.getId() == dto.getId());
+        Assert.assertTrue(entity.getId() == null);
         Assert.assertTrue(entity.getName().equals(dto.getName()));
         Assert.assertTrue(entity.getDisplayedName().equals(dto.getDispName()));
         Assert.assertTrue(entity.getEncodedPassword().equals(dto.getPassword()));

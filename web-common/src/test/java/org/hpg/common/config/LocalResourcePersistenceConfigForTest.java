@@ -32,7 +32,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 @Configuration
 @PropertySources({
-    @PropertySource("classpath:datasource_jta_test.properties")
+    @PropertySource("classpath:datasource_jpa_test.properties")
 })
 public class LocalResourcePersistenceConfigForTest {
 
@@ -45,7 +45,7 @@ public class LocalResourcePersistenceConfigForTest {
 
         return EntityManagerFactoryBuilder.instanceForDataSource(getDataSource())
                 .packagesToScan(Arrays.asList("org.hpg.common.model.entity"))
-                .persistenceUnitName("pu1")
+                .persistenceUnitName("pu1-fortest")
                 .jpaVendorAdapter(new HibernateJpaVendorAdapter())
                 .propertiesMap(getPropertiesMap(Arrays.asList(
                         "hibernate.transaction.jta.platform",
