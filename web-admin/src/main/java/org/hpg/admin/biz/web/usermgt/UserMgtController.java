@@ -28,6 +28,7 @@ import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.framework.BaseFormProcessorForAjaxResult;
 import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.dto.web.AjaxResult;
+import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.util.AjaxResultBuilder;
 import org.hpg.libcommon.CH;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +120,10 @@ public class UserMgtController {
                     MendelUser userToCreateOrUpdate = parseUserDtoFromForm(fm);
                     // Save
                     MendelUser savedUser = fm.getToCreateUser() ? userService.createUser(userToCreateOrUpdate) : userService.updateUser(userToCreateOrUpdate);
+                    // Throw exception for test rolling back
+                    if (true) {
+                        throw new MendelRuntimeException("SFAGAr2#RSD@#%$%@$!@#");
+                    }
                     // Grant privileges
                     List<MendelPrivilege> grantedPrivileges = parseGrantedPrivilegesFromForm(fm);
                     userService.grantUserWithPrivileges(savedUser, grantedPrivileges);

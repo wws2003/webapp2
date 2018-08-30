@@ -1,0 +1,77 @@
+[2018-08-30T09:09:15.385+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955385] [levelValue: 800] [[
+  2018-08-30 09:09:15,385 DEBUG - DispatcherServlet with name 'dispatcher' processing POST request for [/mendel-all/admin/userMgt/addUpdate]]]
+
+[2018-08-30T09:09:15.385+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955385] [levelValue: 800] [[
+  2018-08-30 09:09:15,385 DEBUG - Looking up handler method for path /admin/userMgt/addUpdate]]
+
+[2018-08-30T09:09:15.385+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955385] [levelValue: 800] [[
+  2018-08-30 09:09:15,385 DEBUG - Returning handler method [public org.hpg.common.model.dto.web.AjaxResult org.hpg.admin.biz.web.usermgt.UserMgtController.addUpdateUser(org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm)]]]
+
+[2018-08-30T09:09:15.386+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955386] [levelValue: 800] [[
+  2018-08-30 09:09:15,386 DEBUG - Returning cached instance of singleton bean 'userMgtController']]
+
+[2018-08-30T09:09:15.424+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955424] [levelValue: 800] [[
+  2018-08-30 09:09:15,424 DEBUG - Skip CORS processing: request is from same origin]]
+
+[2018-08-30T09:09:15.432+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955432] [levelValue: 800] [[
+  2018-08-30 09:09:15,432 DEBUG - Read [class org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm] as "application/json;charset=UTF-8" with [org.springframework.http.converter.json.MappingJackson2HttpMessageConverter@5ebf5d88]]]
+
+[2018-08-30T09:09:15.454+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955454] [levelValue: 800] [[
+  2018-08-30 09:09:15,454 DEBUG - Failed to meta-introspect annotation interface org.springframework.web.bind.annotation.RequestBody: java.lang.NullPointerException]]
+
+[2018-08-30T09:09:15.566+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955566] [levelValue: 800] [[
+  2018-08-30 09:09:15,566 DEBUG - Adding transactional method 'save' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT; '']]
+
+[2018-08-30T09:09:15.573+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955573] [levelValue: 800] [[
+  2018-08-30 09:09:15,573 DEBUG - Returning cached instance of singleton bean 'jtaPlatformTransactionManager']]
+
+[2018-08-30T09:09:15.583+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955583] [levelValue: 800] [[
+  2018-08-30 09:09:15,583 DEBUG - Creating new transaction with name [org.springframework.data.jpa.repository.support.SimpleJpaRepository.save]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT; '']]
+
+[2018-08-30T09:09:15.600+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955600] [levelValue: 800] [[
+  2018-08-30 09:09:15,600 DEBUG - Opening JPA EntityManager]]
+
+[2018-08-30T09:09:15.611+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955611] [levelValue: 800] [[
+  2018-08-30 09:09:15,611 DEBUG - Registering transaction synchronization for JPA EntityManager]]
+
+[2018-08-30T09:09:15.690+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955690] [levelValue: 800] [[
+  Hibernate: 
+    insert 
+    into
+        TBL_USER
+        (displayed_name, password, name, role_id) 
+    values
+        (?, ?, ?, ?)]]
+
+[2018-08-30T09:09:15.693+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955693] [levelValue: 800] [[
+  Hibernate: 
+    select
+        currval('TBL_USER_id_seq')]]
+
+[2018-08-30T09:09:15.711+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955711] [levelValue: 800] [[
+  2018-08-30 09:09:15,711 DEBUG - Closing JPA EntityManager]]
+
+[2018-08-30T09:09:15.712+0700] [glassfish 4.1] [INFO] [] [] [tid: _ThreadID=34 _ThreadName=Thread-8] [timeMillis: 1535594955712] [levelValue: 800] [[
+  2018-08-30 09:09:15,712 DEBUG - Initiating transaction commit]]
+
+[2018-08-30T09:09:15.744+0700] [glassfish 4.1] [SEVERE] [] [org.hpg.common.biz.service.impl.SimpleLoggerImpl] [tid: _ThreadID=34 _ThreadName=http-listener-1(5)] [timeMillis: 1535594955744] [levelValue: 1000] [[
+  SFAGAr2#RSD@#%$%@$!@#
+org.hpg.admin.biz.web.usermgt.UserMgtController.lambda$addUpdateUser$2(): line 125
+org.hpg.common.framework.BaseFormProcessor.lambda$internalExecute$5(): line 215
+java.util.Optional.map(): line 215
+org.hpg.common.framework.BaseFormProcessor.internalExecute(): line 215
+org.hpg.common.framework.BaseFormProcessor.access$700(): line 30
+org.hpg.common.framework.BaseFormProcessor$BaseExecuteWrapper.execute(): line 231
+org.hpg.common.framework.BaseFormProcessor.execute(): line 181
+org.hpg.admin.biz.web.usermgt.UserMgtController.defaultExecuteForAjaxResult(): line 179
+org.hpg.admin.biz.web.usermgt.UserMgtController.addUpdateUser(): line 117
+sun.reflect.NativeMethodAccessorImpl.invoke0(): line -2
+sun.reflect.NativeMethodAccessorImpl.invoke(): line 62
+sun.reflect.DelegatingMethodAccessorImpl.invoke(): line 43
+java.lang.reflect.Method.invoke(): line 498
+org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(): line 209
+org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(): line 136
+org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(): line 102
+org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(): line 877
+org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(): line 783]]
+

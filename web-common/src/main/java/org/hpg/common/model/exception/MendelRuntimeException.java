@@ -14,6 +14,11 @@ public class MendelRuntimeException extends RuntimeException {
 
     // TODO Add more methods and fields
     public MendelRuntimeException() {
+        super();
+    }
+
+    public MendelRuntimeException(String message) {
+        super(message);
     }
 
     public MendelRuntimeException(Throwable cause) {
