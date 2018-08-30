@@ -5,6 +5,7 @@
  */
 package org.hpg.common.service;
 
+import java.util.function.Function;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.dao.repository.IUserRepository;
 import org.hpg.common.model.dto.user.MendelUser;
@@ -38,9 +39,32 @@ public class TransactionServiceForTest {
         throw new MendelRuntimeException();
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public void saveThenException(UserEntity entity) {
-        userRepository.save(entity);
+        // The very test
+
+        // This kind of thing does not work. Possibly newly created instance is not managed properly by Spring transaction manager
+        XXXExecutor ex = new XXXExecutor(entity);
+        ex.saveEntity(ent -> {
+            UserEntity ent1 = userRepository.save(entity);
+            if (true) {
+                throw new MendelRuntimeException();
+            }
+            return ent1;
+        });
         throw new MendelRuntimeException();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    private class XXXExecutor {
+
+        private final UserEntity entity;
+
+        public XXXExecutor(UserEntity entity) {
+            this.entity = entity;
+        }
+
+        public UserEntity saveEntity(Function<UserEntity, UserEntity> persistFunc) {
+            return persistFunc.apply(entity);
+        }
     }
 }
