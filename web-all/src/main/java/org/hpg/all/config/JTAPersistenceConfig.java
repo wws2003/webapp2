@@ -22,6 +22,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
@@ -34,6 +35,7 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 @PropertySources({
     @PropertySource("classpath:datasource_jta.properties")
 })
+@EnableTransactionManagement
 public class JTAPersistenceConfig {
 
     @Autowired
@@ -65,7 +67,7 @@ public class JTAPersistenceConfig {
     }
 
     /**
-     * Create XA-data source name
+     * TODO Create XA-data source name
      *
      * @return
      */

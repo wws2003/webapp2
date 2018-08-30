@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.AbstractEntityManagerFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -24,6 +25,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * JTA config for test
@@ -34,6 +36,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 @PropertySources({
     @PropertySource("classpath:datasource_jpa_test.properties")
 })
+@EnableJpaRepositories(
+        // TODO Add packages from other modules apart from web-common
+        basePackages = {"org.hpg.common.dao.repository"},
+        entityManagerFactoryRef = "jpaEntityManagerFactory",
+        transactionManagerRef = "jpaPlatformTransactionManager"
+)
+@EnableTransactionManagement
 public class LocalResourcePersistenceConfigForTest {
 
     @Autowired

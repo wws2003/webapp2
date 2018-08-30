@@ -10,6 +10,9 @@ import org.hpg.common.constant.MendelRole;
 import org.hpg.common.dao.repository.IUserRepository;
 import org.hpg.common.model.entity.RoleEntity;
 import org.hpg.common.model.entity.UserEntity;
+import org.hpg.common.model.exception.MendelRuntimeException;
+import org.hpg.common.service.TransactionServiceForTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +29,39 @@ public class UserDaoTest extends WebCommonTestBase {
     @Autowired
     private IUserRepository userRepository;
 
+    @Autowired
+    private TransactionServiceForTest srv;
+
     @Test
     public void testSave1() {
+        UserEntity saveRet = userRepository.save(getSampleEntity());
+        assert (saveRet.getId() > 0);
+    }
+
+    @Test
+    public void testSaveWithException() {
+        // First count
+        long userCnt = userRepository.count();
+        System.out.println("First count = " + userCnt);
+
+        // Executor
+        try {
+            srv.saveThenException(getSampleEntity());
+        } catch (MendelRuntimeException e) {
+            System.out.println("Encountered an expected exception");
+        }
+
+        // Count again after rollback
+        long userCnt2 = userRepository.count();
+        System.out.println("Second count = " + userCnt2);
+
+        Assert.assertTrue(userCnt == userCnt2);
+    }
+
+    private UserEntity getSampleEntity() {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(null);
-        userEntity.setName("Name1");
+        userEntity.setName("Name12414");
         userEntity.setDisplayedName("DispName1");
         userEntity.setEncodedPassword("nononono");
 
@@ -39,7 +70,6 @@ public class UserDaoTest extends WebCommonTestBase {
         roleEntity.setName(MendelRole.USER.getName());
         userEntity.setRole(roleEntity);
 
-        UserEntity saveRet = userRepository.save(userEntity);
-        assert (saveRet.getId() > 0);
+        return userEntity;
     }
 }

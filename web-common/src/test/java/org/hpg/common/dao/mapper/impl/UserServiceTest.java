@@ -14,6 +14,7 @@ import org.hpg.common.dao.repository.IUserRepository;
 import org.hpg.common.framework.BaseFormProcessor;
 import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.exception.MendelRuntimeException;
+import org.hpg.common.service.TransactionServiceForTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,9 @@ public class UserServiceTest extends WebCommonTestBase {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private TransactionServiceForTest tst;
 
     @Test
     public void testSave1() {
@@ -80,6 +84,34 @@ public class UserServiceTest extends WebCommonTestBase {
             if (e instanceof MendelRuntimeException) {
                 System.out.println("Encountered an expected exception");
             }
+        }
+
+        // Count again after rollback
+        long userCnt2 = userRepository.count();
+        System.out.println("Second count = " + userCnt2);
+
+        Assert.assertTrue(userCnt == userCnt2);
+    }
+
+    @Test
+    public void testSaveWithManualTransaction() {
+        MendelUser dto = new MendelUser();
+        dto.setId(0L);
+        dto.setDispName("disname");
+        dto.setName("name9999");
+        dto.setPassword("pass1");
+        dto.setEncodedPassword("pass1"); //Must be the same as password for now
+        dto.setRole(MendelRole.USER);
+
+        // First count
+        long userCnt = userRepository.count();
+        System.out.println("First count = " + userCnt);
+
+        // Executor
+        try {
+            tst.saveThenException(dto);
+        } catch (MendelRuntimeException e) {
+            System.out.println("Encountered an expected exception");
         }
 
         // Count again after rollback
