@@ -5,21 +5,35 @@
  */
 package org.hpg.common.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.hpg.common.biz.service.abstr.IFormValidator;
 import org.hpg.common.biz.service.abstr.ILogger;
 import org.hpg.common.biz.service.abstr.IPrivilegeService;
+import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.impl.SamplePrivilegeServiceImpl;
+import org.hpg.common.biz.service.impl.ScreenServiceImpl;
 import org.hpg.common.biz.service.impl.SimpleLoggerImpl;
 import org.hpg.common.biz.service.impl.StdFormValidatorImpl;
 import org.hpg.common.biz.service.impl.UserServiceImpl;
+import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.dao.mapper.impl.UserEntityDtoMapperImpl;
+import org.hpg.common.framework.transaction.CurrentReadOnlyTransactionalExecutorImpl;
+import org.hpg.common.framework.transaction.CurrentTransactionalExecutorImpl;
+import org.hpg.common.framework.transaction.DefaultReadOnlyTransactionalExecutorImpl;
+import org.hpg.common.framework.transaction.DefaultTransactionalExecutorImpl;
+import org.hpg.common.framework.transaction.ITransactionExecutor;
+import org.hpg.common.framework.transaction.NewReadOnlyTransactionalExecutorImpl;
+import org.hpg.common.framework.transaction.NewTransactionalExecutorImpl;
 import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.annotation.Scope;
@@ -71,5 +85,61 @@ public class CommonBeanConfig {
     public ILogger getLogger() {
         int maxTraceLevel = environment.getProperty("logger.max-trace-level", Integer.class);
         return new SimpleLoggerImpl(maxTraceLevel);
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IScreenService getScreenService() {
+        return new ScreenServiceImpl();
+    }
+
+    @Bean
+    @DependsOn()
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public Map<Integer, ITransactionExecutor> getTransactionExecutorMap() {
+        Map<Integer, ITransactionExecutor> transactionExecutorMap = new HashMap();
+        transactionExecutorMap.put(MendelTransactionalLevel.DEFAULT.getCode(), getDefaultTransactionalExecutor());
+        transactionExecutorMap.put(MendelTransactionalLevel.DEFAULT_READONLY.getCode(), getDefaultReadOnlyTransactionalExecutor());
+        transactionExecutorMap.put(MendelTransactionalLevel.NEW.getCode(), getNewTransactionalExecutor());
+        transactionExecutorMap.put(MendelTransactionalLevel.NEW_READONLY.getCode(), getNewTransactionalExecutor());
+        transactionExecutorMap.put(MendelTransactionalLevel.CURRENT.getCode(), getCurrentTransactionalExecutor());
+        transactionExecutorMap.put(MendelTransactionalLevel.CURRENT_READONLY.getCode(), getCurrentReadOnlyTransactionalExecutor());
+        return transactionExecutorMap;
+    }
+
+    @Bean
+    @Qualifier(CommonQualifierConstant.TransactionExecutor.DEFAULT)
+    public ITransactionExecutor getDefaultTransactionalExecutor() {
+        return new DefaultTransactionalExecutorImpl();
+    }
+
+    @Bean
+    @Qualifier(CommonQualifierConstant.TransactionExecutor.DEFAULT_READONLY)
+    public ITransactionExecutor getDefaultReadOnlyTransactionalExecutor() {
+        return new DefaultReadOnlyTransactionalExecutorImpl();
+    }
+
+    @Bean
+    @Qualifier(CommonQualifierConstant.TransactionExecutor.NEW)
+    public ITransactionExecutor getNewTransactionalExecutor() {
+        return new NewTransactionalExecutorImpl();
+    }
+
+    @Bean
+    @Qualifier(CommonQualifierConstant.TransactionExecutor.NEW_READONLY)
+    public ITransactionExecutor getNewReadOnlyTransactionalExecutor() {
+        return new NewReadOnlyTransactionalExecutorImpl();
+    }
+
+    @Bean
+    @Qualifier(CommonQualifierConstant.TransactionExecutor.CURRENT)
+    public ITransactionExecutor getCurrentTransactionalExecutor() {
+        return new CurrentTransactionalExecutorImpl();
+    }
+
+    @Bean
+    @Qualifier(CommonQualifierConstant.TransactionExecutor.CURRENT_READONLY)
+    public ITransactionExecutor getCurrentReadOnlyTransactionalExecutor() {
+        return new CurrentReadOnlyTransactionalExecutorImpl();
     }
 }

@@ -19,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author trungpt
  */
-public class TransactionServiceForTest {
+@Transactional(propagation = Propagation.REQUIRED)
+public class TransactionServiceForTest implements ITransactionServiceForTest {
 
     /**
      * User service
@@ -33,38 +34,18 @@ public class TransactionServiceForTest {
     @Autowired
     private IUserRepository userRepository;
 
-    @Transactional
     public void saveThenException(MendelUser dto) {
         userService.createUser(dto);
         throw new MendelRuntimeException();
     }
 
     public void saveThenException(UserEntity entity) {
-        // The very test
-
-        // This kind of thing does not work. Possibly newly created instance is not managed properly by Spring transaction manager
-        XXXExecutor ex = new XXXExecutor(entity);
-        ex.saveEntity(ent -> {
-            UserEntity ent1 = userRepository.save(entity);
-            if (true) {
-                throw new MendelRuntimeException();
-            }
-            return ent1;
-        });
+        userRepository.save(entity);
         throw new MendelRuntimeException();
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    private class XXXExecutor {
-
-        private final UserEntity entity;
-
-        public XXXExecutor(UserEntity entity) {
-            this.entity = entity;
-        }
-
-        public UserEntity saveEntity(Function<UserEntity, UserEntity> persistFunc) {
-            return persistFunc.apply(entity);
-        }
+    @Override
+    public void executeSave(Function<UserEntity, UserEntity> saveFunc, UserEntity userEntity) {
+        saveFunc.apply(userEntity);
     }
 }

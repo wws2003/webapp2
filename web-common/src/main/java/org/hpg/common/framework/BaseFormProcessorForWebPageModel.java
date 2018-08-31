@@ -18,4 +18,15 @@ public class BaseFormProcessorForWebPageModel<FormType> extends BaseFormProcesso
     private BaseFormProcessorForWebPageModel(FormType form) {
         super(form);
     }
+
+    /**
+     * Instance creator
+     *
+     * @param <FT>
+     * @param form
+     * @return
+     */
+    public static <FT> BaseFormProcessorForWebPageModel<FT> instanceForWebPageModel(FT form) {
+        return new BaseFormProcessorForWebPageModel(form);
+    }
 }

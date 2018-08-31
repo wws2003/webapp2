@@ -6,17 +6,14 @@
 package org.hpg.common.framework.transaction;
 
 import java.util.function.Function;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Execute function in a simple transaction
+ * No transaction required to execute
  *
- * @author trungpt
+ * @author wws2003
  */
-@Transactional(rollbackFor = Exception.class)
-public class DefaultTransactionalExecutorImpl implements ITransactionExecutor {
+public class NoTransactionExecutorImpl implements ITransactionExecutor {
 
-    // Have to put method body here in order to have Transactional annotation work !"!??
     @Override
     public <T, R> R execute(Function<T, R> func, T input) {
         return func.apply(input);

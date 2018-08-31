@@ -5,6 +5,8 @@
  */
 package org.hpg.common.dao.mapper.impl;
 
+import java.util.Map;
+import java.util.Optional;
 import org.hpg.common.WebCommonTestBase;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.impl.SimpleLoggerImpl;
@@ -12,6 +14,8 @@ import org.hpg.common.constant.MendelRole;
 import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.dao.repository.IUserRepository;
 import org.hpg.common.framework.BaseFormProcessor;
+import org.hpg.common.framework.transaction.ITransactionExecutor;
+import org.hpg.common.framework.transaction.NoTransactionExecutorImpl;
 import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.service.TransactionServiceForTest;
@@ -37,6 +41,9 @@ public class UserServiceTest extends WebCommonTestBase {
 
     @Autowired
     private TransactionServiceForTest tst;
+
+    @Autowired
+    private Map<Integer, ITransactionExecutor> transactionExecutorMap;
 
     @Test
     public void testSave1() {
@@ -70,7 +77,7 @@ public class UserServiceTest extends WebCommonTestBase {
         try {
             BaseFormProcessor.<MendelUser, MendelUser>instance(dto)
                     .logger(new SimpleLoggerImpl(12))
-                    .transactional(MendelTransactionalLevel.DEFAULT)
+                    .transactionExecutor(getTransactionExecutor(MendelTransactionalLevel.DEFAULT))
                     .formProcessor(usr -> {
                         MendelUser ret = userService.createUser(usr);
                         if (true) {
@@ -119,5 +126,16 @@ public class UserServiceTest extends WebCommonTestBase {
         System.out.println("Second count = " + userCnt2);
 
         Assert.assertTrue(userCnt == userCnt2);
+    }
+
+    /**
+     * Get the proper transaction executor based on level
+     *
+     * @param transactionalLevel
+     * @return
+     */
+    private ITransactionExecutor getTransactionExecutor(MendelTransactionalLevel transactionalLevel) {
+        return Optional.ofNullable(transactionExecutorMap.get(transactionalLevel.getCode()))
+                .orElse(new NoTransactionExecutorImpl());
     }
 }

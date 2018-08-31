@@ -6,20 +6,23 @@
 package org.hpg.common.dao.mapper.impl;
 
 import org.hpg.common.WebCommonTestBase;
+import org.hpg.common.config.CommonQualifierConstant;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.dao.repository.IUserRepository;
+import org.hpg.common.framework.transaction.ITransactionExecutor;
 import org.hpg.common.model.entity.RoleEntity;
 import org.hpg.common.model.entity.UserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
-import org.hpg.common.service.TransactionServiceForTest;
+import org.hpg.common.service.ITransactionServiceForTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Test class for user dao
+ * Test class for user DAO
  *
  * @author trungpt
  */
@@ -30,7 +33,11 @@ public class UserDaoTest extends WebCommonTestBase {
     private IUserRepository userRepository;
 
     @Autowired
-    private TransactionServiceForTest srv;
+    @Qualifier(CommonQualifierConstant.TransactionExecutor.NEW)
+    private ITransactionExecutor transactionExecutor;
+
+    @Autowired
+    private ITransactionServiceForTest srv;
 
     @Test
     public void testSave1() {
@@ -46,7 +53,25 @@ public class UserDaoTest extends WebCommonTestBase {
 
         // Executor
         try {
-            srv.saveThenException(getSampleEntity());
+            // Using map does not work
+            // ITransactionExecutor exe = transactionExecutorMap.get(MendelTransactionalLevel.DEFAULT.getCode());
+
+            // This does not work neither, surprisingly
+            /*transactionExecutor.execute(
+                    ent -> {
+                        userRepository.save(ent);
+                        throw new MendelRuntimeException("");
+                    },
+                    getSampleEntity());*/
+            // This works
+            // srv.saveThenException(getSampleEntity());
+            // What about this. Does not. Looks like due to using default implementing method from the interface ?
+            srv.executeSave(
+                    ent -> {
+                        userRepository.save(ent);
+                        throw new MendelRuntimeException("");
+                    },
+                    getSampleEntity());
         } catch (MendelRuntimeException e) {
             System.out.println("Encountered an expected exception");
         }

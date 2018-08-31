@@ -6,19 +6,15 @@
 package org.hpg.common.framework;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.hpg.common.biz.service.abstr.IFormValidator;
 import org.hpg.common.biz.service.abstr.ILogger;
-import org.hpg.common.constant.MendelTransactionalLevel;
+import org.hpg.common.framework.transaction.ITransactionExecutor;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.libcommon.CH;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Executor for operations processing form for result (possibly transactional)
@@ -35,9 +31,9 @@ public class BaseFormProcessor<FormType, ResponseType> {
     private FormType form = null;
 
     /**
-     * Transactional level
+     * Transactional executor
      */
-    private MendelTransactionalLevel transactionalLevel = MendelTransactionalLevel.NONE;
+    private ITransactionExecutor transactionalExecutor = null;
 
     /**
      * Form validate checker (check the form and return validation error
@@ -70,20 +66,8 @@ public class BaseFormProcessor<FormType, ResponseType> {
      */
     protected Function<Exception, ResponseType> executeExceptionProcessor = null;
 
-    /**
-     * Map to detect executor
-     */
-    private final Map<Integer, BaseExecuteWrapper> executorMap = new HashMap();
-
     protected BaseFormProcessor(FormType form) {
         this.form = form;
-        // Executors map based on transactional level
-        executorMap.put(MendelTransactionalLevel.DEFAULT.getCode(), new DefaultTransactionalExecuteWrapper());
-        executorMap.put(MendelTransactionalLevel.DEFAULT_READONLY.getCode(), new DefaultReadOnlyTransactionalExecuteWrapper());
-        executorMap.put(MendelTransactionalLevel.CURRENT.getCode(), new CurrentTransactionalExecuteWrapper());
-        executorMap.put(MendelTransactionalLevel.CURRENT_READONLY.getCode(), new CurrentReadOnlyTransactionalExecuteWrapper());
-        executorMap.put(MendelTransactionalLevel.NEW.getCode(), new NewTransactionalExecuteWrapper());
-        executorMap.put(MendelTransactionalLevel.NEW_READONLY.getCode(), new NewReadOnlyTransactionalExecuteWrapper());
     }
 
     public static <FT, RT> BaseFormProcessor<FT, RT> instance(FT form) {
@@ -113,13 +97,13 @@ public class BaseFormProcessor<FormType, ResponseType> {
     }
 
     /**
-     * Set to execute in transactional context
+     * Set transactional executor
      *
-     * @param transactionalLevel
+     * @param transactionalExecutor
      * @return
      */
-    public BaseFormProcessor<FormType, ResponseType> transactional(MendelTransactionalLevel transactionalLevel) {
-        this.transactionalLevel = transactionalLevel;
+    public BaseFormProcessor<FormType, ResponseType> transactionExecutor(ITransactionExecutor transactionalExecutor) {
+        this.transactionalExecutor = transactionalExecutor;
         return this;
     }
 
@@ -173,13 +157,10 @@ public class BaseFormProcessor<FormType, ResponseType> {
      * @return
      */
     public ResponseType execute() {
-        BaseExecuteWrapper wrapper = Optional.ofNullable(executorMap.get(transactionalLevel.getCode()))
-                .orElse(new BaseExecuteWrapper());
-
         try {
-            // Execute. Auto rollback and commit
-            ResponseType ret = wrapper.execute(this, form);
-            // Logging
+            // Execute (validation is also included in transaction if any). Auto rollback or commit
+            ResponseType ret = transactionalExecutor.execute(this::internalExecute, form);
+            // Logging (outside of transaction, if any)
             if (logger != null && infoMessageFunc != null) {
                 logger.info(() -> infoMessageFunc.apply(form, ret));
             }
@@ -216,61 +197,5 @@ public class BaseFormProcessor<FormType, ResponseType> {
                 .orElse(null);
 
         return res;
-    }
-
-    /*---------------------------------Execution wrapper classes--------------------------------*/
-    private class BaseExecuteWrapper {
-
-        /**
-         * Execute the processor in a non-transactional context
-         *
-         * @param processor
-         * @return
-         */
-        public ResponseType execute(BaseFormProcessor<FormType, ResponseType> processor, FormType form) {
-            return processor.internalExecute(form);
-        }
-    }
-
-    /**
-     * Class to execute the processor in transactional context
-     */
-    @Transactional(rollbackFor = Exception.class)
-    private class DefaultTransactionalExecuteWrapper extends BaseExecuteWrapper {
-    }
-
-    /**
-     * Class to execute the processor in readonly transactional context
-     */
-    @Transactional(rollbackFor = Exception.class, readOnly = true)
-    private class DefaultReadOnlyTransactionalExecuteWrapper extends BaseExecuteWrapper {
-    }
-
-    /**
-     * Class to execute the processor in readonly transactional context
-     */
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    private class NewTransactionalExecuteWrapper extends BaseExecuteWrapper {
-    }
-
-    /**
-     * Class to execute the processor in readonly transactional context
-     */
-    @Transactional(rollbackFor = Exception.class, readOnly = true, propagation = Propagation.REQUIRES_NEW)
-    private class NewReadOnlyTransactionalExecuteWrapper extends BaseExecuteWrapper {
-    }
-
-    /**
-     * Class to execute the processor in transactional context
-     */
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
-    private class CurrentTransactionalExecuteWrapper extends BaseExecuteWrapper {
-    }
-
-    /**
-     * Class to execute the processor in transactional context
-     */
-    @Transactional(rollbackFor = Exception.class, readOnly = true, propagation = Propagation.MANDATORY)
-    private class CurrentReadOnlyTransactionalExecuteWrapper extends BaseExecuteWrapper {
     }
 }

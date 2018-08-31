@@ -23,7 +23,5 @@ public interface ITransactionExecutor {
      * @param input
      * @return
      */
-    default <T, R> R execute(Function<T, R> func, T input) {
-        return func.apply(input);
-    }
+    public <T, R> R execute(Function<T, R> func, T input);
 }

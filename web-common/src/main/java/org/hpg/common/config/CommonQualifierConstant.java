@@ -12,7 +12,19 @@ package org.hpg.common.config;
  */
 public class CommonQualifierConstant {
 
-    public static final String USER_SERVICE_FOR_USER = "userServiceForUser";
+    public static class TransactionExecutor {
 
-    public static final String USER_SERVICE_FOR_ADMIN = "userServiceForAdmin";
+        public static final String DEFAULT = "defaultTransactionalExecutor";
+
+        public static final String DEFAULT_READONLY = "defaultReadOnlyTransactionalExecutor";
+
+        public static final String NEW = "newTransactionalExecutor";
+
+        public static final String NEW_READONLY = "newReadOnlyTransactionalExecutor";
+
+        public static final String CURRENT = "currentTransactionalExecutor";
+
+        public static final String CURRENT_READONLY = "currentReadOnlyTransactionalExecutor";
+
+    }
 }

@@ -5,6 +5,7 @@
  */
 package org.hpg.common.config;
 
+import org.hpg.common.service.ITransactionServiceForTest;
 import org.hpg.common.service.TransactionServiceForTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class BeanForTestConfig {
 
     @Bean
-    public TransactionServiceForTest getTransactionServiceForTest() {
+    public ITransactionServiceForTest getTransactionServiceForTest() {
         return new TransactionServiceForTest();
     }
 }
