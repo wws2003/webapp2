@@ -5,6 +5,9 @@
  */
 package org.hpg.common.dao.mapper.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.hpg.common.WebCommonTestBase;
 import org.hpg.common.config.CommonQualifierConstant;
 import org.hpg.common.constant.MendelRole;
@@ -46,6 +49,38 @@ public class UserDaoTest extends WebCommonTestBase {
     }
 
     @Test
+    public void testUpdate1() {
+        UserEntity ent = getSampleEntity();
+        UserEntity saveRet = userRepository.save(ent);
+        assert (saveRet.getId() > 0);
+        saveRet.setDisplayedName("New displayed name");
+        UserEntity saveRet2 = userRepository.save(saveRet);
+        assert (saveRet2.getId() > 0);
+        assert (saveRet2.getDisplayedName().equals(saveRet.getDisplayedName()));
+    }
+
+    @Test
+    public void testDelete() {
+        List<UserEntity> entities = IntStream.range(0, 10)
+                .boxed()
+                .map(i -> "Namexxx" + String.valueOf(i))
+                .map(this::getSampleEntity)
+                .collect(Collectors.toList());
+
+        List<UserEntity> savedEntities = entities.stream()
+                .map(ent -> userRepository.save(ent))
+                .collect(Collectors.toList());
+
+        List<Long> savedIds = savedEntities.stream()
+                .map(UserEntity::getId)
+                .collect(Collectors.toList());
+
+        List<UserEntity> deletedEntities = srv.executeDelete(userRepository::deleteByIdIn, savedIds);
+
+        assert (deletedEntities.size() == entities.size());
+    }
+
+    @Test
     public void testSaveWithException() {
         // First count
         long userCnt = userRepository.count();
@@ -84,9 +119,13 @@ public class UserDaoTest extends WebCommonTestBase {
     }
 
     private UserEntity getSampleEntity() {
+        return getSampleEntity("Name12414");
+    }
+
+    private UserEntity getSampleEntity(String name) {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(null);
-        userEntity.setName("Name12414");
+        userEntity.setName(name);
         userEntity.setDisplayedName("DispName1");
         userEntity.setEncodedPassword("nononono");
 

@@ -5,6 +5,7 @@
  */
 package org.hpg.common.service;
 
+import java.util.List;
 import java.util.function.Function;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.dao.repository.IUserRepository;
@@ -47,5 +48,10 @@ public class TransactionServiceForTest implements ITransactionServiceForTest {
     @Override
     public void executeSave(Function<UserEntity, UserEntity> saveFunc, UserEntity userEntity) {
         saveFunc.apply(userEntity);
+    }
+
+    @Override
+    public List<UserEntity> executeDelete(Function<List<Long>, List<UserEntity>> deleteFunc, List<Long> idListToDelete) {
+        return deleteFunc.apply(idListToDelete);
     }
 }

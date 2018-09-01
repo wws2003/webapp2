@@ -74,9 +74,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public int deleteUsers(List<Long> userIds) throws MendelRuntimeException {
-        // TODO Implement properly for return value
-        userRepository.deleteUsersById(userIds);
-        return 0;
+        List<UserEntity> deletedRecords = userRepository.deleteByIdIn(userIds);
+        return deletedRecords.size();
     }
 
     @Override
