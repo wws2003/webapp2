@@ -1,5 +1,5 @@
 -- Choose the Database
-\c mendel_db;
+\c :v1;
 
 -- ================================Roles: Admin and User
 INSERT INTO TBL_ROLE(

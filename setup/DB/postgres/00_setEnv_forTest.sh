@@ -5,7 +5,7 @@ if [ "$(uname)" == "Darwin" ]; then
 	export PSQL_PASS_DIR=~
 	export PSQL_PASS_FILENAME=.pgpass
 	# Must be absolute path
-	export PSQL_TABLESPACE_PATH=$PWD/dataspace
+	export PSQL_TABLESPACE_PATH=$PWD/dataspace_fortest
 	# Glassfish containing folder
 	export usr_glassfish_home_prefix=$HOME/servers
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
@@ -14,7 +14,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 	export PSQL_PASS_DIR=~
 	export PSQL_PASS_FILENAME=.pgpass
 	# Must be absolute path
-	export PSQL_TABLESPACE_PATH=$PWD/dataspace
+	export PSQL_TABLESPACE_PATH=$PWD/dataspace_fortest
 	# Glassfish containing folder
 	export usr_glassfish_home_prefix=$HOME/servers
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
@@ -23,7 +23,7 @@ elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
 	export PSQL_PASS_DIR=~
 	export PSQL_PASS_FILENAME=.pgpass
 	# Must be absolute path
-	export PSQL_TABLESPACE_PATH=$PWD/dataspace
+	export PSQL_TABLESPACE_PATH=$PWD/dataspace_fortest
 	# Glassfish containing folder
 	export usr_glassfish_home_prefix=$HOME/servers
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
@@ -32,7 +32,7 @@ elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
 	export PSQL_PASS_DIR=$APPDATA/postgresql
 	export PSQL_PASS_FILENAME=pgpass.conf
 	# Must be absolute path with / as delimeter
-	export PSQL_TABLESPACE_PATH='C:/Users/trungpt/lab/mvn_modules/sample2/setup/DB/postgres/dataspace'
+	export PSQL_TABLESPACE_PATH='C:/Users/trungpt/lab/mvn_modules/sample2/setup/DB/postgres/dataspace_fortest'
 	# Glassfish containing folder
 	export usr_glassfish_home_prefix=$HOME/servers/glassfish-4.1.2/
 fi
@@ -44,11 +44,11 @@ export PSQL_SETUP_USER=postgres
 export PSQL_POSTGRES_PASSWORD=pass001
 
 #---------------Below values also to be passed into SQL statements as arguments
-export PSQL_TABLESPACE_NAME=mendel_tbsp
-export PSQL_OPERATION_ROLE=mendel_role
-export PSQL_OPERATION_USER=mendel_user
+export PSQL_TABLESPACE_NAME=mendel_tbsp_fortest
+export PSQL_OPERATION_ROLE=mendel_role_fortest
+export PSQL_OPERATION_USER=mendel_user_fortest
 export PSQL_OPERATION_USER_PASSWORD=pass001
-export PSQL_OPERATION_DB=mendel_db
+export PSQL_OPERATION_DB=mendel_db_fortest
 
 # PostgreSQL driver
 export PSQL_DRIVER_JAR_NAME=postgresql-9.3-1102-jdbc41.jar

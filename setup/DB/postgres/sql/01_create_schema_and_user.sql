@@ -1,23 +1,22 @@
 -- Table space
-CREATE TABLESPACE mendel_tbsp LOCATION :v1;
+CREATE TABLESPACE :v1 LOCATION :v2;
 
 -- Database
-CREATE DATABASE mendel_db TABLESPACE mendel_tbsp;
+CREATE DATABASE :v3 TABLESPACE :v1;
 
 -- Schema (not needed for now, all tables in the database would be in the public schema)
 
 -- Role
-CREATE ROLE mendel_role;
+CREATE ROLE :v4;
 
 GRANT ALL PRIVILEGES 
-ON DATABASE mendel_db
-TO mendel_role WITH GRANT OPTION;
+ON DATABASE :v3
+TO :v4 WITH GRANT OPTION;
 
 -- User (with granted role)
 --  TODO: Use setting variable (psql needed probably)
-CREATE USER mendel_user PASSWORD 'pass001';
+CREATE USER :v5 PASSWORD :v6;
 
-GRANT mendel_role
-TO mendel_user;
+GRANT :v4 TO :v5;
 
 -- TODO: Table space, database, schema, role, privileges for log database (for experimental 2-phase commit)

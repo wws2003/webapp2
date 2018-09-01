@@ -1,5 +1,5 @@
 -- Choose the Database
-\c mendel_db;
+\c :v1;
 
 -- Roles
 --  ID (2-bytes auto incremental, PK)
@@ -116,12 +116,14 @@ CREATE TABLE TBL_POSTIT(
 -- Grant roles for all tables
 GRANT ALL PRIVILEGES
 ON ALL TABLES IN SCHEMA public
-TO mendel_role WITH GRANT OPTION;
+TO :v2 WITH GRANT OPTION;
 
 -- Grant roles for all sequences
 GRANT ALL PRIVILEGES
 ON ALL SEQUENCES IN SCHEMA public
-TO mendel_role WITH GRANT OPTION;
+TO :v2 WITH GRANT OPTION;
+
+-- TODO: Grant roles for all views (if any)
 
 -- TODO: Tables for log database (for experimental 2-phase commit)
 

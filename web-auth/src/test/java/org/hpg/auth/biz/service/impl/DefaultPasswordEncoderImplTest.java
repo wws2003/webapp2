@@ -20,8 +20,10 @@ public class DefaultPasswordEncoderImplTest {
     public void testSomeMethod() {
         // Just a sample to show encoded password
         DefaultPasswordEncoderImpl encoderImpl = new DefaultPasswordEncoderImpl();
-        String encodedPassword = encoderImpl.encode("pass001");
-        System.err.println("-----------Encoded password = " + encodedPassword);
+        String pass = "pass001";
+        System.err.println("For " + pass + ", -----------Encoded password = " + encoderImpl.encode(pass));
+        pass = "pass1";
+        System.err.println("For " + pass + ", -----------Encoded password = " + encoderImpl.encode(pass));
     }
 
 }
