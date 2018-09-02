@@ -80,6 +80,38 @@ public class UserDaoTest extends WebCommonTestBase {
         assert (deletedEntities.size() == entities.size());
     }
 
+    /**
+     * Test with bulk delete
+     */
+    @Test
+    public void testDelete2() {
+        List<UserEntity> entities = IntStream.range(0, 10)
+                .boxed()
+                .map(i -> "Namexxx" + String.valueOf(i))
+                .map(this::getSampleEntity)
+                .collect(Collectors.toList());
+
+        List<UserEntity> savedEntities = entities.stream()
+                .map(ent -> userRepository.save(ent))
+                .collect(Collectors.toList());
+
+        List<Long> savedIds = savedEntities.stream()
+                .map(UserEntity::getId)
+                .collect(Collectors.toList());
+
+        List<UserEntity> deletedEntities = srv.executeDelete(userRepository::deleteBatchByIdIn, savedIds);
+
+        assert (deletedEntities.size() == entities.size());
+
+        // Currently not even executable due to some Hibernate exception org.hibernate.hql.internal.QueryExecutionRequestException: Not supported for DML operations
+        // Assert if deleted records are really deleted ?
+        long remainingRecordCnt = deletedEntities.stream()
+                .filter(ent -> userRepository.existsById(ent.getId()))
+                .count();
+
+        assert (remainingRecordCnt == 0);
+    }
+
     @Test
     public void testSaveWithException() {
         // First count

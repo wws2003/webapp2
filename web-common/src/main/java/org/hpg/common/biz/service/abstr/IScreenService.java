@@ -19,13 +19,29 @@ import org.hpg.common.model.dto.web.WebPageModel;
 public interface IScreenService {
 
     /**
+     * Create AJAX result for submitted form synchronously without logging
+     * (normally for read operation)
+     *
+     * @param <FormType>
+     * @param func
+     * @param transactionLevel
+     * @param form
+     * @return
+     */
+    default public <FormType> AjaxResult executeSyncForAjaxResult(FormType form,
+            MendelTransactionalLevel transactionLevel,
+            Function<FormType, AjaxResult> func) {
+        return executeSyncForAjaxResult(form, transactionLevel, func, null);
+    }
+
+    /**
      * Create AJAX result for submitted form synchronously
      *
      * @param <FormType>
      * @param func
      * @param transactionLevel
      * @param form
-     * @param infoMessageFunc
+     * @param infoMessageFunc Success logging message function
      * @return
      */
     public <FormType> AjaxResult executeSyncForAjaxResult(FormType form,
@@ -34,13 +50,29 @@ public interface IScreenService {
             BiFunction<FormType, AjaxResult, String> infoMessageFunc);
 
     /**
+     * Create WebPageModel result for submitted form synchronously without
+     * logging (normally for read operation)
+     *
+     * @param <FormType>
+     * @param func
+     * @param transactionLevel
+     * @param form
+     * @return
+     */
+    default public <FormType> WebPageModel executeSyncForWebPageModel(FormType form,
+            MendelTransactionalLevel transactionLevel,
+            Function<FormType, WebPageModel> func) {
+        return executeSyncForWebPageModel(form, transactionLevel, func, null);
+    }
+
+    /**
      * Create WebPageModel result for submitted form synchronously
      *
      * @param <FormType>
      * @param func
      * @param transactionLevel
      * @param form
-     * @param infoMessageFunc
+     * @param infoMessageFunc Success logging message function
      * @return
      */
     public <FormType> WebPageModel executeSyncForWebPageModel(FormType form,

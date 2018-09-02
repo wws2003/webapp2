@@ -5,7 +5,11 @@
  */
 package org.hpg.common.biz.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelPrivilege;
@@ -17,7 +21,6 @@ import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.entity.UserEntity;
 import org.hpg.common.model.entity.UserPrivEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Actual implementation of user service
@@ -26,14 +29,35 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class UserServiceImpl implements IUserService {
 
-    @Autowired
-    private IUserRepository userRepository;
+    private final IUserRepository userRepository;
 
-    @Autowired
-    private IUserPrivRepository userPrivRepository;
+    private final IUserPrivRepository userPrivRepository;
 
-    @Autowired
-    private IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper;
+    private final IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper;
+
+    private final Map<Integer, List<MendelPrivilege>> rolePrivilegesMap = new HashMap();
+
+    /**
+     * Constructor
+     *
+     * @param userRepository
+     * @param userPrivRepository
+     * @param entityDtoMapper
+     */
+    public UserServiceImpl(IUserRepository userRepository, IUserPrivRepository userPrivRepository, IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper) {
+        // Dependencies
+        this.userRepository = userRepository;
+        this.userPrivRepository = userPrivRepository;
+        this.entityDtoMapper = entityDtoMapper;
+
+        // Usable privileges for each role
+        rolePrivilegesMap.put(MendelRole.ADMIN.getCode(), Arrays.asList(MendelPrivilege.PRIV_MANAGE_USER, MendelPrivilege.PRIV_MANAGE_SYSTEM));
+        rolePrivilegesMap.put(MendelRole.USER.getCode(), Arrays.asList(MendelPrivilege.PRIV_CREATE_DOCUMENT,
+                MendelPrivilege.PRIV_SHARE_DOCUMENT,
+                MendelPrivilege.PRIV_UPDATE_DOCUMENT,
+                MendelPrivilege.PRIV_LIST_DOCUMENT,
+                MendelPrivilege.PRIV_SEARCH_DOCUMENT));
+    }
 
     @Override
     public Optional<MendelUser> findUserById(long userId) throws MendelRuntimeException {
@@ -80,6 +104,6 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<MendelPrivilege> findPrivilegesForRole(MendelRole role) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Optional.ofNullable(rolePrivilegesMap.get(role.getCode())).orElse(new ArrayList());
     }
 }

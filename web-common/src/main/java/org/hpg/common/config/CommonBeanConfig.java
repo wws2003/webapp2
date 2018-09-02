@@ -9,9 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 import org.hpg.common.biz.service.abstr.IFormValidator;
 import org.hpg.common.biz.service.abstr.ILogger;
+import org.hpg.common.biz.service.abstr.IPagingService;
 import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
+import org.hpg.common.biz.service.impl.PagingServiceImpl;
 import org.hpg.common.biz.service.impl.SamplePrivilegeServiceImpl;
 import org.hpg.common.biz.service.impl.ScreenServiceImpl;
 import org.hpg.common.biz.service.impl.SimpleLoggerImpl;
@@ -20,6 +22,8 @@ import org.hpg.common.biz.service.impl.UserServiceImpl;
 import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.dao.mapper.impl.UserEntityDtoMapperImpl;
+import org.hpg.common.dao.repository.IUserPrivRepository;
+import org.hpg.common.dao.repository.IUserRepository;
 import org.hpg.common.framework.transaction.CurrentReadOnlyTransactionalExecutorImpl;
 import org.hpg.common.framework.transaction.CurrentTransactionalExecutorImpl;
 import org.hpg.common.framework.transaction.DefaultReadOnlyTransactionalExecutorImpl;
@@ -63,8 +67,8 @@ public class CommonBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public IUserService getUserService() {
-        return new UserServiceImpl();
+    public IUserService getUserService(IUserRepository userRepository, IUserPrivRepository userPrivRepository, IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper) {
+        return new UserServiceImpl(userRepository, userPrivRepository, entityDtoMapper);
     }
 
     @Bean
@@ -88,12 +92,6 @@ public class CommonBeanConfig {
     }
 
     @Bean
-    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public IScreenService getScreenService() {
-        return new ScreenServiceImpl();
-    }
-
-    @Bean
     @DependsOn()
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public Map<Integer, ITransactionExecutor> getTransactionExecutorMap() {
@@ -105,6 +103,14 @@ public class CommonBeanConfig {
         transactionExecutorMap.put(MendelTransactionalLevel.CURRENT.getCode(), getCurrentTransactionalExecutor());
         transactionExecutorMap.put(MendelTransactionalLevel.CURRENT_READONLY.getCode(), getCurrentReadOnlyTransactionalExecutor());
         return transactionExecutorMap;
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IScreenService getScreenService(IFormValidator formValidator,
+            ILogger logger,
+            Map<Integer, ITransactionExecutor> transactionExecutorMap) {
+        return new ScreenServiceImpl(formValidator, logger, transactionExecutorMap);
     }
 
     @Bean
@@ -141,5 +147,10 @@ public class CommonBeanConfig {
     @Qualifier(CommonQualifierConstant.TransactionExecutor.CURRENT_READONLY)
     public ITransactionExecutor getCurrentReadOnlyTransactionalExecutor() {
         return new CurrentReadOnlyTransactionalExecutorImpl();
+    }
+
+    @Bean
+    public IPagingService<MendelUser> getUserPagingService(IUserRepository userRepository, IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper) {
+        return new PagingServiceImpl(entityDtoMapper, userRepository);
     }
 }

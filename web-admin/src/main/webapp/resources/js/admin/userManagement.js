@@ -14,7 +14,9 @@ var Rx = Rx || {};
  * @type Map
  */
 let Urls = {
-    USER_MGT_BASE_URL: MendelApp.BASE_URL + location.pathname
+    USER_MGT_BASE_URL: MendelApp.BASE_URL + location.pathname,
+    USER_MGT_INDEX_ACTION: 'index',
+    USER_MGT_ADDUPDATE_ACTION: 'addUpdate'
 };
 
 /**
@@ -35,7 +37,20 @@ var UserMgtController = {
     },
 
     indexUsers: function () {
-        // TODO Implement
+        // TODO Implement. First try to load first page of users
+        let indexForm = {
+            pageNumber: 1,
+            recordCountPerPage: 50
+        };
+        // Create
+        let indexUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_INDEX_ACTION;
+        let promise = this.getMendelAjaxExecutor()
+                .url(indexUrl)
+                .formData(indexForm)
+                .getPromise();
+        let observable = Rx.Observable.fromPromise(promise);
+        // Subscribe. TODO Implement better for failed event
+        observable.subscribe(response => console.log(response));
     },
 
     getUserDetails: function () {
@@ -53,23 +68,24 @@ var UserMgtController = {
             confirmedRawPassword: $('#txtPasswordConfirm').val(),
             grantedPrivilegeIds: []
         };
-        let saveUrl = Urls.USER_MGT_BASE_URL + '/addUpdate';
-        let promise = $.ajax({
-            url: saveUrl,
-            type: "POST",
-            dataType: "json",
-            contentType: "application/json",
-            connection: "Keep-Alive",
-            data: JSON.stringify(saveForm)
-        });
         // Create
+        let saveUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_ADDUPDATE_ACTION;
+        let promise = this.getMendelAjaxExecutor()
+                .url(saveUrl)
+                .formData(saveForm)
+                .getPromise();
         let observable = Rx.Observable.fromPromise(promise);
-        // Subscribe
+        // Subscribe. TODO Implement better for failed event
         observable.subscribe(response => console.log(response));
     },
 
     deleteUser: function () {
         // TODO Implement
+    },
+
+    /*---Private methods---*/
+    getMendelAjaxExecutor: function () {
+        return new MendelAjaxExecutor();
     }
 };
 
@@ -102,7 +118,7 @@ function setupEvents() {
  * @returns {undefined}
  */
 function loadInitialData() {
-    // TODO Implement
+    UserMgtController.indexUsers();
 }
 
 

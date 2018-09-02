@@ -19,7 +19,6 @@ import org.hpg.common.framework.transaction.ITransactionExecutor;
 import org.hpg.common.framework.transaction.NoTransactionExecutorImpl;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.dto.web.WebPageModel;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Base class for normal controllers
@@ -28,14 +27,24 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ScreenServiceImpl implements IScreenService {
 
-    @Autowired
-    private IFormValidator formValidator;
+    private final IFormValidator formValidator;
 
-    @Autowired
-    private ILogger logger;
+    private final ILogger logger;
 
-    @Autowired
-    private Map<Integer, ITransactionExecutor> transactionExecutorMap;
+    private final Map<Integer, ITransactionExecutor> transactionExecutorMap;
+
+    /**
+     * Constructor
+     *
+     * @param formValidator
+     * @param logger
+     * @param transactionExecutorMap
+     */
+    public ScreenServiceImpl(IFormValidator formValidator, ILogger logger, Map<Integer, ITransactionExecutor> transactionExecutorMap) {
+        this.formValidator = formValidator;
+        this.logger = logger;
+        this.transactionExecutorMap = transactionExecutorMap;
+    }
 
     @Override
     public <FormType> AjaxResult executeSyncForAjaxResult(FormType form,

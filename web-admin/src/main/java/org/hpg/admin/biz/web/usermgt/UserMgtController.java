@@ -14,8 +14,9 @@ import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserDetail;
-import org.hpg.admin.biz.web.usermgt.scrnmodel.UsersIndexModel;
+import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserRecord;
 import org.hpg.admin.constant.AdminUrls;
+import org.hpg.common.biz.service.abstr.IPagingService;
 import org.hpg.common.biz.service.abstr.IPasswordService;
 import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
@@ -27,6 +28,10 @@ import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.util.AjaxResultBuilder;
 import org.hpg.libcommon.CH;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,6 +52,9 @@ public class UserMgtController {
     private IScreenService screenService;
 
     @Autowired
+    private IPagingService<MendelUser> userPagingService;
+
+    @Autowired
     private IUserService userService;
 
     @Autowired
@@ -60,18 +68,24 @@ public class UserMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_INDEX)
     @ResponseBody
-    public AjaxResult indexUsers(@ModelAttribute("userIndexForm") UsersIndexForm form) {
+    public AjaxResult indexUsers(@RequestBody UsersIndexForm form) {
         return screenService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 fm -> {
-                    // TODO Get model properly
-                    UsersIndexModel model = new UsersIndexModel();
-                    // Return sucess result. TODO Set message properly
+                    Pageable pageRequest = PageRequest.of(fm.getPageNumber() - 1,
+                            fm.getRecordCountPerPage(),
+                            Sort.Direction.ASC,
+                            "name");
+
+                    // Get data
+                    // TODO Detect login status properly
+                    Page<ScrnUserRecord> currentPage = userPagingService.getPage(pageRequest)
+                            .map(usr -> new ScrnUserRecord(usr, false));
+
                     return AjaxResultBuilder.successInstance()
-                            .resultObject(model)
+                            .resultObject(currentPage)
                             .build();
-                },
-                null);
+                });
     }
 
     /**
@@ -93,8 +107,7 @@ public class UserMgtController {
                     return AjaxResultBuilder.successInstance()
                             .resultObject(model)
                             .build();
-                },
-                null);
+                });
     }
 
     /**

@@ -21,6 +21,7 @@ and open the template in the editor.
         <script src="../../../resources/assets/js/Rx.min.js" th:src="@{'/resources/assets/js/Rx.min.js?' + ${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}}"></script>
         <!-- /* Common resources */ -->
         <script src="../../../resources/js/common.js" th:src="@{'/resources/js/common.js?' + ${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}}"></script>
+        <script src="../../../resources/js/web.js" th:src="@{'/resources/js/web.js?' + ${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}}"></script>
         <!--/* Per-page placeholder for additional links */-->
         <th:block th:replace="${links}"></th:block>
         <!--/* Per-page placeholder for additional scripts */-->
