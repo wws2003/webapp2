@@ -5,35 +5,17 @@
  */
 package org.hpg.admin.biz.web.usermgt;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
-import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserDetail;
-import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserRecord;
+import org.hpg.admin.biz.web.usermgt.scrnservice.IUserMgtScrnService;
 import org.hpg.admin.constant.AdminUrls;
-import org.hpg.common.biz.service.abstr.IPagingService;
-import org.hpg.common.biz.service.abstr.IPasswordService;
 import org.hpg.common.biz.service.abstr.IScreenService;
-import org.hpg.common.biz.service.abstr.IUserService;
-import org.hpg.common.constant.MendelPrivilege;
-import org.hpg.common.constant.MendelRole;
 import org.hpg.common.constant.MendelTransactionalLevel;
-import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.dto.web.AjaxResult;
-import org.hpg.common.util.AjaxResultBuilder;
-import org.hpg.libcommon.CH;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,16 +31,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UserMgtController {
 
     @Autowired
-    private IScreenService screenService;
+    private IScreenService actionFlowService;
 
     @Autowired
-    private IPagingService<MendelUser> userPagingService;
-
-    @Autowired
-    private IUserService userService;
-
-    @Autowired
-    private IPasswordService passwordService;
+    private IUserMgtScrnService userMgtScrnService;
 
     /**
      * Indexing
@@ -69,23 +45,9 @@ public class UserMgtController {
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_INDEX)
     @ResponseBody
     public AjaxResult indexUsers(@RequestBody UsersIndexForm form) {
-        return screenService.executeSyncForAjaxResult(form,
+        return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
-                fm -> {
-                    Pageable pageRequest = PageRequest.of(fm.getPageNumber() - 1,
-                            fm.getRecordCountPerPage(),
-                            Sort.Direction.ASC,
-                            "name");
-
-                    // Get data
-                    // TODO Detect login status properly
-                    Page<ScrnUserRecord> currentPage = userPagingService.getPage(pageRequest)
-                            .map(usr -> new ScrnUserRecord(usr, false));
-
-                    return AjaxResultBuilder.successInstance()
-                            .resultObject(currentPage)
-                            .build();
-                });
+                userMgtScrnService::indexUsers);
     }
 
     /**
@@ -96,18 +58,10 @@ public class UserMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_USER_DETAILS)
     @ResponseBody
-    public AjaxResult getUserDetailInfo(@ModelAttribute("userDetailForm") UserDetailForm form) {
-        return screenService.executeSyncForAjaxResult(form,
+    public AjaxResult getUserDetailInfo(@RequestBody UserDetailForm form) {
+        return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
-                fm -> {
-                    // TODO Get model properly
-                    MendelUser user = userService.findUserById(fm.getUserId()).orElse(null);
-                    ScrnUserDetail model = new ScrnUserDetail();
-                    // Return sucess result. TODO Set message properly
-                    return AjaxResultBuilder.successInstance()
-                            .resultObject(model)
-                            .build();
-                });
+                userMgtScrnService::getUserDetailInfo);
     }
 
     /**
@@ -119,20 +73,9 @@ public class UserMgtController {
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_ADD_UPDATE)
     @ResponseBody
     public AjaxResult addUpdateUser(@RequestBody UserAddUpdateForm form) {
-        return screenService.executeSyncForAjaxResult(form,
+        return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT,
-                fm -> {
-                    MendelUser userToCreateOrUpdate = parseUserDtoFromForm(fm);
-                    // Save
-                    MendelUser savedUser = fm.getToCreateUser() ? userService.createUser(userToCreateOrUpdate) : userService.updateUser(userToCreateOrUpdate);
-                    // Grant privileges
-                    List<MendelPrivilege> grantedPrivileges = parseGrantedPrivilegesFromForm(fm);
-                    userService.grantUserWithPrivileges(savedUser, grantedPrivileges);
-                    // Return sucess result. TODO Set message properly
-                    return AjaxResultBuilder.successInstance()
-                            .oneSuccessMessage("User has been successfully saved")
-                            .build();
-                },
+                userMgtScrnService::addUpdateUser,
                 (fm, ret) -> String.format("User has been successfully saved {%s} for {%s}", fm, ret));
     }
 
@@ -144,50 +87,10 @@ public class UserMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_DELETE)
     @ResponseBody
-    public AjaxResult deleteUser(@ModelAttribute("userDeleteForm") UserDeleteForm form) {
-        return screenService.executeSyncForAjaxResult(form,
+    public AjaxResult deleteUser(@RequestBody UserDeleteForm form) {
+        return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT,
-                fm -> {
-                    userService.deleteUsers(fm.getUserIdsToDelete());
-                    // Return sucess result. TODO Set message properly
-                    return AjaxResultBuilder.successInstance()
-                            .oneSuccessMessage("Users have been successfully deleted")
-                            .build();
-                },
+                userMgtScrnService::deleteUser,
                 (fm, ret) -> String.format("Users have been successfully deleted {%s} for {%s}", fm, ret));
-    }
-
-    /**
-     * Parse from add/update form the DTO instance
-     *
-     * @param form
-     * @return
-     */
-    private MendelUser parseUserDtoFromForm(UserAddUpdateForm form) {
-        // TODO Implement properly based on annotations
-        MendelUser user = new MendelUser();
-        user.setDispName(form.getUserDispName());
-        user.setId(form.getUserId());
-        user.setName(form.getUserName());
-        user.setEncodedPassword(Optional.ofNullable(passwordService).map(srv -> srv.getEncodedPassword(form.getRawPassword())).orElse(form.getRawPassword()));
-        user.setPassword(user.getEncodedPassword());
-        user.setRole(MendelRole.USER);
-        return user;
-    }
-
-    /**
-     * Parse granted privileges to the user
-     *
-     * @param form
-     * @return
-     */
-    private List<MendelPrivilege> parseGrantedPrivilegesFromForm(UserAddUpdateForm form) {
-        if (CH.isEmpty(form.getGrantedPrivilegeIds())) {
-            return new ArrayList();
-        }
-        return form.getGrantedPrivilegeIds()
-                .stream()
-                .map(MendelPrivilege::getPrivilegeFromId)
-                .collect(Collectors.toList());
     }
 }
