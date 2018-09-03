@@ -5,13 +5,13 @@
  */
 package org.hpg.admin.biz.web.usermgt.scrnmodel;
 
-import org.hpg.common.model.dto.paging.PagingIndex;
+import java.io.Serializable;
 
 /**
- * Model class for users indexing
+ * Model class for the user management screen
  *
  * @author trungpt
  */
-public class UsersIndexModel extends PagingIndex<ScrnUserRecord> {
+public class ScrnUserMgtModel implements Serializable {
     // TODO Add attributes if neccessary
 }

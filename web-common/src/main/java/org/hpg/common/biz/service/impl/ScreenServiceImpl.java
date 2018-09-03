@@ -14,11 +14,11 @@ import org.hpg.common.biz.service.abstr.ILogger;
 import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.framework.BaseFormProcessorForAjaxResult;
-import org.hpg.common.framework.BaseFormProcessorForWebPageModel;
+import org.hpg.common.framework.BaseFormProcessorForModelAndView;
 import org.hpg.common.framework.transaction.ITransactionExecutor;
 import org.hpg.common.framework.transaction.NoTransactionExecutorImpl;
 import org.hpg.common.model.dto.web.AjaxResult;
-import org.hpg.common.model.dto.web.WebPageModel;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Base class for normal controllers
@@ -63,18 +63,21 @@ public class ScreenServiceImpl implements IScreenService {
     }
 
     @Override
-    public <FormType> WebPageModel executeSyncForWebPageModel(FormType form,
+    public <FormType> ModelAndView executeSyncForModelAndView(FormType form,
             MendelTransactionalLevel transactionLevel,
-            Function<FormType, WebPageModel> func,
-            BiFunction<FormType, WebPageModel, String> infoMessageFunc) {
+            Function<FormType, ModelAndView> func,
+            String errorPage,
+            String fatalPage,
+            BiFunction<FormType, ModelAndView, String> infoMessageFunc) {
 
-        // TODO Implement properly by specifying transaction executor properly
-        return BaseFormProcessorForWebPageModel.<FormType>instanceForWebPageModel(form)
+        return BaseFormProcessorForModelAndView.instanceForModelAndView(form)
+                .validationErrorPage(errorPage)
+                .fatalPage(fatalPage)
                 .formValidator(formValidator)
                 .logger(logger)
                 .transactionExecutor(getTransactionExecutor(transactionLevel))
-                .infoMessageFunc(infoMessageFunc)
                 .formProcessor(func)
+                .infoMessageFunc(infoMessageFunc)
                 .execute();
     }
 

@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.model.dto.web.AjaxResult;
-import org.hpg.common.model.dto.web.WebPageModel;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Interface for services bound to controller (i.e. WEB layer)
@@ -17,6 +17,8 @@ import org.hpg.common.model.dto.web.WebPageModel;
  * @author wws2003
  */
 public interface IScreenService {
+
+    public static final String FATAL_PAGE_VIEW = "common/pages/fatal";
 
     /**
      * Create AJAX result for submitted form synchronously without logging
@@ -50,35 +52,58 @@ public interface IScreenService {
             BiFunction<FormType, AjaxResult, String> infoMessageFunc);
 
     /**
-     * Create WebPageModel result for submitted form synchronously without
-     * logging (normally for read operation)
+     * Create ModelAndView result for submitted form synchronously
      *
      * @param <FormType>
-     * @param func
-     * @param transactionLevel
      * @param form
+     * @param transactionLevel
+     * @param func
+     * @param errorPage
+     * @param fatalPage
+     * @param infoMessageFunc
      * @return
      */
-    default public <FormType> WebPageModel executeSyncForWebPageModel(FormType form,
+    public <FormType> ModelAndView executeSyncForModelAndView(FormType form,
             MendelTransactionalLevel transactionLevel,
-            Function<FormType, WebPageModel> func) {
-        return executeSyncForWebPageModel(form, transactionLevel, func, null);
+            Function<FormType, ModelAndView> func,
+            String errorPage,
+            String fatalPage,
+            BiFunction<FormType, ModelAndView, String> infoMessageFunc);
+
+    /**
+     * Create ModelAndView result for submitted form synchronously
+     *
+     * @param <FormType>
+     * @param form
+     * @param transactionLevel
+     * @param func
+     * @param errorPage
+     * @param fatalPage
+     * @return
+     */
+    default public <FormType> ModelAndView executeSyncForModelAndView(FormType form,
+            MendelTransactionalLevel transactionLevel,
+            Function<FormType, ModelAndView> func,
+            String errorPage,
+            String fatalPage) {
+        return executeSyncForModelAndView(form, transactionLevel, func, errorPage, fatalPage, null);
     }
 
     /**
-     * Create WebPageModel result for submitted form synchronously
+     * Create ModelAndView result for submitted form synchronously (default
+     * fatal page is used, no logging info message)
      *
      * @param <FormType>
-     * @param func
-     * @param transactionLevel
      * @param form
-     * @param infoMessageFunc Success logging message function
+     * @param transactionLevel
+     * @param func
+     * @param errorPage
      * @return
      */
-    public <FormType> WebPageModel executeSyncForWebPageModel(FormType form,
+    default public <FormType> ModelAndView executeSyncForModelAndView(FormType form,
             MendelTransactionalLevel transactionLevel,
-            Function<FormType, WebPageModel> func,
-            BiFunction<FormType, WebPageModel, String> infoMessageFunc);
-
-    // TODO Add methods
+            Function<FormType, ModelAndView> func,
+            String errorPage) {
+        return executeSyncForModelAndView(form, transactionLevel, func, errorPage, FATAL_PAGE_VIEW, null);
+    }
 }
