@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.hpg.common.WebCommonTestBase;
-import org.hpg.common.config.CommonQualifierConstant;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.dao.repository.IUserRepository;
-import org.hpg.common.framework.transaction.ITransactionExecutor;
 import org.hpg.common.model.entity.RoleEntity;
 import org.hpg.common.model.entity.UserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
@@ -21,7 +19,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -35,10 +32,8 @@ public class UserDaoTest extends WebCommonTestBase {
     @Autowired
     private IUserRepository userRepository;
 
-    @Autowired
-    @Qualifier(CommonQualifierConstant.TransactionExecutor.NEW)
-    private ITransactionExecutor transactionExecutor;
-
+    //@Autowired
+    //private ITransactionExecutor transactionExecutor;
     @Autowired
     private ITransactionServiceForTest srv;
 

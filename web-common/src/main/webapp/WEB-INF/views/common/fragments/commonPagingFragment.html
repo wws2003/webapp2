@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Just a faked title to deceive IDE</title>
+    </head>
+    <body>
+        <div id="frgPaging" th:fragment="frgPaging">
+            <!-- /* Navigating buttons */  -->
+            <div id="dvPagingNavBar">
+                <button class="btn btn-primary" id="btnPagingFirst" type="button" disabled="disabled">|< </button>
+                <button class="btn btn-primary" id="btnPagingPrev" type="button" disabled="disabled">< </button>
+                <span>
+                    <input type="text" id="txtPagingCurrent" class="form-control mo_inline_text" placeholder="1"/>
+                    &#47;
+                    <label id="lblPagingPageCount">100</label>
+                    <label>Pages</label>
+                </span>
+                <button class="btn btn-primary" id="btnPagingNext" type="button"disabled="disabled">></button>
+                <button class="btn btn-primary" id="btnPagingLast" type="button"disabled="disabled">>|</button>
+                <select id="sltPagingRecordPerPage" name="sltPagingRecordPerPage" class="form-control mo_inline_select_box">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+            <!-- /* Message area */  -->
+            <div>
+                <label id="lblPagingMessage"></label>
+            </div>
+            <!-- /* Content area */  -->
+            <div>
+                <table id="tblPagingContent">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

@@ -16,7 +16,9 @@ var Rx = Rx || {};
 let Urls = {
     USER_MGT_BASE_URL: MendelApp.BASE_URL + location.pathname,
     USER_MGT_INDEX_ACTION: 'index',
-    USER_MGT_ADDUPDATE_ACTION: 'addUpdate'
+    USER_MGT_ADDUPDATE_ACTION: 'addUpdate',
+    USER_MGT_GETDETAIL_ACTION: 'detail',
+    USER_MGT_DELETE_ACTION: 'delete'
 };
 
 /**
@@ -24,7 +26,40 @@ let Urls = {
  * @type type
  */
 var UserMgtView = {
+    init: function () {
+        // TODO Implement
+    },
 
+    renderUsers: function (users) {
+        // TODO Implement
+    },
+
+    renderErrors: function (errorMessages) {
+        // TODO Implement
+    },
+
+    userTblHeadGenFunc: function (userPage) {
+        return $('<tr><th>Name</th><th>Display name</th><th>Role</th><th>Login status</th></tr>');
+    },
+
+    userTblRowGenFunc: function (userRecord) {
+        // TODO Implement properly
+        return $('<tr><td>XXXX</td><td>XXXXXX</td><td>YYYYYYY</td><td>111111</td></tr>');
+    }
+};
+
+/**
+ * Instance to handle UI stuffs for user detail modal
+ * @type type
+ */
+var UserDetailDlg = {
+    init: function () {
+        // TODO Implement
+    },
+
+    renderUserDetails: function (userDetails) {
+        // TODO Implement
+    }
 };
 
 /**
@@ -34,6 +69,8 @@ var UserMgtView = {
 var UserMgtController = {
     init: function () {
         // TODO Implement
+        this._isAdd = true;
+        this._currentUserSelectedId = 0;
     },
 
     indexUsers: function () {
@@ -53,8 +90,34 @@ var UserMgtController = {
         observable.subscribe(response => console.log(response));
     },
 
-    getUserDetails: function () {
+    showDetailDlg: function (isAdding) {
+        // TODO Implement
+        let detailForm = {
+            userId: isAdding ? 0 : this._currentUserSelectedId
+        };
+        let detailUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETDETAIL_ACTION;
+        let promise = this.getMendelAjaxExecutor()
+                .url(detailUrl)
+                .formData(detailForm)
+                .getPromise();
+        let observable = Rx.Observable.fromPromise(promise);
+        // Subscribe. TODO Implement better for failed event
+        observable.subscribe(response => console.log(response));
+    },
 
+    getUserDetails: function () {
+        // Get user details
+        let getDetailUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETDETAIL_ACTION;
+        let detailForm = {
+            userId: this._currentUserSelectedId
+        };
+        let promise = this.getMendelAjaxExecutor()
+                .url(getDetailUrl)
+                .formData(detailForm)
+                .getPromise();
+        let observable = Rx.Observable.fromPromise(promise);
+        // Subscribe. TODO Implement better for failed event
+        observable.subscribe(response => console.log(response));
     },
 
     saveUser: function () {
@@ -89,6 +152,7 @@ var UserMgtController = {
     }
 };
 
+// Entry point
 $(document).ready(function () {
     // TODO Implement
     initUserMgt();
@@ -110,7 +174,24 @@ function initUserMgt() {
  */
 function setupEvents() {
     // TODO Implement properly
-    $('#btnUserAddUpdateDone').click(UserMgtController.saveUser);
+    // Rewritten in Rx-style
+    Rx.Observable.fromEvent($('#btnUserAddUpdateDone'), 'click')
+            .subscribe(UserMgtController.saveUser);
+
+    // To show modal
+    // From add button
+    Rx.Observable.fromEvent($('#btnAddUser'), 'click')
+            .map(e => true)
+            .merge(Rx.Observable
+                    .fromEvent($('.btnUpdate'), 'click')
+                    .map(e => false))
+            .subscribe(UserMgtController.showDetailDlg);
+
+    // After modal shown
+    Rx.Observable.fromEvent($('#mdlUserAddUpdate'), 'shown.bs.modal')
+            .subscribe(UserMgtController.getUserDetails);
+
+    //$('#btnUserAddUpdateDone').click(UserMgtController.saveUser);
 }
 
 /**

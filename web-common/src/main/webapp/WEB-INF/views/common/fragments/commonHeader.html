@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <!-- /* Common styles and scripts, along with title passes as parameter */ -->
-    <head th:fragment="frg_common_header(title,links,scripts)">
+    <head th:fragment="frg_common_header(title,links,scripts)" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
         <title th:replace="${title}">Title</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,10 +18,13 @@ and open the template in the editor.
         <link href="../../../resources/assets/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/assets/css/core.css}" />
         <script src="../../../resources/assets/js/jquery.min.js" th:src="@{/resources/assets/js/jquery.min.js}"></script>
         <script src="../../../resources/assets/js/bootstrap.min.js" th:src="@{/resources/assets/js/bootstrap.min.js}"></script>
-        <script src="../../../resources/assets/js/Rx.min.js" th:src="@{'/resources/assets/js/Rx.min.js?' + ${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}}"></script>
+        <script src="../../../resources/assets/js/Rx.min.js" th:src="@{/resources/assets/js/Rx.min.js}"></script>
         <!-- /* Common resources */ -->
-        <script src="../../../resources/js/common.js" th:src="@{'/resources/js/common.js?' + ${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}}"></script>
-        <script src="../../../resources/js/web.js" th:src="@{'/resources/js/web.js?' + ${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}}"></script>
+        <link href="../../../resources/css/common.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/common.css?'+ ${timeToken}}" />
+        <link href="../../../resources/css/commonPagingFragment.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/commonPagingFragment.css?'+ ${timeToken}}" />
+        <script src="../../../resources/js/common.js" th:src="@{'/resources/js/common.js?' + ${timeToken}}"></script>
+        <script src="../../../resources/js/web.js" th:src="@{'/resources/js/web.js?' + ${timeToken}}"></script>
+        <script src="../../../resources/js/commonPagingFragment.js" th:src="@{'/resources/js/commonPagingFragment.js?' + ${timeToken}}"></script>
         <!--/* Per-page placeholder for additional links */-->
         <th:block th:replace="${links}"></th:block>
         <!--/* Per-page placeholder for additional scripts */-->

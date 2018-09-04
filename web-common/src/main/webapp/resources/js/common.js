@@ -82,3 +82,22 @@ let MendelCommon = {
         return rootUrl + (paramPart ? ('?' + paramPart) : '');
     }
 };
+
+/**
+ * Function against one JQuery object to disable itself
+ */
+$.fn.eleDisable = function () {
+    $.each(this, function (i, val) {
+        $(val).attr("disabled", "disabled");
+        $(val).addClass("md_mo_cs_disabled");
+    });
+};
+/**
+ *Function against one JQuery object to enable itself
+ */
+$.fn.eleEnable = function () {
+    $.each(this, function (i, val) {
+        $(val).removeAttr("disabled");
+        $(val).removeClass("md_mo_cs_disabled");
+    });
+};

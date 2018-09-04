@@ -1,0 +1,14 @@
+/*
+    Created on : 2018/09/04, 16:15:06
+    Author     : wws2003
+*/
+
+.mo_inline_select_box {
+    max-width: 80px;
+    display: inline-block;
+}
+
+.mo_inline_text {
+    max-width: 120px;
+    display: inline-block;
+}
