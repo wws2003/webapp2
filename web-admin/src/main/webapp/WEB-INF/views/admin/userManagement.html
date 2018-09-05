@@ -17,9 +17,10 @@ and open the template in the editor.
                 <h2>User management</h2>
                 <!-- Operating area  -->
                 <div>
-                    <button id="btnForceUserLogout" class="btn btn-info pull-right">Force logout</button>
-                    <button id="btnDeleteUser" class="btn btn-info pull-right">Delete users</button>
-                    <button id="btnAddUser" class="btn btn-info pull-right" data-toggle="modal" data-target="#mdlUserAddUpdate">Add user</button>
+                    <button id="btnForceUserLogout" class="btn pull-right">Force logout</button>
+                    <button id="btnDeleteUser" class="btn pull-right">Delete users</button>
+                    <button id="btnAddUser" class="btn pull-right" data-toggle="modal" data-target="#mdlUserAddUpdate">Add user</button>
+                    <button id="btnReload" class="btn pull-right" >Reload</button>
                 </div>
                 <!-- User list area (paging)  -->
                 <div th:replace="common/fragments/commonPagingFragment::frgPaging">

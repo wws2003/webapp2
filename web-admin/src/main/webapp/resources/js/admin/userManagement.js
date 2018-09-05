@@ -39,12 +39,19 @@ var UserMgtView = {
     },
 
     userTblHeadGenFunc: function (userPage) {
-        return $('<tr><th>Name</th><th>Display name</th><th>Role</th><th>Login status</th></tr>');
+        return '<tr><th>Name</th><th>Display name</th><th>Role</th><th>Login status</th><th>Update</th></tr>';
     },
 
     userTblRowGenFunc: function (userRecord) {
-        // TODO Implement properly
-        return $('<tr><td>XXXX</td><td>XXXXXX</td><td>YYYYYYY</td><td>111111</td></tr>');
+        let row = [];
+        row.push('<tr>',
+                '<td>' + userRecord.name + '</td>',
+                '<td>' + userRecord.displayedName + '</td>',
+                '<td>' + userRecord.role + '</td>',
+                '<td>' + userRecord.loggingIn + '</td>',
+                '<td><button>Update</button></td>',
+                '</tr>');
+        return row.join('');
     }
 };
 
@@ -68,9 +75,12 @@ var UserDetailDlg = {
  */
 var UserMgtController = {
     init: function () {
-        // TODO Implement
+        // TODO Implement properly
         this._isAdd = true;
         this._currentUserSelectedId = 0;
+        this._pageRender = (new CommonPagingFragmentRender())
+                .headerGenFunc(UserMgtView.userTblHeadGenFunc)
+                .rowGenFunc(UserMgtView.userTblRowGenFunc);
     },
 
     indexUsers: function () {
@@ -86,8 +96,8 @@ var UserMgtController = {
                 .formData(indexForm)
                 .getPromise();
         let observable = Rx.Observable.fromPromise(promise);
-        // Subscribe. TODO Implement better for failed event
-        observable.subscribe(response => console.log(response));
+        // Subscribe. TODO Implement better for failed event and standard for response
+        observable.subscribe(response => this._pageRender.render($('#frgPaging'), response.resultObject));
     },
 
     showDetailDlg: function (isAdding) {
@@ -165,7 +175,7 @@ $(document).ready(function () {
  * @returns {undefined}
  */
 function initUserMgt() {
-    // TODO Implement
+    UserMgtController.init();
 }
 
 /**
@@ -174,7 +184,11 @@ function initUserMgt() {
  */
 function setupEvents() {
     // TODO Implement properly
-    // Rewritten in Rx-style
+    // Reload
+    Rx.Observable.fromEvent($('#btnReload'), 'click')
+            .subscribe(UserMgtController.indexUsers);
+
+    // Add/Update
     Rx.Observable.fromEvent($('#btnUserAddUpdateDone'), 'click')
             .subscribe(UserMgtController.saveUser);
 
@@ -190,8 +204,6 @@ function setupEvents() {
     // After modal shown
     Rx.Observable.fromEvent($('#mdlUserAddUpdate'), 'shown.bs.modal')
             .subscribe(UserMgtController.getUserDetails);
-
-    //$('#btnUserAddUpdateDone').click(UserMgtController.saveUser);
 }
 
 /**

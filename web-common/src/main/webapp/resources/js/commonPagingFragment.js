@@ -66,41 +66,41 @@ CommonPagingFragmentRender.prototype.pageRequestFunc = function (pageRequestFunc
  * @returns {CommonPagingFragmentRender.prototype}
  */
 CommonPagingFragmentRender.prototype.render = function (frgPagingEle, page) {
+    // Initialize
     let self = this;
     let navBarEle = frgPagingEle.find('#dvPagingNavBar');
     let tableEle = frgPagingEle.find('#tblPagingContent');
-
-    // Nav bar. TODO Implement properly
-    let txtPageNo = frgPagingEle.find('#txtPagingCurrent');
-    txtPageNo.val(page.currentPage);
-    this.setEnableState(navBarEle.find('#btnPagingFirst'), !(page.isFirst));
-    this.setEnableState(navBarEle.find('#btnPagingPrev'), true);
-    this.setEnableState(navBarEle.find('#btnPagingNext'), false);
-    this.setEnableState(navBarEle.find('#btnPagingLast'), !(page.isLast));
-
-    // Record count options
-    let recordCountSelect = frgPagingEle.find('#sltPagingRecordPerPage');
-    recordCountSelect.empty();
-    Rx.Observable.from(this._recordCountOptions)
-            .map(rec => $('<option>').val(rec))
-            .subscribe(opt => recordCountSelect.append(opt));
-
-    // Content table header
-    let headerEle = tableEle.find('thead');
-    headerEle.html(this._headerGenFunc(page));
-
-    // Content table body
-    let bodyEle = tableEle.find('tboby');
-    bodyEle.empty();
-    Rx.Observable.from(page.contents)
-            .map(rec => self._rowGenFunc(rec))
-            .subscribe(opt => bodyEle.append(opt));
-
-    // Events
     if (this._pageRequestSubscription) {
         // Unsubscribe what observer ?
         this._pageRequestSubscription.unsubscribe();
     }
+
+    // Nav bar
+    $('#lblPagingPageCount').text(page.pageNumber + 1); // From zero-based to one-based
+    let txtPageNo = frgPagingEle.find('#txtPagingCurrent');
+    txtPageNo.val(page.currentPage);
+    this.setEnableState(navBarEle.find('#btnPagingFirst'), !(page.first));
+    this.setEnableState(navBarEle.find('#btnPagingPrev'), (page.pageNumber > 0));
+    this.setEnableState(navBarEle.find('#btnPagingNext'), (page.pageNumber < page.totalPages - 1));
+    this.setEnableState(navBarEle.find('#btnPagingLast'), !(page.last));
+
+    // Record count options
+    let recordCountSelect = frgPagingEle.find('#sltPagingRecordPerPage');
+    Rx.Observable.from(this._recordCountOptions)
+            .map(rec => '<option val=' + rec + '>' + rec + '</option>')
+            .scan((accOpts, opt) => accOpts + opt, '')
+            .subscribe(accOpts => recordCountSelect.html(accOpts));
+
+    // Content table header
+    tableEle.find('thead').html(this._headerGenFunc(page));
+
+    // Content table body
+    Rx.Observable.from(page.content)
+            .map(rec => self._rowGenFunc(rec))
+            .scan((accTrs, tr) => accTrs + tr, '')
+            .subscribe(trs => tableEle.find('tbody').html(trs));
+
+    // Events
     this._pageRequestSubscription = Rx.Observable
             .fromEvent(recordCountSelect, 'change')
             .merge(Rx.Observable.fromEvent(txtPageNo, 'blur'))

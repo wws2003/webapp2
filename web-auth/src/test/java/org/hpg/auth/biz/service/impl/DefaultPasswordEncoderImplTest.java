@@ -6,6 +6,8 @@
 package org.hpg.auth.biz.service.impl;
 
 import org.junit.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  *
@@ -19,8 +21,8 @@ public class DefaultPasswordEncoderImplTest {
     @Test
     public void testSomeMethod() {
         // Just a sample to show encoded password
-        DefaultPasswordEncoderImpl encoderImpl = new DefaultPasswordEncoderImpl();
-        String pass = "pass001";
+        PasswordEncoder encoderImpl = new BCryptPasswordEncoder(11);
+        String pass = "system1234";
         System.err.println("For " + pass + ", -----------Encoded password = " + encoderImpl.encode(pass));
         pass = "pass1";
         System.err.println("For " + pass + ", -----------Encoded password = " + encoderImpl.encode(pass));

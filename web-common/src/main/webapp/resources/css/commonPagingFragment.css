@@ -2,4 +2,10 @@
     Created on : 2018/09/04, 16:15:06
     Author     : wws2003
 */
+.lo_paging_table {
+    max-width: 550px
+}
 
+.lo_paging_table thead{
+    background-color: aliceblue
+}
