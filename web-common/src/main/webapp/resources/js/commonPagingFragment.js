@@ -76,12 +76,12 @@ CommonPagingFragmentRender.prototype.render = function (frgPagingEle, page) {
     }
 
     // Nav bar
-    $('#lblPagingPageCount').text(page.pageNumber + 1); // From zero-based to one-based
+    $('#lblPagingPageCount').text(page.totalPages); // From zero-based to one-based
     let txtPageNo = frgPagingEle.find('#txtPagingCurrent');
-    txtPageNo.val(page.currentPage);
+    txtPageNo.val(page.number + 1);
     this.setEnableState(navBarEle.find('#btnPagingFirst'), !(page.first));
-    this.setEnableState(navBarEle.find('#btnPagingPrev'), (page.pageNumber > 0));
-    this.setEnableState(navBarEle.find('#btnPagingNext'), (page.pageNumber < page.totalPages - 1));
+    this.setEnableState(navBarEle.find('#btnPagingPrev'), (page.hasPrevious));
+    this.setEnableState(navBarEle.find('#btnPagingNext'), (page.hasNext));
     this.setEnableState(navBarEle.find('#btnPagingLast'), !(page.last));
 
     // Record count options

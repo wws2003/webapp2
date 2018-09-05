@@ -39,7 +39,17 @@ var UserMgtView = {
     },
 
     userTblHeadGenFunc: function (userPage) {
-        return '<tr><th>Name</th><th>Display name</th><th>Role</th><th>Login status</th><th>Update</th></tr>';
+        let row = [];
+        row.push('<tr>',
+                '<th>Name</th>',
+                '<th>Display name</th>',
+                '<th>Role</th>',
+                '<th>Login status</th>',
+                '<th>Force logout</th>', // Force logout
+                '<th>Delete</th>', // Delete
+                '<th></th>', // Update
+                '</tr>');
+        return row.join('');
     },
 
     userTblRowGenFunc: function (userRecord) {
@@ -49,6 +59,8 @@ var UserMgtView = {
                 '<td>' + userRecord.displayedName + '</td>',
                 '<td>' + userRecord.role + '</td>',
                 '<td>' + userRecord.loggingIn + '</td>',
+                '<td><input type="checkbox"></td>',
+                '<td><input type="checkbox"></td>',
                 '<td><button>Update</button></td>',
                 '</tr>');
         return row.join('');
@@ -91,10 +103,7 @@ var UserMgtController = {
         };
         // Create
         let indexUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_INDEX_ACTION;
-        let promise = this.getMendelAjaxExecutor()
-                .url(indexUrl)
-                .formData(indexForm)
-                .getPromise();
+        let promise = this.getPostActionPromise(indexUrl, indexForm);
         let observable = Rx.Observable.fromPromise(promise);
         // Subscribe. TODO Implement better for failed event and standard for response
         observable.subscribe(response => this._pageRender.render($('#frgPaging'), response.resultObject));
@@ -106,10 +115,7 @@ var UserMgtController = {
             userId: isAdding ? 0 : this._currentUserSelectedId
         };
         let detailUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETDETAIL_ACTION;
-        let promise = this.getMendelAjaxExecutor()
-                .url(detailUrl)
-                .formData(detailForm)
-                .getPromise();
+        let promise = this.getPostActionPromise(detailUrl, detailForm);
         let observable = Rx.Observable.fromPromise(promise);
         // Subscribe. TODO Implement better for failed event
         observable.subscribe(response => console.log(response));
@@ -121,10 +127,7 @@ var UserMgtController = {
         let detailForm = {
             userId: this._currentUserSelectedId
         };
-        let promise = this.getMendelAjaxExecutor()
-                .url(getDetailUrl)
-                .formData(detailForm)
-                .getPromise();
+        let promise = this.getPostActionPromise(getDetailUrl, detailForm);
         let observable = Rx.Observable.fromPromise(promise);
         // Subscribe. TODO Implement better for failed event
         observable.subscribe(response => console.log(response));
@@ -143,10 +146,7 @@ var UserMgtController = {
         };
         // Create
         let saveUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_ADDUPDATE_ACTION;
-        let promise = this.getMendelAjaxExecutor()
-                .url(saveUrl)
-                .formData(saveForm)
-                .getPromise();
+        let promise = this.getPostActionPromise(saveUrl, saveForm);
         let observable = Rx.Observable.fromPromise(promise);
         // Subscribe. TODO Implement better for failed event
         observable.subscribe(response => console.log(response));
@@ -157,8 +157,17 @@ var UserMgtController = {
     },
 
     /*---Private methods---*/
-    getMendelAjaxExecutor: function () {
-        return new MendelAjaxExecutor();
+    /**
+     * Shortcut for get AJAX promise
+     * @param {String} url
+     * @param {Map} form
+     * @returns {undefined}
+     */
+    getPostActionPromise: function (url, form) {
+        return (new MendelAjaxExecutor())
+                .url(url)
+                .formData(form)
+                .getPromise();
     }
 };
 
@@ -184,13 +193,19 @@ function initUserMgt() {
  */
 function setupEvents() {
     // TODO Implement properly
+    // Observer define
+    let loadFunc = UserMgtController.indexUsers.bind(UserMgtController);
+    let saveFunc = UserMgtController.saveUser.bind(UserMgtController);
+    let showDetailDlgFunc = UserMgtController.showDetailDlg.bind(UserMgtController);
+    let getUserDetails = UserMgtController.getUserDetails.bind(UserMgtController);
+
     // Reload
     Rx.Observable.fromEvent($('#btnReload'), 'click')
-            .subscribe(UserMgtController.indexUsers);
+            .subscribe(loadFunc);
 
     // Add/Update
     Rx.Observable.fromEvent($('#btnUserAddUpdateDone'), 'click')
-            .subscribe(UserMgtController.saveUser);
+            .subscribe(saveFunc);
 
     // To show modal
     // From add button
@@ -199,11 +214,11 @@ function setupEvents() {
             .merge(Rx.Observable
                     .fromEvent($('.btnUpdate'), 'click')
                     .map(e => false))
-            .subscribe(UserMgtController.showDetailDlg);
+            .subscribe(showDetailDlgFunc);
 
     // After modal shown
     Rx.Observable.fromEvent($('#mdlUserAddUpdate'), 'shown.bs.modal')
-            .subscribe(UserMgtController.getUserDetails);
+            .subscribe(getUserDetails);
 }
 
 /**
