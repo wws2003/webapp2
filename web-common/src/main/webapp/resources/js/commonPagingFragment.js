@@ -13,7 +13,7 @@ function CommonPagingFragmentRender() {
      */
     this._headerGenFunc = function (page) {
         // Return empty head
-        return $('<tr><th></th></tr>');
+        return '<tr><th></th></tr>';
     };
     /**
      * Function to generate body of record table
@@ -22,7 +22,7 @@ function CommonPagingFragmentRender() {
      */
     this._rowGenFunc = function (record) {
         // Return empty row
-        return $('<tr><td></td></tr>');
+        return '<tr><td></td></tr>';
     };
     /**
      * Options for record number per page
@@ -56,6 +56,11 @@ CommonPagingFragmentRender.prototype.rowGenFunc = function (rowGenFunc) {
 
 CommonPagingFragmentRender.prototype.pageRequestFunc = function (pageRequestFunc) {
     this._pageRequestFunc = pageRequestFunc;
+    return this;
+};
+
+CommonPagingFragmentRender.prototype.pageRequestFuncAsFetchFromUrl = function (fetchUrl) {
+    // TODO Implement
     return this;
 };
 
@@ -105,6 +110,7 @@ CommonPagingFragmentRender.prototype.render = function (frgPagingEle, page) {
             .fromEvent(recordCountSelect, 'change')
             .merge(Rx.Observable.fromEvent(txtPageNo, 'blur'))
             .map(e => [txtPageNo.val(), recordCountSelect.val()])
+            .distinctUntilChanged((pair1, pair2) => (pair1[0] === pair2[0] && pair1[1] === pair2[1])) // Do not fire event without any change
             .subscribe(this.createObserverForPageRequest());
 
     return true;
