@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 
-/* MendelApp is initialized by let and therefore can not be redeclared here */
-/* global MendelApp  */
+/* Values is initialized by let and therefore can not be redeclared here */
+/* global MendelApp, Tagger  */
 
 var Rx = Rx || {};
 
@@ -39,31 +39,27 @@ var UserMgtView = {
     },
 
     userTblHeadGenFunc: function (userPage) {
-        let row = [];
-        row.push('<tr>',
-                '<th>Name</th>',
-                '<th>Display name</th>',
-                '<th>Role</th>',
-                '<th>Login status</th>',
-                '<th>Force logout</th>', // Force logout
-                '<th>Delete</th>', // Delete
-                '<th></th>', // Update
-                '</tr>');
-        return row.join('');
+        return Tagger.tr()
+                .withTh('Name')
+                .withTh('isplay name')
+                .withTh('Role')
+                .withTh('Login status')
+                .withTh('Force logout')
+                .withTh('Delete')
+                .withTh('Update')
+                .build();
     },
 
     userTblRowGenFunc: function (userRecord) {
-        let row = [];
-        row.push('<tr>',
-                '<td>' + userRecord.name + '</td>',
-                '<td>' + userRecord.displayedName + '</td>',
-                '<td>' + userRecord.role + '</td>',
-                '<td>' + userRecord.loggingIn + '</td>',
-                '<td><input type="checkbox"></td>',
-                '<td><input type="checkbox"></td>',
-                '<td><button>Update</button></td>',
-                '</tr>');
-        return row.join('');
+        return Tagger.tr()
+                .withTd(userRecord.name)
+                .withTd(userRecord.displayedName)
+                .withTd(userRecord.role)
+                .withTd(userRecord.loggingIn)
+                .withTd('<input type="checkbox">')
+                .withTd('<input type="checkbox">')
+                .withTd('<button>Update</button>')
+                .build();
     }
 };
 
