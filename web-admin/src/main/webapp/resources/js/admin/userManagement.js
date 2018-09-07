@@ -41,7 +41,7 @@ var UserMgtView = {
     userTblHeadGenFunc: function (userPage) {
         return Tagger.tr()
                 .withTh('Name')
-                .withTh('isplay name')
+                .withTh('Display name')
                 .withTh('Role')
                 .withTh('Login status')
                 .withTh('Force logout')
@@ -56,9 +56,12 @@ var UserMgtView = {
                 .withTd(userRecord.displayedName)
                 .withTd(userRecord.role)
                 .withTd(userRecord.loggingIn)
-                .withTd('<input type="checkbox">')
-                .withTd('<input type="checkbox">')
-                .withTd('<button>Update</button>')
+                .td().innerTag('input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
+                .then()
+                .td().innerTag('input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
+                .then()
+                .td().innerTag('button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
+                .then()
                 .build();
     }
 };
@@ -70,6 +73,10 @@ var UserMgtView = {
 var UserDetailDlg = {
     init: function () {
         // TODO Implement
+    },
+
+    show: function (userId) {
+
     },
 
     renderUserDetails: function (userDetails) {
@@ -84,7 +91,6 @@ var UserDetailDlg = {
 var UserMgtController = {
     init: function () {
         // TODO Implement properly
-        this._isAdd = true;
         this._currentUserSelectedId = 0;
         this._pageRender = (new CommonPagingFragmentRender())
                 .headerGenFunc(UserMgtView.userTblHeadGenFunc)
@@ -105,23 +111,15 @@ var UserMgtController = {
         observable.subscribe(response => this._pageRender.render($('#frgPaging'), response.resultObject));
     },
 
-    showDetailDlg: function (isAdding) {
+    showDetailDlg: function (userId) {
         // TODO Implement
-        let detailForm = {
-            userId: isAdding ? 0 : this._currentUserSelectedId
-        };
-        let detailUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETDETAIL_ACTION;
-        let promise = this.getPostActionPromise(detailUrl, detailForm);
-        let observable = Rx.Observable.fromPromise(promise);
-        // Subscribe. TODO Implement better for failed event
-        observable.subscribe(response => console.log(response));
     },
 
-    getUserDetails: function () {
+    getUserDetails: function (currentUserSelectedId) {
         // Get user details
         let getDetailUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETDETAIL_ACTION;
         let detailForm = {
-            userId: this._currentUserSelectedId
+            userId: currentUserSelectedId
         };
         let promise = this.getPostActionPromise(getDetailUrl, detailForm);
         let observable = Rx.Observable.fromPromise(promise);
@@ -203,17 +201,23 @@ function setupEvents() {
     Rx.Observable.fromEvent($('#btnUserAddUpdateDone'), 'click')
             .subscribe(saveFunc);
 
-    // To show modal
-    // From add button
+    // To show modal (from add/update button)
+    // TODO Better implement. This looks like does not work for items generated on the fly
     Rx.Observable.fromEvent($('#btnAddUser'), 'click')
-            .map(e => true)
-            .merge(Rx.Observable
-                    .fromEvent($('.btnUpdate'), 'click')
-                    .map(e => false))
-            .subscribe(showDetailDlgFunc);
+            .map(e => 0)
+            .merge(Rx.Observable.fromEvent($('.mo_btnUpdate'), 'click')
+                    .map(e => $(e.target).attr('id').split('_')[1])
+                    .map(idStr => parseInt(idStr))
+                    )
+            .subscribe(userId => {
+                $('#mdlUserAddUpdate').attr('userId', userId);
+                $('#mdlUserAddUpdate').modal('show');
+            });
 
     // After modal shown
     Rx.Observable.fromEvent($('#mdlUserAddUpdate'), 'shown.bs.modal')
+            .map(e => $(e.target).attr('userId'))
+            .map(idStr => parseInt(idStr))
             .subscribe(getUserDetails);
 }
 

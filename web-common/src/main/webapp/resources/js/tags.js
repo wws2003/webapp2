@@ -28,6 +28,7 @@ function MendelHTMLTag(tagName, contentOrder) {
     this._innerText = '';
     this._innerTags = [];
     this._id = '';
+    this._autoClose = false; // True for tags like <input xxx/>
     this._cssClasses = [];
     this._attrMap = {};
 }
@@ -48,7 +49,16 @@ MendelHTMLTag.prototype.id = function (id) {
  * @returns {undefined}
  */
 MendelHTMLTag.prototype.innerText = function (text) {
-    this._innerText = text;
+    this._innerText = (text !== null && text !== undefined) ? text : '';
+    return this;
+};
+
+/**
+ * Set autoclose
+ * @returns {undefined}
+ */
+MendelHTMLTag.prototype.autoClose = function () {
+    this._autoClose = true;
     return this;
 };
 
@@ -109,13 +119,15 @@ MendelHTMLTag.prototype.then = function () {
  * @returns {String}
  */
 MendelHTMLTag.prototype.build = function () {
-    let innerText = this._innerText;
-    let innerTagHTML = this._innerTags.reduce(
-            (accInnerHTML, innerTag) => accInnerHTML + innerTag.build(),
-            '');
-    let innerContent = (this._contentOrder === 1) ? (innerText + innerTagHTML) : (innerTagHTML + innerText);
-    let openAndCloseTag = this.buildOpenAndCloseTag();
-    return openAndCloseTag[0] + innerContent + openAndCloseTag[1];
+    return this._autoClose ? this.buildAsAutoCloseTag() : this.buildOpenAndCloseTag();
+};
+
+/**
+ * Build HTML string for tag without closing mark
+ * @returns {String}
+ */
+MendelHTMLTag.prototype.buildAsAutoCloseTag = function () {
+    return '<' + this.buildOpenTagContent() + '/>';
 };
 
 /**
@@ -123,6 +135,23 @@ MendelHTMLTag.prototype.build = function () {
  * @returns {String}
  */
 MendelHTMLTag.prototype.buildOpenAndCloseTag = function () {
+    let openTag = '<' + this.buildOpenTagContent() + '>';
+    let innerText = this._innerText;
+    let innerTagHTML = this._innerTags.reduce(
+            (accInnerHTML, innerTag) => accInnerHTML + innerTag.build(),
+            '');
+    let innerContent = (this._contentOrder === 1) ? (innerText + innerTagHTML) : (innerTagHTML + innerText);
+    let closeTag = '</' + this._tagName + '>';
+    // Create tags
+    return openTag + innerContent + closeTag;
+};
+
+
+/**
+ * Build HTML string for open tag, like &lt;tr id='1'&gt and &lt;/tr id='1'&gt;
+ * @returns {String}
+ */
+MendelHTMLTag.prototype.buildOpenTagContent = function () {
     let id = this.ifNotEmpty(this._id, id => 'id="' + id + '"');
     let attrMap = this._attrMap;
     let attrs = Object.keys(attrMap)
@@ -130,9 +159,7 @@ MendelHTMLTag.prototype.buildOpenAndCloseTag = function () {
             .join(' ');
     let css = this.ifNotEmpty(this._cssClasses.join(' '), cssClasses => 'class="' + cssClasses + '"');
     // Create tags
-    let openTag = '<' + [this._tagName, id, attrs, css].filter(e => (e !== '')).join(' ') + '>';
-    let closeTag = '</' + this._tagName + '>';
-    return [openTag, closeTag];
+    return [this._tagName, id, attrs, css].filter(e => (e !== '')).join(' ');
 };
 
 /**
