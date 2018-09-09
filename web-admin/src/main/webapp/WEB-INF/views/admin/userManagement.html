@@ -7,6 +7,7 @@ and open the template in the editor.
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org">
     <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
         <title>User management</title>
+        <link href="../../../resources/css/commonModal.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/commonModal.css?'+ ${timeToken}}" />
         <link href="../../../../resources/css/admin/userManagement.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/admin/userManagement.css?' + ${timeToken}}"/>
         <script src="../../../../resources/js/admin/userManagement.js" th:src="@{'/resources/js/admin/userManagement.js?' +  ${timeToken}}"></script>
     </head>
@@ -40,9 +41,9 @@ and open the template in the editor.
                 <div class="modal-content">
                     <!-- Modal header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Input user info</h4>
-                        <button id="btnUserAddUpdateDone" type="button">Done</button>
-                        <button type="button" class="close" data-dismiss="modal">Cancel</button>
+                        <label id="lblUserDialogTitle" class="modal-title mo_modal_title">Input user info</label>
+                        <button type="button" class="btn btn-default pull-right mo_btn_close" data-dismiss="modal">Cancel</button>
+                        <button id="btnUserAddUpdateDone" class="btn btn-primary pull-right" type="button">Save</button>
                     </div>
                     <!-- Modal body -->
                     <div class="modal-body">
@@ -72,7 +73,7 @@ and open the template in the editor.
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <!-- Not-granted privileges -->
-                                        <div class="col-xs-5">
+                                        <div class="col-xs-5 text-center lo_priv_area">
                                             <div>
                                                 <label>Not granted privileges</label>
                                             </div>
@@ -82,12 +83,12 @@ and open the template in the editor.
                                             </select>
                                         </div>
                                         <!-- Grant/Revoke buttons -->
-                                        <div class="col-xs-2">
-                                            <button id="btnGrant" type="button">Grant</button>
-                                            <button id="btnRevoke" type="button">Revoke</button>
+                                        <div class="col-xs-2 lo_priv_buttons_area">
+                                            <button id="btnGrant" type="button">Grant &gt;</button>
+                                            <button id="btnRevoke" type="button"> &lt; Revoke</button>
                                         </div>
                                         <!-- Granted privileges -->
-                                        <div class="col-xs-5">
+                                        <div class="col-xs-5 text-center lo_priv_area">
                                             <div>
                                                 <label>Granted privileges</label>
                                             </div>

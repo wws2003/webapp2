@@ -72,7 +72,7 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     public AjaxResult getUserDetailInfo(UserDetailForm form) throws MendelRuntimeException {
         // TODO Get model properly
         // Separate update and delete
-        boolean isAdding = form.getUserId() > 0;
+        boolean isAdding = form.getUserId() <= 0;
         List<MendelPrivilege> allGrantablePrivs = userService.findPrivilegesForRole(MendelRole.USER);
         ScrnUserDetail model = new ScrnUserDetail();
 

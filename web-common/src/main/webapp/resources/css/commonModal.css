@@ -1,0 +1,13 @@
+/*
+    Created on : Sep 9, 2018, 9:18:13 PM
+    Author     : wws2003
+*/
+.modal-header .mo_modal_title {
+    vertical-align: top;
+    font-size: 14pt;
+}
+
+.modal-header .mo_btn_close {
+    margin-left: 15px
+}
+

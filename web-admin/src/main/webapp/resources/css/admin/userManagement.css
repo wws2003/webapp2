@@ -1,7 +1,17 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
 
+.lo_priv_area select{
+    width: 100%
+}
+
+.lo_priv_buttons_area {
+    padding: 0px;
+    height: 100%;
+    display: grid;
+    vertical-align: middle;
+    margin-top: 40px;
+}
+
+.lo_priv_buttons_area button:first-child {
+    margin-bottom: 5px
+}
 

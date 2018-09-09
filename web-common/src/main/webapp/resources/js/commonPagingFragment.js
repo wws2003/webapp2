@@ -75,10 +75,8 @@ CommonPagingFragmentRender.prototype.render = function (frgPagingEle, page) {
     let self = this;
     let navBarEle = frgPagingEle.find('#dvPagingNavBar');
     let tableEle = frgPagingEle.find('#tblPagingContent');
-    if (this._pageRequestSubscription) {
-        // Unsubscribe what observer ?
-        this._pageRequestSubscription.unsubscribe();
-    }
+    // Unsubscribe what observer
+    this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
 
     // Nav bar
     $('#lblPagingPageCount').text(page.totalPages); // From zero-based to one-based

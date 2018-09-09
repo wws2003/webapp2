@@ -9,6 +9,13 @@ let Tagger = {
      */
     tr: function () {
         return new MendelHTMLTr();
+    },
+    /**
+     * Create DIV tag
+     * @returns {MendelHTMLTr}
+     */
+    div: function () {
+        return new MendelHTMLTag('div', 1);
     }
     // TODO Add methods like select, form...
 };
