@@ -5,7 +5,7 @@
  */
 
 /* Values is initialized by let and therefore can not be redeclared here */
-/* global MendelApp, Tagger  */
+/* global MendelApp, Tagger, MendelDialog  */
 
 var Rx = Rx || {};
 
@@ -373,8 +373,8 @@ var ServerResponseSubjects = {
         return  {
             next: (response) => {
                 userDetailDlg.hide();
-                // Reload
-                indexSubject.next();
+                // Show dialog after hide dialog
+                MendelDialog.info('Message', response.successMessages[0], () => indexSubject.next());
             }
         };
     },
@@ -390,8 +390,8 @@ var ServerResponseSubjects = {
         return  {
             next: (response) => {
                 userDetailDlg.hide();
-                // Reload
-                indexSubject.next();
+                // Show dialog after hide dialog
+                MendelDialog.info('Message', response.successMessages[0], () => indexSubject.next());
             }
         };
     },

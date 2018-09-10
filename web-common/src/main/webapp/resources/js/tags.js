@@ -75,9 +75,23 @@ MendelHTMLTag.prototype.autoClose = function () {
  * @returns {undefined}
  */
 MendelHTMLTag.prototype.withClass = function (cssClass) {
-    this._cssClasses[this._cssClasses.length] = cssClass;
+    this._cssClasses.push(cssClass);
     return this;
 };
+
+/**
+ * Add new CSS classes
+ * @param {String} cssClasses (Space-Separated value)
+ * @returns {undefined}
+ */
+MendelHTMLTag.prototype.withClasses = function (cssClasses) {
+    var _cssClasses = this._cssClasses;
+    $.each(cssClasses.split(' '), function (i, clz) {
+        _cssClasses.push(clz);
+    });
+    return this;
+};
+
 
 /**
  * Add new attribute
