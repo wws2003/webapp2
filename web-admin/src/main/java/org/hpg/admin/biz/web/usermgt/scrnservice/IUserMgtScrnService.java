@@ -9,6 +9,7 @@ import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
+import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.exception.MendelRuntimeException;
 
@@ -36,6 +37,14 @@ public interface IUserMgtScrnService {
      * @throws MendelRuntimeException When retrieval failed
      */
     public AjaxResult getUserDetailInfo(UserDetailForm form) throws MendelRuntimeException;
+
+    /**
+     * Get all user privileges
+     *
+     * @param role
+     * @return @throws MendelRuntimeException When retrieval failed
+     */
+    public AjaxResult getAllPrivileges(MendelRole role) throws MendelRuntimeException;
 
     /**
      * Add/update

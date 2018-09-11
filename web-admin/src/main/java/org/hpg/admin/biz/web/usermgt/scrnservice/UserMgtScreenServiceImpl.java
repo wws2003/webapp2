@@ -93,6 +93,14 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     }
 
     @Override
+    public AjaxResult getAllPrivileges(MendelRole role) throws MendelRuntimeException {
+        // Return sucess result. TODO Set message properly
+        return AjaxResultBuilder.successInstance()
+                .resultObject(userService.findPrivilegesForRole(role))
+                .build();
+    }
+
+    @Override
     public AjaxResult addUpdateUser(UserAddUpdateForm form) throws MendelRuntimeException {
         MendelUser userToCreateOrUpdate = parseUserDtoFromForm(form);
         // Save

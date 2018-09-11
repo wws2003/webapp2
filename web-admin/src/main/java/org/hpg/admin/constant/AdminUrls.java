@@ -43,6 +43,11 @@ public class AdminUrls {
     public static final String ADMIN_USER_MANAGEMENT_USER_DETAILS = "/detail";
 
     /**
+     * User manager: Get all privileges for user
+     */
+    public static final String ADMIN_USER_MANAGEMENT_ALL_USER_PRIVS = "/userPrivs";
+
+    /**
      * User manager: Add/update
      */
     public static final String ADMIN_USER_MANAGEMENT_ADD_UPDATE = "/addUpdate";

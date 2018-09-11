@@ -18,6 +18,7 @@ let Urls = {
     USER_MGT_INDEX_ACTION: 'index',
     USER_MGT_ADDUPDATE_ACTION: 'addUpdate',
     USER_MGT_GETDETAIL_ACTION: 'detail',
+    USER_MGT_GETALLUSERPRIVS_ACTION: 'userPrivs',
     USER_MGT_DELETE_ACTION: 'delete'
 };
 
@@ -179,6 +180,8 @@ var UserDetailDlg = {
                 });
         this._userInfoFormSubscription = undefined;
         this._saveSubject = undefined;
+        // Observable of internal pure UI-stuffs
+        this.setupGrantRevokeInternalActions();
     },
 
     /**
@@ -210,15 +213,18 @@ var UserDetailDlg = {
             toCreateUser: false,
             userId: userDetails.id
         });
+        // Privileges. TODO Implement properly
+        this.setPrivsGrantRevokeOptions([], []);
         // Show up
         mdlUserAddUpdate.modal('show');
     },
 
     /**
      * Show user detailed info for add
+     * @param {Array} allUserPrivs
      * @returns {undefined}
      */
-    showForAdd: function () {
+    showForAdd: function (allUserPrivs) {
         let mdlUserAddUpdate = this._mdlUserAddUpdate;
         // Render
         mdlUserAddUpdate.find('#lblUserDialogTitle').text('Input new user info');
@@ -231,6 +237,8 @@ var UserDetailDlg = {
             toCreateUser: true,
             userId: 0
         });
+        // Privileges
+        this.setPrivsGrantRevokeOptions(allUserPrivs, []);
         // Show up
         mdlUserAddUpdate.modal('show');
     },
@@ -255,6 +263,44 @@ var UserDetailDlg = {
                     return $.extend({}, userInfoForm, extInfo);
                 })
                 .subscribe(this._saveSubject);
+    },
+
+    /**
+     * Action for privileges grant/revoke buttons
+     * @returns {undefined}
+     */
+    setupGrantRevokeInternalActions: function () {
+        // Observable of internal UI-stuffs
+        let btnGrant = this._mdlUserAddUpdate.find('#btnGrant');
+        let btnRevoke = this._mdlUserAddUpdate.find('#btnRevoke');
+        let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
+        let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
+
+        // -Move selected options between 2 select elements
+        Rx.Observable.fromEvent(btnGrant, 'click')
+                .map(() => [sltNotGrantedPrivs, sltGrantedPrivs])
+                .merge(Rx.Observable
+                        .fromEvent(btnRevoke, 'click')
+                        .map(() => [sltGrantedPrivs, sltNotGrantedPrivs])
+                        )
+                .subscribe(eles => {
+                    eles[0].find('option:selected').appendTo(eles[1]);
+                });
+    },
+
+    /**
+     * Set privileges into proper select elements
+     * @param {Array} notGrantedPrivs
+     * @param {Array} grantedPrivs
+     * @returns {undefined}
+     */
+    setPrivsGrantRevokeOptions: function (notGrantedPrivs, grantedPrivs) {
+        // TODO Implement
+        let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
+        let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
+        // Reset
+        sltNotGrantedPrivs.empty();
+        sltGrantedPrivs.empty();
     }
 };
 
@@ -263,9 +309,8 @@ var UserActionSubjects = {
 
     /**
      * Initialize subjects from user interacting events
-     * @param {Map} userDetailDlg
      */
-    init: function (userDetailDlg) {
+    init: function () {
         // Subjects
         this._indexSubject = new Rx.Subject();
         this._getUserDetailsSubject = new Rx.Subject();
@@ -273,9 +318,6 @@ var UserActionSubjects = {
         this._updateUserSubject = new Rx.Subject();
         this._deleteUsersSubject = new Rx.Subject();
         this._forceLogoutUsersSubject = new Rx.Subject();
-
-        // Views
-        this._userDetailDlg = userDetailDlg;
     },
 
     /**
@@ -303,8 +345,9 @@ var UserActionSubjects = {
                 .subscribe(serverResponseSubjects.getRetrieveUserDetailsResponseObserver());
 
         // Add
-        let userDetailDlg = this._userDetailDlg;
-        this._addUserSubject.subscribe(() => userDetailDlg.showForAdd());
+        this._addUserSubject
+                .switchMap(userId => userMgtWebService.getAllUserPrivsRetrieveAJAXObservable(userId))
+                .subscribe(serverResponseSubjects.getRetrieveAllUserPrivsResponseObserver());
 
         // Update
         this._updateUserSubject
@@ -356,6 +399,18 @@ var ServerResponseSubjects = {
      */
     getRetrieveUserDetailsResponseObserver: function () {
         let successResponseFunc = UserDetailDlg.showForUpdate.bind(this._userDetailDlg);
+        return {
+            // TODO Handle error
+            next: (response) => successResponseFunc(response.resultObject)
+        };
+    },
+
+    /**
+     * Subject for get all user privileges action
+     * @type Map
+     */
+    getRetrieveAllUserPrivsResponseObserver: function () {
+        let successResponseFunc = UserDetailDlg.showForAdd.bind(this._userDetailDlg);
         return {
             // TODO Handle error
             next: (response) => successResponseFunc(response.resultObject)
@@ -440,6 +495,12 @@ var UserMgtWebService = {
         return this.getPostActionObservable(getDetailUrl, detailForm);
     },
 
+    getAllUserPrivsRetrieveAJAXObservable: function () {
+        // Get all user privileges
+        let getAllUserPrivs = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETALLUSERPRIVS_ACTION;
+        return this.getGetActionObservable(getAllUserPrivs);
+    },
+
     getSaveAJAXObservable: function (saveForm) {
         // Create
         let saveUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_ADDUPDATE_ACTION;
@@ -457,7 +518,7 @@ var UserMgtWebService = {
 
     /*--------------------Private methods--------------------*/
     /**
-     * Shortcut for get AJAX promise
+     * Shortcut for Post AJAX promise
      * @param {String} url
      * @param {Map} form
      * @returns {Observable}
@@ -466,6 +527,18 @@ var UserMgtWebService = {
         let promise = (new MendelAjaxExecutor())
                 .url(url)
                 .formData(form)
+                .getPromise();
+        return Rx.Observable.fromPromise(promise);
+    },
+
+    /**
+     * Shortcut for Fet AJAX promise
+     * @param {String} url
+     * @returns {Observable}
+     */
+    getGetActionObservable: function (url) {
+        let promise = (new MendelAjaxExecutor())
+                .url(url)
                 .getPromise();
         return Rx.Observable.fromPromise(promise);
     }
@@ -502,7 +575,7 @@ function initViews() {
  */
 function setupEvents() {
     // Initialize subjects
-    UserActionSubjects.init(UserDetailDlg);
+    UserActionSubjects.init();
     ServerResponseSubjects.init(UserRecordsPageFragment, UserDetailDlg, UserActionSubjects._indexSubject);
     UserActionSubjects.setupSubjects(UserMgtWebService, ServerResponseSubjects);
 

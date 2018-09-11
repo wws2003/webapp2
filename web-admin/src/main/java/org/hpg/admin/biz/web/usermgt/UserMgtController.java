@@ -12,6 +12,7 @@ import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
 import org.hpg.admin.biz.web.usermgt.scrnservice.IUserMgtScrnService;
 import org.hpg.admin.constant.AdminUrls;
 import org.hpg.common.biz.service.abstr.IScreenService;
+import org.hpg.common.constant.MendelRole;
 import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,20 @@ public class UserMgtController {
     }
 
     /**
-     * Add/Update user action
+     * Get all privileges can be set to user
+     *
+     * @return
+     */
+    @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_ALL_USER_PRIVS)
+    @ResponseBody
+    public AjaxResult getAllUserPrivileges() {
+        return actionFlowService.executeSyncForAjaxResult(MendelRole.USER,
+                MendelTransactionalLevel.DEFAULT_READONLY,
+                userMgtScrnService::getAllPrivileges);
+    }
+
+    /**
+     * Get all privileges can be set to user
      *
      * @param form
      * @return
