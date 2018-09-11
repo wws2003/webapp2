@@ -99,15 +99,19 @@ let MendelDialog = {
                 .innerTag('div').withClass('modal-dialog')
                 .innerTag('div').withClass('modal-content')
                 .innerTag('div').withClass('modal-header')
-                .innerTag('label').withClassses('modal-title mo_modal_title').innerText(title)
+                .innerTag('label').withClasses('modal-title mo_modal_title').innerText(title)
                 .then()
-                .innerTag('button').withClass('close').withAttr('data-dismiss', 'modal')
+                .innerTag('button').innerText('&times;').withClass('close').withAttr('data-dismiss', 'modal')
+                .then()
                 .then()
                 .innerTag('div').withClass('modal-body')
                 .innerTag('div').innerText(infoMessage)
+                .innerTag('span').withClasses('glyphicon glyphicon-ok mo_success_icon')
                 .then()
-                .innerTag('div')
-                .innerTag('button').withClasses('btn btn-primary').innerText('OK')
+                .then()
+                .then()
+                .innerTag('div').withClass('modal-footer')
+                .innerTag('button').innerText('OK').withClass('btn btn-default').withAttr('data-dismiss', 'modal')
                 .then()
                 .then()
                 .then()
@@ -150,7 +154,7 @@ let MendelDialog = {
      * @returns {undefined}
      */
     appendTemp: function (modalContent, hideCallback) {
-        let modalEle = $.parseHTML(modalContent);
+        let modalEle = $($.parseHTML(modalContent));
         // Append to body
         $('body').append(modalEle.css("z-index", "3000"));
         // Remove after hide

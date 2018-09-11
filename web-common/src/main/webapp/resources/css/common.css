@@ -12,3 +12,9 @@
     max-width: 120px;
     display: inline-block;
 }
+
+.modal .mo_success_icon {
+    color: green;
+    font-size: 20px;
+    margin-right: 20px;
+}
