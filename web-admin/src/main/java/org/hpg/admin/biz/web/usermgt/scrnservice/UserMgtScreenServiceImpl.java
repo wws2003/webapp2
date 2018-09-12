@@ -25,6 +25,7 @@ import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.util.AjaxResultBuilder;
 import org.hpg.libcommon.CH;
+import org.hpg.libcommon.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -95,8 +96,12 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     @Override
     public AjaxResult getAllPrivileges(MendelRole role) throws MendelRuntimeException {
         // Return sucess result. TODO Set message properly
+        // Map ENUM to tuple here instead of making enum depends on JSON by annotation
         return AjaxResultBuilder.successInstance()
-                .resultObject(userService.findPrivilegesForRole(role))
+                .resultObject(userService.findPrivilegesForRole(role)
+                        .stream()
+                        .map(priv -> Tuple.newTuple(priv.getId(), priv.getCode(), priv.getDispName()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 

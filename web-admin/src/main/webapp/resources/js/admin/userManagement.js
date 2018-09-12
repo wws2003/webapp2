@@ -295,12 +295,17 @@ var UserDetailDlg = {
      * @returns {undefined}
      */
     setPrivsGrantRevokeOptions: function (notGrantedPrivs, grantedPrivs) {
-        // TODO Implement
         let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
         let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
-        // Reset
-        sltNotGrantedPrivs.empty();
-        sltGrantedPrivs.empty();
+        // Set data
+        Rx.Observable.from(notGrantedPrivs)
+                .map(priv => [sltNotGrantedPrivs, priv])
+                .merge(Rx.Observable.from(grantedPrivs)
+                        .map(priv => [sltGrantedPrivs, priv])
+                        )
+                .groupBy(selOpt => selOpt[0].attr('id')) // Group options by each select element
+                .flatMap(selOpts => selOpts.reduce((acc, cur) => [acc[0], acc[1] + Tagger.option().innerText(cur[1].item3).withAttr('val', cur[1].item1).build()])) // Collect options HTML by each select
+                .subscribe(selOptsHtml => selOptsHtml[0].html(selOptsHtml[1]));
     }
 };
 

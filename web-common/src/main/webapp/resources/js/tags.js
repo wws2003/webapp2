@@ -16,6 +16,13 @@ let Tagger = {
      */
     div: function () {
         return new MendelHTMLTag('div', 1);
+    },
+    /**
+     * Create Option tag
+     * @returns {MendelHTMLTag}
+     */
+    option: function () {
+        return new MendelHTMLTag('option');
     }
     // TODO Add methods like select, form...
 };
