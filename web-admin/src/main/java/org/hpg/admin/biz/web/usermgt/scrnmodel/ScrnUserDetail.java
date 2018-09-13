@@ -7,7 +7,7 @@ package org.hpg.admin.biz.web.usermgt.scrnmodel;
 
 import java.io.Serializable;
 import java.util.List;
-import org.hpg.common.constant.MendelPrivilege;
+import org.hpg.libcommon.Tuple3;
 
 /**
  * Model class for user details to display on screen
@@ -32,14 +32,14 @@ public class ScrnUserDetail implements Serializable {
     private String dispName;
 
     /**
-     * Granted privileges
+     * Granted privileges in serialized mode
      */
-    private List<MendelPrivilege> grantedPrivileges;
+    private List<Tuple3<Integer, String, String>> grantedPrivileges;
 
     /**
-     * Not granted privileges
+     * Not granted privileges in serialized mode
      */
-    private List<MendelPrivilege> remainingGrantablePrivileges;
+    private List<Tuple3<Integer, String, String>> remainingGrantablePrivileges;
 
     public long getId() {
         return id;
@@ -65,19 +65,19 @@ public class ScrnUserDetail implements Serializable {
         this.dispName = dispName;
     }
 
-    public List<MendelPrivilege> getGrantedPrivileges() {
+    public List<Tuple3<Integer, String, String>> getGrantedPrivileges() {
         return grantedPrivileges;
     }
 
-    public void setGrantedPrivileges(List<MendelPrivilege> grantedPrivileges) {
+    public void setGrantedPrivileges(List<Tuple3<Integer, String, String>> grantedPrivileges) {
         this.grantedPrivileges = grantedPrivileges;
     }
 
-    public List<MendelPrivilege> getRemainingGrantablePrivileges() {
+    public List<Tuple3<Integer, String, String>> getRemainingGrantablePrivileges() {
         return remainingGrantablePrivileges;
     }
 
-    public void setRemainingGrantablePrivileges(List<MendelPrivilege> remainingGrantablePrivileges) {
+    public void setRemainingGrantablePrivileges(List<Tuple3<Integer, String, String>> remainingGrantablePrivileges) {
         this.remainingGrantablePrivileges = remainingGrantablePrivileges;
     }
 

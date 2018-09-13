@@ -175,7 +175,9 @@ var UserDetailDlg = {
                         userDispName: mdlUserAddUpdate.find('#txtDispName').val(),
                         rawPassword: mdlUserAddUpdate.find('#txtPassword').val(),
                         confirmedRawPassword: mdlUserAddUpdate.find('#txtPasswordConfirm').val(),
-                        grantedPrivilegeIds: []
+                        grantedPrivilegeIds: mdlUserAddUpdate.find('#sltGrantedPrivs option:selected')
+                                .get()
+                                .map(optEle => parseInt(optEle.getAttribute('val')))
                     };
                 });
         this._userInfoFormSubscription = undefined;
@@ -213,8 +215,8 @@ var UserDetailDlg = {
             toCreateUser: false,
             userId: userDetails.id
         });
-        // Privileges. TODO Implement properly
-        this.setPrivsGrantRevokeOptions([], []);
+        // Privileges render
+        this.setPrivsGrantRevokeOptions([userDetails.remainingGrantablePrivileges], [userDetails.grantedPrivileges]);
         // Show up
         mdlUserAddUpdate.modal('show');
     },

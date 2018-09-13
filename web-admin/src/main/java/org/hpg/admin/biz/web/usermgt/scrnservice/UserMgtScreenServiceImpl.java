@@ -26,6 +26,7 @@ import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.util.AjaxResultBuilder;
 import org.hpg.libcommon.CH;
 import org.hpg.libcommon.Tuple;
+import org.hpg.libcommon.Tuple3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -82,9 +83,16 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
             model.setId(user.getId());
             model.setName(user.getName());
             model.setDispName(user.getDispName());
-            // TODO Handle privs
+            // Get privs
+            List<MendelPrivilege> grantedPrivs = new ArrayList();
+            List<MendelPrivilege> notGrantedPrivs = allGrantablePrivs.stream()
+                    .filter(priv -> !(grantedPrivs.stream().anyMatch(prv -> prv.getId() == priv.getId())))
+                    .collect(Collectors.toList());
+            // Set privileges into final result
+            model.setGrantedPrivileges(this.serializeMendelPrivileges(grantedPrivs));
+            model.setRemainingGrantablePrivileges(this.serializeMendelPrivileges(notGrantedPrivs));
         } else {
-            model.setRemainingGrantablePrivileges(allGrantablePrivs);
+            model.setRemainingGrantablePrivileges(this.serializeMendelPrivileges(allGrantablePrivs));
         }
 
         // Return sucess result. TODO Set message properly
@@ -98,10 +106,7 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
         // Return sucess result. TODO Set message properly
         // Map ENUM to tuple here instead of making enum depends on JSON by annotation
         return AjaxResultBuilder.successInstance()
-                .resultObject(userService.findPrivilegesForRole(role)
-                        .stream()
-                        .map(priv -> Tuple.newTuple(priv.getId(), priv.getCode(), priv.getDispName()))
-                        .collect(Collectors.toList()))
+                .resultObject(this.serializeMendelPrivileges(userService.findPrivilegesForRole(role)))
                 .build();
     }
 
@@ -110,9 +115,9 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
         MendelUser userToCreateOrUpdate = parseUserDtoFromForm(form);
         // Save
         MendelUser savedUser = form.getToCreateUser() ? userService.createUser(userToCreateOrUpdate) : userService.updateUser(userToCreateOrUpdate);
-        // Grant privileges
-        List<MendelPrivilege> grantedPrivileges = parseGrantedPrivilegesFromForm(form);
-        userService.grantUserWithPrivileges(savedUser, grantedPrivileges);
+        // TODO Grant privileges
+        // List<MendelPrivilege> grantedPrivileges = parseGrantedPrivilegesFromForm(form);
+        // userService.grantUserWithPrivileges(savedUser, grantedPrivileges);
         // Return sucess result. TODO Set message properly
         return AjaxResultBuilder.successInstance()
                 .oneSuccessMessage("User has been successfully saved")
@@ -160,6 +165,18 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
         return form.getGrantedPrivilegeIds()
                 .stream()
                 .map(MendelPrivilege::getPrivilegeFromId)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Parse privileges into JSON serializable format
+     *
+     * @param privs
+     * @return
+     */
+    private List<Tuple3<Integer, String, String>> serializeMendelPrivileges(List<MendelPrivilege> privs) {
+        return privs.stream()
+                .map(priv -> Tuple.newTuple(priv.getId(), priv.getCode(), priv.getDispName()))
                 .collect(Collectors.toList());
     }
 }
