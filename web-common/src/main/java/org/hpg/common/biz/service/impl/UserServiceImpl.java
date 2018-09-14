@@ -5,12 +5,9 @@
  */
 package org.hpg.common.biz.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
@@ -35,8 +32,6 @@ public class UserServiceImpl implements IUserService {
 
     private final IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper;
 
-    private final Map<Integer, List<MendelPrivilege>> rolePrivilegesMap = new HashMap();
-
     /**
      * Constructor
      *
@@ -50,13 +45,6 @@ public class UserServiceImpl implements IUserService {
         this.userPrivRepository = userPrivRepository;
         this.entityDtoMapper = entityDtoMapper;
 
-        // Usable privileges for each role
-        rolePrivilegesMap.put(MendelRole.ADMIN.getCode(), Arrays.asList(MendelPrivilege.PRIV_MANAGE_USER, MendelPrivilege.PRIV_MANAGE_SYSTEM));
-        rolePrivilegesMap.put(MendelRole.USER.getCode(), Arrays.asList(MendelPrivilege.PRIV_CREATE_DOCUMENT,
-                MendelPrivilege.PRIV_SHARE_DOCUMENT,
-                MendelPrivilege.PRIV_UPDATE_DOCUMENT,
-                MendelPrivilege.PRIV_LIST_DOCUMENT,
-                MendelPrivilege.PRIV_SEARCH_DOCUMENT));
     }
 
     @Override
@@ -88,6 +76,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void grantUserWithPrivileges(MendelUser user, List<MendelPrivilege> privileges) throws MendelRuntimeException {
         final long userId = user.getId();
+        // Revoke
+        userPrivRepository.deleteByUserId(userId);
+        // Grant
         privileges.stream().forEach(priv -> {
             UserPrivEntity entity = new UserPrivEntity();
             entity.setPrivilegeId(priv.getId());
@@ -97,13 +88,17 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public int deleteUsers(List<Long> userIds) throws MendelRuntimeException {
-        List<UserEntity> deletedRecords = userRepository.deleteByIdIn(userIds);
-        return deletedRecords.size();
+    public List<MendelPrivilege> getUserGrantedPrivileges(long userId) throws MendelRuntimeException {
+        return userPrivRepository.findByUserId(userId)
+                .stream()
+                .map(userPrivEnt -> userPrivEnt.getPrivilegeId())
+                .map(MendelPrivilege::getPrivilegeFromId)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<MendelPrivilege> findPrivilegesForRole(MendelRole role) throws MendelRuntimeException {
-        return Optional.ofNullable(rolePrivilegesMap.get(role.getCode())).orElse(new ArrayList());
+    public int deleteUsers(List<Long> userIds) throws MendelRuntimeException {
+        List<UserEntity> deletedRecords = userRepository.deleteByIdIn(userIds);
+        return deletedRecords.size();
     }
 }

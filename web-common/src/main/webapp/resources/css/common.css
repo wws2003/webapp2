@@ -18,3 +18,9 @@
     font-size: 20px;
     margin-right: 20px;
 }
+
+.modal .mo_error_icon {
+    color: red;
+    font-size: 20px;
+    margin-right: 20px;
+}

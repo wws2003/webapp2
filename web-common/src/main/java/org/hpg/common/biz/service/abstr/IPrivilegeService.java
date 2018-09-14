@@ -7,6 +7,7 @@ package org.hpg.common.biz.service.abstr;
 
 import java.util.List;
 import org.hpg.common.constant.MendelPrivilege;
+import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.exception.MendelRuntimeException;
 
 /**
@@ -16,43 +17,13 @@ import org.hpg.common.model.exception.MendelRuntimeException;
  */
 public interface IPrivilegeService {
 
+    // TODO Add more methods
     /**
-     * Get privileges granted to the specified user
+     * Find privileges assigned to the given role
      *
-     * @param userId
-     * @return
-     * @throws MendelRuntimeException
+     * @param role
+     * @return List of privileges assigned to the given role
+     * @throws MendelRuntimeException When find operation failed
      */
-    List<MendelPrivilege> getUserGrantedPrivileges(long userId) throws MendelRuntimeException;
-
-    /**
-     * Check if the specified privilege has been granted to the specified user
-     *
-     * @param userId
-     * @param privilege
-     * @return
-     * @throws MendelRuntimeException
-     */
-    boolean hasPrivilege(long userId, MendelPrivilege privilege) throws MendelRuntimeException;
-
-    /**
-     * Grant the specified user with the specified privileges
-     *
-     * @param userId
-     * @param privileges
-     * @return Number of privileges succesfully granted
-     * @throws MendelRuntimeException
-     */
-    int grantUserPrivileges(long userId, List<MendelPrivilege> privileges) throws MendelRuntimeException;
-
-    /**
-     * Revoke the specified user with the specified privileges
-     *
-     * @param userId
-     * @param privileges
-     * @return Number of privileges succesfully revoked (if any privilege not
-     * granted to the user yet, do nothing with it)
-     * @throws MendelRuntimeException
-     */
-    int revokePrivileges(long userId, List<MendelPrivilege> privileges) throws MendelRuntimeException;
+    List<MendelPrivilege> findPrivilegesForRole(MendelRole role) throws MendelRuntimeException;
 }

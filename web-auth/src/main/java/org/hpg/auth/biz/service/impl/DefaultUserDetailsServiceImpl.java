@@ -6,7 +6,6 @@
 package org.hpg.auth.biz.service.impl;
 
 import org.hpg.auth.model.MendelUserDetails;
-import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.principal.LoginInfo;
@@ -21,9 +20,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * @author trungpt
  */
 public class DefaultUserDetailsServiceImpl implements UserDetailsService {
-
-    @Autowired
-    private IPrivilegeService mPrivilegeService;
 
     @Autowired
     private IUserService mUserService;
@@ -46,7 +42,7 @@ public class DefaultUserDetailsServiceImpl implements UserDetailsService {
 
         return mUserService.findUserByName(userName, this.mRole)
                 .map(mendelUser -> {
-                    return new MendelUserDetails(LoginInfo.withUser(mendelUser).build(), mPrivilegeService.getUserGrantedPrivileges(mendelUser.getId()));
+                    return new MendelUserDetails(LoginInfo.withUser(mendelUser).build(), mUserService.getUserGrantedPrivileges(mendelUser.getId()));
                 })
                 .orElseThrow(() -> new UsernameNotFoundException(userName));
     }

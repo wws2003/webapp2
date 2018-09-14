@@ -99,6 +99,31 @@ MendelHTMLTag.prototype.withClasses = function (cssClasses) {
     return this;
 };
 
+/**
+ * Add new CSS class if predicate true
+ * @param {Function} predicator
+ * @param {String} cssClass
+ * @returns {undefined}
+ */
+MendelHTMLTag.prototype.withClassIf = function (predicator, cssClass) {
+    if (!predicator()) {
+        return this;
+    }
+    return this.withClass(cssClass);
+};
+
+/**
+ * Add new CSS classes if predicate true
+ * @param {Function} predicator
+ * @param {String} cssClasses (Space-Separated value)
+ * @returns {undefined}
+ */
+MendelHTMLTag.prototype.withClassesIf = function (predicator, cssClasses) {
+    if (!predicator()) {
+        return this;
+    }
+    return this.withClasses(cssClasses);
+};
 
 /**
  * Add new attribute
@@ -107,8 +132,23 @@ MendelHTMLTag.prototype.withClasses = function (cssClasses) {
  * @returns {undefined}
  */
 MendelHTMLTag.prototype.withAttr = function (attrName, attrVal) {
-    this._attrMap[attrName] = attrVal;
+    // If do not specifiy attrVal, consider attrVal the same as attrName (e.g. disabled, selected)
+    this._attrMap[attrName] = attrVal !== undefined ? attrVal : attrName;
     return this;
+};
+
+/**
+ * Add new attribute if predicate true
+ * @param {Function} predicator
+ * @param {String} attrName
+ * @param {String} attrVal
+ * @returns {undefined}
+ */
+MendelHTMLTag.prototype.withAttrIf = function (predicator, attrName, attrVal) {
+    if (!predicator()) {
+        return this;
+    }
+    return this.withAttr(attrName, attrVal);
 };
 
 /**
@@ -130,6 +170,23 @@ MendelHTMLTag.prototype.innerTag = function (tagName, contentOrder) {
     let innerTag = new MendelHTMLTag(tagName, contentOrder);
     innerTag._parentTag = this;
     this._innerTags[this._innerTags.length] = (innerTag);
+    return innerTag;
+};
+
+/**
+ * Create new inner tag and return it (if predicate true, also append the new tag into current tag)
+ * @param {Function} predicator
+ * @param {String} tagName
+ * @param {Number} contentOrder
+ * @returns {MendelHTMLTag}
+ */
+MendelHTMLTag.prototype.innerTagIf = function (predicator, tagName, contentOrder) {
+    // Almost simlar as innerTag, except that do not append to current tag
+    let innerTag = new MendelHTMLTag(tagName, contentOrder);
+    innerTag._parentTag = this;
+    if (predicator()) {
+        this._innerTags[this._innerTags.length] = (innerTag);
+    }
     return innerTag;
 };
 

@@ -5,7 +5,9 @@
  */
 package org.hpg.common.dao.repository;
 
+import java.util.List;
 import org.hpg.common.model.entity.UserPrivEntity;
+import org.hpg.common.model.exception.MendelRuntimeException;
 
 /**
  * Repository for user-privilege mapping
@@ -13,4 +15,23 @@ import org.hpg.common.model.entity.UserPrivEntity;
  * @author trungpt
  */
 public interface IUserPrivRepository extends ICRUDRepository<UserPrivEntity, Long> {
+
+    /**
+     * Find by user id
+     *
+     * @param userId
+     * @return
+     * @throws MendelRuntimeException When find failed
+     */
+    List<UserPrivEntity> findByUserId(long userId) throws MendelRuntimeException;
+
+    /**
+     * Delete by user id
+     *
+     * @param userId
+     * @return
+     * @throws MendelRuntimeException When delete failed
+     */
+    List<UserPrivEntity> deleteByUserId(long userId) throws MendelRuntimeException;
+
 }

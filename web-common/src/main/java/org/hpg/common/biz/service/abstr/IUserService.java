@@ -66,6 +66,15 @@ public interface IUserService {
     void grantUserWithPrivileges(MendelUser user, List<MendelPrivilege> privileges) throws MendelRuntimeException;
 
     /**
+     * Get privileges granted to the specified user
+     *
+     * @param userId
+     * @return
+     * @throws MendelRuntimeException
+     */
+    List<MendelPrivilege> getUserGrantedPrivileges(long userId) throws MendelRuntimeException;
+
+    /**
      * Delete list of users by id
      *
      * @param userIds
@@ -73,13 +82,4 @@ public interface IUserService {
      * @throws MendelRuntimeException When delete operation failed
      */
     int deleteUsers(List<Long> userIds) throws MendelRuntimeException;
-
-    /**
-     * Find privileges assigned to the given role
-     *
-     * @param role
-     * @return List of privileges assigned to the given role
-     * @throws MendelRuntimeException When find operation failed
-     */
-    List<MendelPrivilege> findPrivilegesForRole(MendelRole role) throws MendelRuntimeException;
 }

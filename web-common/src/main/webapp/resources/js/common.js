@@ -94,30 +94,7 @@ let MendelDialog = {
      * @returns {undefined}
      */
     info: function (title, infoMessage, callback) {
-        // TODO Implement properly
-        let modalContent = Tagger.div().withClasses('modal fade').withAttr('role', 'dialog')
-                .innerTag('div').withClass('modal-dialog')
-                .innerTag('div').withClass('modal-content')
-                .innerTag('div').withClass('modal-header')
-                .innerTag('label').withClasses('modal-title mo_modal_title').innerText(title)
-                .then()
-                .innerTag('button').innerText('&times;').withClass('close').withAttr('data-dismiss', 'modal')
-                .then()
-                .then()
-                .innerTag('div').withClass('modal-body')
-                .innerTag('div').innerText(infoMessage)
-                .innerTag('span').withClasses('glyphicon glyphicon-ok mo_success_icon')
-                .then()
-                .then()
-                .then()
-                .innerTag('div').withClass('modal-footer')
-                .innerTag('button').innerText('OK').withClass('btn btn-default').withAttr('data-dismiss', 'modal')
-                .then()
-                .then()
-                .then()
-                .then()
-                .build();
-        return this.appendTemp(modalContent, callback);
+        return this.simpleDialog(1, title, infoMessage, callback);
     },
 
     /**
@@ -128,9 +105,7 @@ let MendelDialog = {
      * @returns {undefined}
      */
     error: function (title, errorMessage, callback) {
-        // TODO Implement
-        let modalContent = '';
-        return this.appendTemp(modalContent);
+        return this.simpleDialog(2, title, errorMessage, callback);
     },
 
     /**
@@ -145,6 +120,45 @@ let MendelDialog = {
     confirm: function (title, confirmMessage, yesCallback, noCallback, cancelCallback) {
         let modalContent = '';
         return this.appendTemp(modalContent);
+    },
+
+    /*-----------------------------------------Private methods-------------------------------------------*/
+
+    /**
+     * Show simple dialog with callback called after user closes the dialog
+     * @param {String} type 1: Info, 2: Error TODO Add more types
+     * @param {String} title
+     * @param {String} message
+     * @param {Function} callback
+     * @returns {undefined}
+     */
+    simpleDialog: function (type, title, message, callback) {
+        let isInfoDlg = (type === 1);
+        let isErrorDlg = (type === 2);
+
+        let modalContent = Tagger.div().withClasses('modal fade').withAttr('role', 'dialog')
+                .innerTag('div').withClass('modal-dialog')
+                .innerTag('div').withClass('modal-content')
+                .innerTag('div').withClass('modal-header')
+                .innerTag('label').withClasses('modal-title mo_modal_title').innerText(title)
+                .then()
+                .innerTag('button').innerText('&times;').withClass('close').withAttr('data-dismiss', 'modal')
+                .then()
+                .then()
+                .innerTag('div').withClass('modal-body')
+                .innerTag('div').innerText(message)
+                .innerTag('span').withClassesIf(() => isInfoDlg, 'glyphicon glyphicon-ok-sign mo_success_icon').withClassesIf(() => isErrorDlg, 'glyphicon glyphicon-remove-sign mo_error_icon')
+                .then()
+                .then()
+                .then()
+                .innerTag('div').withClass('modal-footer')
+                .innerTag('button').innerText('OK').withClass('btn btn-default').withAttr('data-dismiss', 'modal')
+                .then()
+                .then()
+                .then()
+                .then()
+                .build();
+        return this.appendTemp(modalContent, callback);
     },
 
     /**

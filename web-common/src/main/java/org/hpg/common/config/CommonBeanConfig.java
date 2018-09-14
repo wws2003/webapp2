@@ -14,7 +14,7 @@ import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.impl.PagingServiceImpl;
-import org.hpg.common.biz.service.impl.SamplePrivilegeServiceImpl;
+import org.hpg.common.biz.service.impl.PrivilegeServiceImpl;
 import org.hpg.common.biz.service.impl.ScreenServiceImpl;
 import org.hpg.common.biz.service.impl.SimpleLoggerImpl;
 import org.hpg.common.biz.service.impl.StdFormValidatorImpl;
@@ -75,7 +75,7 @@ public class CommonBeanConfig {
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public IPrivilegeService getPrivilegeService() {
         // TODO Implement properly
-        return new SamplePrivilegeServiceImpl();
+        return new PrivilegeServiceImpl();
     }
 
     @Bean

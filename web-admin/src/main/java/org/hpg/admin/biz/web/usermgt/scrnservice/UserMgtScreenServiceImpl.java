@@ -17,6 +17,7 @@ import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserDetail;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserRecord;
 import org.hpg.common.biz.service.abstr.IPagingService;
 import org.hpg.common.biz.service.abstr.IPasswordService;
+import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
@@ -51,6 +52,9 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     private IUserService userService;
 
     @Autowired
+    private IPrivilegeService privilegeService;
+
+    @Autowired
     private IPasswordService passwordService;
 
     @Override
@@ -72,28 +76,23 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
 
     @Override
     public AjaxResult getUserDetailInfo(UserDetailForm form) throws MendelRuntimeException {
-        // TODO Get model properly
-        // Separate update and delete
-        boolean isAdding = form.getUserId() <= 0;
-        List<MendelPrivilege> allGrantablePrivs = userService.findPrivilegesForRole(MendelRole.USER);
+        List<MendelPrivilege> allGrantablePrivs = privilegeService.findPrivilegesForRole(MendelRole.USER);
         ScrnUserDetail model = new ScrnUserDetail();
 
-        if (!isAdding) {
-            MendelUser user = userService.findUserById(form.getUserId()).orElseThrow(() -> new MendelRuntimeException("Can not find user to update"));
-            model.setId(user.getId());
-            model.setName(user.getName());
-            model.setDispName(user.getDispName());
-            // Get privs
-            List<MendelPrivilege> grantedPrivs = new ArrayList();
-            List<MendelPrivilege> notGrantedPrivs = allGrantablePrivs.stream()
-                    .filter(priv -> !(grantedPrivs.stream().anyMatch(prv -> prv.getId() == priv.getId())))
-                    .collect(Collectors.toList());
-            // Set privileges into final result
-            model.setGrantedPrivileges(this.serializeMendelPrivileges(grantedPrivs));
-            model.setRemainingGrantablePrivileges(this.serializeMendelPrivileges(notGrantedPrivs));
-        } else {
-            model.setRemainingGrantablePrivileges(this.serializeMendelPrivileges(allGrantablePrivs));
-        }
+        // Get user by id
+        MendelUser user = userService.findUserById(form.getUserId()).orElseThrow(() -> new MendelRuntimeException("Can not find user to update with id " + form.getUserId()));
+        // Set attributes to model
+        model.setId(user.getId());
+        model.setName(user.getName());
+        model.setDispName(user.getDispName());
+        // Get privs
+        List<MendelPrivilege> grantedPrivs = userService.getUserGrantedPrivileges(user.getId());
+        List<MendelPrivilege> notGrantedPrivs = allGrantablePrivs.stream()
+                .filter(priv -> !(grantedPrivs.stream().anyMatch(prv -> prv.getId() == priv.getId())))
+                .collect(Collectors.toList());
+        // Set privileges into final result
+        model.setGrantedPrivileges(this.serializeMendelPrivileges(grantedPrivs));
+        model.setRemainingGrantablePrivileges(this.serializeMendelPrivileges(notGrantedPrivs));
 
         // Return sucess result. TODO Set message properly
         return AjaxResultBuilder.successInstance()
@@ -106,7 +105,7 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
         // Return sucess result. TODO Set message properly
         // Map ENUM to tuple here instead of making enum depends on JSON by annotation
         return AjaxResultBuilder.successInstance()
-                .resultObject(this.serializeMendelPrivileges(userService.findPrivilegesForRole(role)))
+                .resultObject(this.serializeMendelPrivileges(privilegeService.findPrivilegesForRole(role)))
                 .build();
     }
 
@@ -116,7 +115,8 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
         // Save
         MendelUser savedUser = form.getToCreateUser() ? userService.createUser(userToCreateOrUpdate) : userService.updateUser(userToCreateOrUpdate);
         // TODO Grant privileges
-        // List<MendelPrivilege> grantedPrivileges = parseGrantedPrivilegesFromForm(form);
+        List<MendelPrivilege> grantedPrivileges = parseGrantedPrivilegesFromForm(form);
+        userService.grantUserWithPrivileges(savedUser, grantedPrivileges);
         // userService.grantUserWithPrivileges(savedUser, grantedPrivileges);
         // Return sucess result. TODO Set message properly
         return AjaxResultBuilder.successInstance()

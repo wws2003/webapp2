@@ -128,16 +128,18 @@ var UserRecordsPageFragment = {
     },
 
     userTblRowGenFunc: function (userRecord) {
+        // TODO Better solution
+        let isUserRole = userRecord.role === 'USER';
         return Tagger.tr()
                 .withTd(userRecord.name)
                 .withTd(userRecord.displayedName)
                 .withTd(userRecord.role)
                 .withTd(userRecord.loggingIn)
-                .td().innerTag('input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
+                .td().innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
                 .then()
-                .td().innerTag('input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
+                .td().innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
                 .then()
-                .td().innerTag('button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
+                .td().innerTagIf(() => isUserRole, 'button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
                 .then()
                 .build();
     },
@@ -216,7 +218,7 @@ var UserDetailDlg = {
             userId: userDetails.id
         });
         // Privileges render
-        this.setPrivsGrantRevokeOptions([userDetails.remainingGrantablePrivileges], [userDetails.grantedPrivileges]);
+        this.setPrivsGrantRevokeOptions(userDetails.remainingGrantablePrivileges, userDetails.grantedPrivileges);
         // Show up
         mdlUserAddUpdate.modal('show');
     },
@@ -307,6 +309,7 @@ var UserDetailDlg = {
                         )
                 .groupBy(selOpt => selOpt[0].attr('id')) // Group options by each select element
                 .flatMap(selOpts => selOpts.reduce((acc, cur) => [acc[0], acc[1] + Tagger.option().innerText(cur[1].item3).withAttr('val', cur[1].item1).build()])) // Collect options HTML by each select
+                .defaultIfEmpty('')
                 .subscribe(selOptsHtml => selOptsHtml[0].html(selOptsHtml[1]));
     }
 };
@@ -435,8 +438,13 @@ var ServerResponseSubjects = {
         return  {
             next: (response) => {
                 userDetailDlg.hide();
-                // Show dialog after hide dialog
-                MendelDialog.info('Message', response.successMessages[0], () => indexSubject.next());
+                if (response.success) {
+                    // Show dialog after hide dialog, then reload
+                    MendelDialog.info('Message', response.successMessages[0], () => indexSubject.next());
+                } else {
+                    // Show error message
+                    MendelDialog.error('Message', response.errorMessages[0]);
+                }
             }
         };
     },
