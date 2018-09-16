@@ -29,6 +29,14 @@ function CommonPagingFragmentRender() {
      */
     this._recordCountOptions = [20, 50, 100];
     /**
+     * Records-control area elements
+     */
+    this._recordCtrlAreaEles = [];
+    /**
+     * Table addition CSS-classes
+     */
+    this._tableClasses = '';
+    /**
      * Function to request page
      */
     this._pageRequestFunc = null;
@@ -39,21 +47,61 @@ function CommonPagingFragmentRender() {
     this._pageRequestSubscription = null;
 }
 
+/**
+ * Set options for record per pages
+ * @param {Array} recordCountOptions
+ * @returns {CommonPagingFragmentRender.prototype}
+ */
 CommonPagingFragmentRender.prototype.recordCountOptions = function (recordCountOptions) {
     this._recordCountOptions = recordCountOptions;
     return this;
 };
 
+/**
+ * Set CSS for table elements (apart from default ones). thead and tbody elements style should depend on these classes
+ * @param {String} tableClasses (space-separated)
+ * @returns {CommonPagingFragmentRender.prototype}
+ */
+CommonPagingFragmentRender.prototype.tableClass = function (tableClasses) {
+    this._tableClasses = tableClasses;
+    return this;
+};
+
+/**
+ * Add one element into records control area
+ * @param {String} eleHtml
+ * @returns {undefined}
+ */
+CommonPagingFragmentRender.prototype.withRecordsCtrlElement = function (eleHtml) {
+    this._recordCtrlAreaEles.push(eleHtml);
+    return this;
+};
+
+/**
+ * Set function to generate table thead
+ * @param {Function} headerGenFunc
+ * @returns {CommonPagingFragmentRender.prototype}
+ */
 CommonPagingFragmentRender.prototype.headerGenFunc = function (headerGenFunc) {
     this._headerGenFunc = headerGenFunc;
     return this;
 };
 
+/**
+ * Set function to generate table row
+ * @param {Function} rowGenFunc
+ * @returns {CommonPagingFragmentRender.prototype}
+ */
 CommonPagingFragmentRender.prototype.rowGenFunc = function (rowGenFunc) {
     this._rowGenFunc = rowGenFunc;
     return this;
 };
 
+/**
+ * Set function to request page data (after changing page number of records number per page)
+ * @param {type} pageRequestFunc
+ * @returns {CommonPagingFragmentRender.prototype}
+ */
 CommonPagingFragmentRender.prototype.pageRequestFunc = function (pageRequestFunc) {
     this._pageRequestFunc = pageRequestFunc;
     return this;
@@ -65,17 +113,30 @@ CommonPagingFragmentRender.prototype.pageRequestFuncAsFetchFromUrl = function (f
 };
 
 /**
+ * Show elements in records control area
+ * @param {JQuery} frgPagingEle
+ * @returns {undefined}
+ */
+CommonPagingFragmentRender.prototype.renderRecordCtrlArea = function (frgPagingEle) {
+    let recordsCtrlArea = frgPagingEle.find('#dvRecordCtrlArea');
+
+    // Records control area
+    recordsCtrlArea.html(this._recordCtrlAreaEles.reduce((acc, cur) => acc + cur, ''));
+};
+
+/**
  * Actual do the rendering
  * @param {JQuery} frgPagingEle
  * @param {Map} page
  * @returns {CommonPagingFragmentRender.prototype}
  */
-CommonPagingFragmentRender.prototype.render = function (frgPagingEle, page) {
+CommonPagingFragmentRender.prototype.renderPage = function (frgPagingEle, page) {
     // Initialize
     let self = this;
     let navBarEle = frgPagingEle.find('#dvPagingNavBar');
     let tableEle = frgPagingEle.find('#tblPagingContent');
-    // Unsubscribe what observer
+
+    // Unsubscribe observer
     this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
 
     // Nav bar
@@ -93,6 +154,9 @@ CommonPagingFragmentRender.prototype.render = function (frgPagingEle, page) {
             .map(rec => '<option val=' + rec + '>' + rec + '</option>')
             .scan((accOpts, opt) => accOpts + opt, '')
             .subscribe(accOpts => recordCountSelect.html(accOpts));
+
+    // Set table styling classes
+    tableEle.addClass(this._tableClasses);
 
     // Content table header
     tableEle.find('thead').html(this._headerGenFunc(page));

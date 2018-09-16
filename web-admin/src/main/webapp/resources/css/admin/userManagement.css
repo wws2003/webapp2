@@ -15,3 +15,7 @@
     margin-bottom: 5px
 }
 
+table.lo_fixed_header_table tbody {
+    max-height: 450px
+}
+

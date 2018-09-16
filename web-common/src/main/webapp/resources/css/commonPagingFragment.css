@@ -2,10 +2,23 @@
     Created on : 2018/09/04, 16:15:06
     Author     : wws2003
 */
+
+/*
+Default CSS classes for common paging fragment
+*/
+
+#frgPaging {
+    border: 1px solid lightgray
+}
+
+#dvRecordCtrlArea {
+    height: 34px
+}
+
 .lo_paging_table {
     max-width: 75%
 }
 
-.lo_paging_table thead{
+.lo_paging_table thead {
     background-color: aliceblue
 }

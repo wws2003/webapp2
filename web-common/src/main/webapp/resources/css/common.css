@@ -24,3 +24,32 @@
     font-size: 20px;
     margin-right: 20px;
 }
+
+/*--------------------Fixed header table--------------------*/
+
+table.lo_fixed_header_table {
+    table-layout: fixed
+}
+
+table.lo_fixed_header_table.with_scroll thead {
+    width: 100%
+}
+
+table.lo_fixed_header_table.with_scroll thead {
+    width: calc(100% - 16px) !important;
+}
+
+table.lo_fixed_header_table tbody {
+    display: block;
+    overflow-y: auto;
+    width: 100%;
+}
+
+table.lo_fixed_header_table thead, table.lo_fixed_header_table tr, table.lo_fixed_header_table td, table.lo_fixed_header_table th {
+    display: block;
+    height: 40px;
+}
+
+table.lo_fixed_header_table tbody td, table.lo_fixed_header_table thead > tr> th {
+    float: left;
+}

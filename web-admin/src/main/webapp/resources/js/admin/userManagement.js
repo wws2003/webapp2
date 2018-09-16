@@ -22,6 +22,29 @@ let Urls = {
     USER_MGT_DELETE_ACTION: 'delete'
 };
 
+let RecordsCtrlArea = {
+    BTN_RELOAD: {
+        id: 'btnReload',
+        text: 'Reload',
+        clz: 'btn btn-info'
+    },
+    BTN_ADD: {
+        id: 'btnAddUser',
+        text: 'Add user',
+        clz: 'btn btn-info'
+    },
+    BTN_DELETE: {
+        id: 'btnDeleteUser',
+        text: 'Delete users',
+        clz: 'btn btn-info'
+    },
+    BTN_FORECELOGOUT: {
+        id: 'btnForceLogout',
+        text: 'Force logout',
+        clz: 'btn btn-info'
+    }
+};
+
 /*--------------------------Views--------------------------*/
 /**
  * Instance to handler UI stuffs (act basically as a view)
@@ -31,25 +54,28 @@ var UserRecordsPageFragment = {
     /**
      * Initialize view with related buttons
      * @param {JQuery} userRecordsPagingFragment
-     * @param {JQuery} btnReload
-     * @param {JQuery} btnAdd
-     * @param {JQuery} btnDelete
-     * @param {JQuery} btnForceLogout
      * @returns {undefined}
      */
-    init: function (userRecordsPagingFragment, btnReload, btnAdd, btnDelete, btnForceLogout) {
-        // TODO Implement properly
-        // Assign view components
-        this._userRecordsPagingFragment = userRecordsPagingFragment;
-        this._btnReload = btnReload;
-        this._btnAdd = btnAdd;
-        this._btnDelete = btnDelete;
-        this._btnForceLogout = btnForceLogout;
-
+    init: function (userRecordsPagingFragment) {
         // Create view builders
         this._pageRender = (new CommonPagingFragmentRender())
+                .tableClass('lo_fixed_header_table')
+                .withRecordsCtrlElement(this.createRecordCtrlButtonHtml(RecordsCtrlArea.BTN_RELOAD))
+                .withRecordsCtrlElement(this.createRecordCtrlButtonHtml(RecordsCtrlArea.BTN_ADD))
+                .withRecordsCtrlElement(this.createRecordCtrlButtonHtml(RecordsCtrlArea.BTN_DELETE))
+                .withRecordsCtrlElement(this.createRecordCtrlButtonHtml(RecordsCtrlArea.BTN_FORECELOGOUT))
                 .headerGenFunc(UserRecordsPageFragment.userTblHeadGenFunc)
                 .rowGenFunc(UserRecordsPageFragment.userTblRowGenFunc);
+
+        // Render record control area
+        this._pageRender.renderRecordCtrlArea(userRecordsPagingFragment);
+
+        // Assign view components
+        this._userRecordsPagingFragment = userRecordsPagingFragment;
+        this._btnReload = userRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_RELOAD.id);
+        this._btnAdd = userRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_ADD.id);
+        this._btnDelete = userRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_DELETE.id);
+        this._btnForceLogout = userRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_FORECELOGOUT.id);
 
         // Subjects (for events fired in this view)
         this._userUpdateSubject = undefined;
@@ -93,7 +119,7 @@ var UserRecordsPageFragment = {
      */
     renderUsersPage: function (page) {
         // Render to view
-        this._pageRender.render(this._userRecordsPagingFragment, page);
+        this._pageRender.renderPage(this._userRecordsPagingFragment, page);
         // Events on the page
         // TODO Unsubsribe old events ?
         Rx.Observable.fromEvent(this._userRecordsPagingFragment.find('button.mo_btnUpdate'), 'click')
@@ -115,15 +141,36 @@ var UserRecordsPageFragment = {
     },
 
     /*--------------------Private methods-------------------*/
+
+    /**
+     * Create HTML for button element in the user record control area
+     * @param {Map} btn
+     * @returns {String}
+     */
+    createRecordCtrlButtonHtml: function (btn) {
+        return Tagger.button()
+                .id(btn.id)
+                .innerText(btn.text)
+                .withClasses(btn.clz)
+                .build();
+    },
+
     userTblHeadGenFunc: function (userPage) {
         return Tagger.tr()
-                .withTh('Name')
-                .withTh('Display name')
-                .withTh('Role')
-                .withTh('Login status')
-                .withTh('Force logout')
-                .withTh('Delete')
-                .withTh('Update')
+                .th('Name').withClass('col-xs-2')
+                .then()
+                .th('Display name').withClass('col-xs-2')
+                .then()
+                .th('Role').withClass('col-xs-2')
+                .then()
+                .th('Login status').withClass('col-xs-2')
+                .then()
+                .th('Force logout').withClass('col-xs-2')
+                .then()
+                .th('Delete').withClass('col-xs-1')
+                .then()
+                .th('Update').withClass('col-xs-1')
+                .then()
                 .build();
     },
 
@@ -131,15 +178,19 @@ var UserRecordsPageFragment = {
         // TODO Better solution
         let isUserRole = userRecord.role === 'USER';
         return Tagger.tr()
-                .withTd(userRecord.name)
-                .withTd(userRecord.displayedName)
-                .withTd(userRecord.role)
-                .withTd(userRecord.loggingIn)
-                .td().innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
+                .td(userRecord.name).withClass('col-xs-2')
                 .then()
-                .td().innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
+                .td(userRecord.displayedName).withClass('col-xs-2')
                 .then()
-                .td().innerTagIf(() => isUserRole, 'button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
+                .td(userRecord.role).withClass('col-xs-2')
+                .then()
+                .td(userRecord.loggingIn).withClass('col-xs-2')
+                .then()
+                .td().withClass('col-xs-2').innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
+                .then()
+                .td().withClass('col-xs-1').innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
+                .then()
+                .td().withClass('col-xs-1').innerTagIf(() => isUserRole, 'button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
                 .then()
                 .build();
     },
@@ -177,7 +228,7 @@ var UserDetailDlg = {
                         userDispName: mdlUserAddUpdate.find('#txtDispName').val(),
                         rawPassword: mdlUserAddUpdate.find('#txtPassword').val(),
                         confirmedRawPassword: mdlUserAddUpdate.find('#txtPasswordConfirm').val(),
-                        grantedPrivilegeIds: mdlUserAddUpdate.find('#sltGrantedPrivs option:selected')
+                        grantedPrivilegeIds: mdlUserAddUpdate.find('#sltGrantedPrivs option')
                                 .get()
                                 .map(optEle => parseInt(optEle.getAttribute('val')))
                     };
@@ -302,15 +353,19 @@ var UserDetailDlg = {
         let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
         let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
         // Set data
-        Rx.Observable.from(notGrantedPrivs)
-                .map(priv => [sltNotGrantedPrivs, priv])
-                .merge(Rx.Observable.from(grantedPrivs)
-                        .map(priv => [sltGrantedPrivs, priv])
-                        )
-                .groupBy(selOpt => selOpt[0].attr('id')) // Group options by each select element
-                .flatMap(selOpts => selOpts.reduce((acc, cur) => [acc[0], acc[1] + Tagger.option().innerText(cur[1].item3).withAttr('val', cur[1].item1).build()])) // Collect options HTML by each select
-                .defaultIfEmpty('')
-                .subscribe(selOptsHtml => selOptsHtml[0].html(selOptsHtml[1]));
+        Rx.Observable.from(
+                [
+                    [sltNotGrantedPrivs, notGrantedPrivs],
+                    [sltGrantedPrivs, grantedPrivs]
+                ]
+                ).map(e => [e[0], e[1].reduce(
+                        (acc, cur) => acc + Tagger.option()
+                            .innerText(cur.item3)
+                            .withAttr('val', cur.item1)
+                            .build(),
+                        ''
+                        )])
+                .subscribe(selOpts => selOpts[0].html(selOpts[1]));
     }
 };
 
@@ -573,11 +628,7 @@ $(document).ready(function () {
  */
 function initViews() {
     // Page fragment
-    UserRecordsPageFragment.init($('#frgPaging'),
-            $('#btnReload'),
-            $('#btnAddUser'),
-            $('#btnDeleteUser'),
-            $('#btnForceUserLogout'));
+    UserRecordsPageFragment.init($('#frgPaging'));
 
     // Dialog
     UserDetailDlg.init($('#mdlUserAddUpdate'));

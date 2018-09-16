@@ -18,11 +18,25 @@ let Tagger = {
         return new MendelHTMLTag('div', 1);
     },
     /**
+     * Create Button tag
+     * @returns {MendelHTMLTr}
+     */
+    button: function () {
+        return new MendelHTMLTag('button');
+    },
+    /**
      * Create Option tag
      * @returns {MendelHTMLTag}
      */
     option: function () {
         return new MendelHTMLTag('option');
+    },
+    /**
+     * Create Select tag
+     * @returns {MendelHTMLTag}
+     */
+    select: function () {
+        return new MendelHTMLTag('select');
     }
     // TODO Add methods like select, form...
 };
