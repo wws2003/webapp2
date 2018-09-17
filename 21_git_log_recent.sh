@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-	nb=10
+	nb=25
 else
 	nb=$1;
 fi

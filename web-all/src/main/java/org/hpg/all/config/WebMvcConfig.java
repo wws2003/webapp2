@@ -68,8 +68,12 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
+        // Spring-security (for what ?)
         templateEngine.addDialect(new SpringSecurityDialect());
+        // Time dialect
         templateEngine.addDialect(new Java8TimeDialect());
+        // Layout dialect (for decorator pattern)
+        //templateEngine.addDialect(new LayoutDialect());
         return templateEngine;
     }
 

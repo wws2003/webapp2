@@ -1,0 +1,50 @@
+/*
+    Created on : 2018/09/17, 8:12:39
+*/
+body>header {
+    background-color: #04B431;
+    width: 100%;
+    color: white;
+    font-size: 40px;
+    text-align: center;
+}
+
+body>footer {
+    position: fixed;
+    font-size: 13px;
+    padding: 2px 15px;
+    background-color: lightblue;
+    width: 100%;
+    bottom: 0px
+}
+
+body>footer>span:nth-child(2){
+    float: right
+}
+
+/*Main area*/
+main {
+    width: 100%;
+    margin: 0px !important;
+    background-color: azure
+}
+
+main>section:first-child {
+    padding: 0px
+}
+
+main>section:first-child>aside {
+    background-color: aliceblue;
+    height: 100%
+}
+
+main>section:first-child>article {
+    overflow-y: scroll
+}
+
+main>section:first-child>article>.breadcrumb:first-child {
+    background: transparent;
+    border-bottom: 1px solid #81BEF7;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}

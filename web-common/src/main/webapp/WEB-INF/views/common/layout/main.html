@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!--
+Reusable main layout
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org">
+    <head th:replace="common/fragments/commonHeader :: frg_common_header(~{::title},~{},~{})">
+        <title>Title</title>
+    </head>
+    <body>
+        <header>Jakob Mendel</header>
+        <main>
+            <aside></aside>
+            <section>
+                <div class="container">
+                    <!-- Breadcrumb -->
+                    <ol>
+
+                    </ol>
+                    <!-- Main content -->
+                    <div id="dvMainContent" layout:fragment="frgContent">
+
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <span> TBC-HPG©2018 </span> <span> <a href="#">Sitemap</a>
+            </span>
+        </footer>
+    </body>
+</html>

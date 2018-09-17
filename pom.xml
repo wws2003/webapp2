@@ -106,6 +106,12 @@
             <artifactId>thymeleaf-extras-java8time</artifactId>
             <version>${thymeleaf-extras-java8time-version}</version>
         </dependency>
+        <!-- Decorator -->
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>2.0.5</version>
+        </dependency>
         <!-- Spring-data JPA -->
         <dependency>
             <groupId>org.springframework.data</groupId>
