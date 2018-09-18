@@ -33,7 +33,7 @@ main>section:first-child {
     padding: 0px
 }
 
-main>section:first-child>aside {
+main>aside {
     background-color: aliceblue;
     height: 100%
 }

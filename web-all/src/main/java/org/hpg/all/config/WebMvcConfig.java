@@ -5,6 +5,7 @@
  */
 package org.hpg.all.config;
 
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,7 +74,7 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
         // Time dialect
         templateEngine.addDialect(new Java8TimeDialect());
         // Layout dialect (for decorator pattern)
-        //templateEngine.addDialect(new LayoutDialect());
+        templateEngine.addDialect(new LayoutDialect());
         return templateEngine;
     }
 

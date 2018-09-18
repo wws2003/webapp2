@@ -8,23 +8,34 @@ Reusable main layout
     </head>
     <body>
         <header>Jakob Mendel</header>
-        <main>
-            <aside></aside>
-            <section>
-                <div class="container">
+        <!-- Main -->
+        <main class="container-fluid">
+            <!-- Sidebar -->
+            <aside class="col-xs-1">
+                <!-- Logout button area -->
+                <div>
+                    <form action="#" th:action="@{/admin/logout}" method="post">
+                        <button type="submit" class="btn btn-warning">Logout</button>
+                    </form>
+                </div>
+            </aside>
+            <article>
+                <section class="col-xs-11">
                     <!-- Breadcrumb -->
-                    <ol>
-
+                    <ol id="olBreadcrumb">
                     </ol>
                     <!-- Main content -->
                     <div id="dvMainContent" layout:fragment="frgContent">
-
                     </div>
-                </div>
-            </section>
+                </section>
+            </article>
         </main>
+        <!-- Modal -->
+        <th:block layout:fragment="frgCustomContent">
+        </th:block>
+        <!-- Footer -->
         <footer>
-            <span> TBC-HPG©2018 </span> <span> <a href="#">Sitemap</a>
+            <span> TBC-HPG&copy;2018 </span> <span> <a href="#">Sitemap</a>
             </span>
         </footer>
     </body>

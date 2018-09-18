@@ -4,7 +4,7 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout/main}">
     <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
         <title>User management</title>
         <link href="../../../resources/css/commonModal.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/commonModal.css?'+ ${timeToken}}" />
@@ -12,81 +12,75 @@ and open the template in the editor.
         <script src="../../../../resources/js/admin/userManagement.js" th:src="@{'/resources/js/admin/userManagement.js?' +  ${timeToken}}"></script>
     </head>
     <body>
-        <!-- Main -->
-        <main class="container">
-            <section class="row">
-                <h2>User management</h2>
-                <!-- User list area (paging)  -->
-                <div th:replace="common/fragments/commonPagingFragment::frgPaging">
-                </div>
-                <!-- Logout button area -->
-                <div>
-                    <form action="#" th:action="@{/admin/logout}" method="post">
-                        <button type="submit">Logout</button>
-                    </form>
-                </div>
-            </section>
-        </main>
-        <!-- User add/update modal -->
-        <div id="mdlUserAddUpdate" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content -->
-                <div class="modal-content">
-                    <!-- Modal header -->
-                    <div class="modal-header">
-                        <label id="lblUserDialogTitle" class="modal-title mo_modal_title">Input user info</label>
-                        <button type="button" class="btn btn-default pull-right mo_btn_close" data-dismiss="modal">Cancel</button>
-                        <button id="btnUserAddUpdateDone" class="btn btn-primary pull-right" type="button">Save</button>
-                    </div>
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div>
-                            <!-- Username -->
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input id="txtUserName" type="text" class="form-control"/>
-                            </div>
-                            <!-- Displayed name -->
-                            <div class="form-group">
-                                <label>Display name</label>
-                                <input id="txtDispName" type="text" class="form-control"/>
-                            </div>
-                            <!-- Password -->
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input id="txtPassword" type="password" class="form-control"/>
-                            </div>
-                            <!-- Password confirm -->
-                            <div class="form-group">
-                                <label>Password confirmation</label>
-                                <input id="txtPasswordConfirm" type="password" class="form-control"/>
-                            </div>
-                            <!-- Privileges -->
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <!-- Not-granted privileges -->
-                                        <div class="col-xs-5 text-center lo_priv_area">
-                                            <div>
-                                                <label>Not granted privileges</label>
+        <!-- /* Content of this page will be decorated by the elements of layout.html (task/layout) */ -->
+        <div layout:fragment="frgContent">
+            <h2>User management</h2>
+            <!-- User list area (paging)  -->
+            <div th:replace="common/fragments/commonPagingFragment::frgPaging">
+            </div>
+        </div>
+        <th:block layout:fragment="frgCustomContent">
+            <!-- User add/update modal -->
+            <div id="mdlUserAddUpdate" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <!-- Modal header -->
+                        <div class="modal-header">
+                            <label id="lblUserDialogTitle" class="modal-title mo_modal_title">Input user info</label>
+                            <button type="button" class="btn btn-default pull-right mo_btn_close" data-dismiss="modal">Cancel</button>
+                            <button id="btnUserAddUpdateDone" class="btn btn-primary pull-right" type="button">Save</button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <div>
+                                <!-- Username -->
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input id="txtUserName" type="text" class="form-control"/>
+                                </div>
+                                <!-- Displayed name -->
+                                <div class="form-group">
+                                    <label>Display name</label>
+                                    <input id="txtDispName" type="text" class="form-control"/>
+                                </div>
+                                <!-- Password -->
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input id="txtPassword" type="password" class="form-control"/>
+                                </div>
+                                <!-- Password confirm -->
+                                <div class="form-group">
+                                    <label>Password confirmation</label>
+                                    <input id="txtPasswordConfirm" type="password" class="form-control"/>
+                                </div>
+                                <!-- Privileges -->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <!-- Not-granted privileges -->
+                                            <div class="col-xs-5 text-center lo_priv_area">
+                                                <div>
+                                                    <label>Not granted privileges</label>
+                                                </div>
+                                                <select id="sltNotGrantedPrivs" multiple="multiple" size="12">
+                                                    <option>User management</option>
+                                                    <option>System management</option>
+                                                </select>
                                             </div>
-                                            <select id="sltNotGrantedPrivs" multiple="multiple" size="12">
-                                                <option>User management</option>
-                                                <option>System management</option>
-                                            </select>
-                                        </div>
-                                        <!-- Grant/Revoke buttons -->
-                                        <div class="col-xs-2 lo_priv_buttons_area">
-                                            <button id="btnGrant" type="button">Grant &gt;</button>
-                                            <button id="btnRevoke" type="button"> &lt; Revoke</button>
-                                        </div>
-                                        <!-- Granted privileges -->
-                                        <div class="col-xs-5 text-center lo_priv_area">
-                                            <div>
-                                                <label>Granted privileges</label>
+                                            <!-- Grant/Revoke buttons -->
+                                            <div class="col-xs-2 lo_priv_buttons_area">
+                                                <button id="btnGrant" type="button">Grant &gt;</button>
+                                                <button id="btnRevoke" type="button"> &lt; Revoke</button>
                                             </div>
-                                            <select id="sltGrantedPrivs" multiple="multiple" size="12">
-                                            </select>
+                                            <!-- Granted privileges -->
+                                            <div class="col-xs-5 text-center lo_priv_area">
+                                                <div>
+                                                    <label>Granted privileges</label>
+                                                </div>
+                                                <select id="sltGrantedPrivs" multiple="multiple" size="12">
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -95,6 +89,6 @@ and open the template in the editor.
                     </div>
                 </div>
             </div>
-        </div>
+        </th:block>
     </body>
 </html>
