@@ -1,6 +1,17 @@
 /*
     Created on : 2018/09/17, 8:12:39
 */
+
+/*Common area*/
+
+html {
+    height: 100%
+}
+
+body {
+    height: 100%
+}
+
 body>header {
     background-color: #04B431;
     width: 100%;
@@ -26,7 +37,8 @@ body>footer>span:nth-child(2){
 main {
     width: 100%;
     margin: 0px !important;
-    background-color: azure
+    background-color: azure;
+    padding: 0px !important
 }
 
 main>section:first-child {
@@ -35,11 +47,13 @@ main>section:first-child {
 
 main>aside {
     background-color: aliceblue;
+    padding-top: 20px;
     height: 100%
 }
 
-main>section:first-child>article {
-    overflow-y: scroll
+main>section:first-of-type {
+    height: 100%;
+    overflow-y: auto
 }
 
 main>section:first-child>article>.breadcrumb:first-child {

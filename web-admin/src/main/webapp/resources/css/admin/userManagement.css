@@ -1,4 +1,13 @@
 
+.lo_records_ctrl_button {
+    margin-left: 5px;
+    margin-right: 5px
+}
+
+table.lo_fixed_header_table tbody {
+    max-height: 450px
+}
+
 .lo_priv_area select{
     width: 100%
 }
@@ -14,8 +23,3 @@
 .lo_priv_buttons_area button:first-child {
     margin-bottom: 5px
 }
-
-table.lo_fixed_header_table tbody {
-    max-height: 450px
-}
-

@@ -15,10 +15,6 @@ Default CSS classes for common paging fragment
     height: 34px
 }
 
-.lo_paging_table {
-    max-width: 75%
-}
-
 .lo_paging_table thead {
-    background-color: aliceblue
+    background-color: silver
 }

@@ -26,22 +26,22 @@ let RecordsCtrlArea = {
     BTN_RELOAD: {
         id: 'btnReload',
         text: 'Reload',
-        clz: 'btn btn-info'
+        clz: 'btn btn-primary lo_records_ctrl_button'
     },
     BTN_ADD: {
         id: 'btnAddUser',
         text: 'Add user',
-        clz: 'btn btn-info'
+        clz: 'btn btn-primary lo_records_ctrl_button'
     },
     BTN_DELETE: {
         id: 'btnDeleteUser',
         text: 'Delete users',
-        clz: 'btn btn-info'
+        clz: 'btn btn-primary lo_records_ctrl_button'
     },
     BTN_FORECELOGOUT: {
         id: 'btnForceLogout',
         text: 'Force logout',
-        clz: 'btn btn-info'
+        clz: 'btn btn-primary lo_records_ctrl_button'
     }
 };
 

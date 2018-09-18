@@ -4,25 +4,25 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout/main}">
     <head th:replace="common/fragments/commonHeader :: frg_common_header(~{::title},~{},~{})">
         <title>Admin home page</title>
     </head>
     <body>
-        <div>
-            <label th:text="'Welcome ' + ${userName}">Username</label>
-        </div>
-        <div>
-            <h3>Choose admin action</h3>
+        <!-- /* Content of this page will be decorated by the elements of layout.html (task/layout) */ -->
+        <div layout:fragment="frgContent">
             <div>
-                <a href="#" th:href="@{/admin/userMgt}">User management</a>
+                <label th:text="'Welcome ' + ${userName}">Username</label>
             </div>
             <div>
-                <a href="#" th:href="@{/admin/systemMgt}">System management</a>
+                <h3>Choose admin action</h3>
+                <div>
+                    <a href="#" th:href="@{/admin/userMgt}">User management</a>
+                </div>
+                <div>
+                    <a href="#" th:href="@{/admin/systemMgt}">System management</a>
+                </div>
             </div>
         </div>
-        <form action="#" th:action="@{/admin/logout}" method="post">
-            <button type="submit">Logout</button>
-        </form>
     </body>
 </html>

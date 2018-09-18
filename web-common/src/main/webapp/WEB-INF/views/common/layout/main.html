@@ -19,16 +19,14 @@ Reusable main layout
                     </form>
                 </div>
             </aside>
-            <article>
-                <section class="col-xs-11">
-                    <!-- Breadcrumb -->
-                    <ol id="olBreadcrumb">
-                    </ol>
-                    <!-- Main content -->
-                    <div id="dvMainContent" layout:fragment="frgContent">
-                    </div>
-                </section>
-            </article>
+            <section class="col-xs-11">
+                <!-- Breadcrumb -->
+                <ol id="olBreadcrumb" class="breadcrumb">
+                </ol>
+                <!-- Main content -->
+                <div id="dvMainContent" layout:fragment="frgContent">
+                </div>
+            </section>
         </main>
         <!-- Modal -->
         <th:block layout:fragment="frgCustomContent">
