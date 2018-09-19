@@ -8,6 +8,7 @@ package org.hpg.common.dao.repository;
 import java.util.List;
 import org.hpg.common.model.entity.UserPrivEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
+import org.springframework.data.jpa.repository.Modifying;
 
 /**
  * Repository for user-privilege mapping
@@ -32,6 +33,7 @@ public interface IUserPrivRepository extends ICRUDRepository<UserPrivEntity, Lon
      * @return
      * @throws MendelRuntimeException When delete failed
      */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     List<UserPrivEntity> deleteByUserId(long userId) throws MendelRuntimeException;
 
 }

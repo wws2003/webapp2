@@ -19,7 +19,7 @@ export pg_db_password_line=$PSQL_HOST:$PSQL_PORT:postgres:$PSQL_SETUP_USER:$PSQL
 echo $pg_db_password_line > $pg_pass_file
 chmod 0600 $pg_pass_file
 
-# Create and set ownership permisison for tablespace directory (for Windows, currently have to use Folder properties setting to do instead)
+# Create and set ownership permisison for tablespace directory (for Windows, currently have to use Folder properties setting to do grant access for Network Service user)
 mkdir -p $PSQL_TABLESPACE_PATH
 sudo chown -R $PSQL_SETUP_USER $PSQL_TABLESPACE_PATH
 
