@@ -5,7 +5,6 @@
  */
 package org.hpg.common.service;
 
-import java.util.List;
 import java.util.Random;
 import org.hpg.common.WebCommonTestBase;
 import org.hpg.common.constant.MendelPrivilege;
@@ -37,6 +36,13 @@ public class UserPrivServiceTest extends WebCommonTestBase {
 
     @Test
     @Transactional(propagation = Propagation.REQUIRED)
+    public void testDefaultDelete() {
+        // Just to see log
+        userPrivRepository.deleteByUserId(12);
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void testDeleteThenSave() {
         // Insert user first
         UserEntity userEntity = getSampleUserEntity();
@@ -51,8 +57,55 @@ public class UserPrivServiceTest extends WebCommonTestBase {
         assert (userPrivEntityId1 > 0);
 
         // Delete user-priv by user id
-        List<UserPrivEntity> deletedUserPrivs = userPrivRepository.deleteByUserId(userEntity.getId());
-        assert (deletedUserPrivs.size() == 1);
+        int deleteCnt = userPrivRepository.deleteXXXX(userEntity.getId());
+        assert (deleteCnt == 1);
+
+        // Re-insert and see if it work (need to use new instance as userPrivEntity is treated as deleted)
+        UserPrivEntity userPrivEntity2 = new UserPrivEntity();
+        userPrivEntity2.setUserId(userEntity.getId());
+        userPrivEntity2.setPrivilegeId(MendelPrivilege.PRIV_CREATE_DOCUMENT.getId());
+        userPrivRepository.save(userPrivEntity2);
+        long userPrivEntityId2 = userPrivEntity2.getId();
+
+        // Assert new record saved instead of the old one
+        assert (userPrivEntityId2 != userPrivEntityId1);
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void testSaveThenDelete() {
+        // Insert user first
+        UserEntity userEntity = getSampleUserEntity();
+        userRepository.save(userEntity);
+
+        long userId = userEntity.getId();
+        assert (userId > 0);
+
+        userRepository.delete(userEntity);
+
+        assert (!userRepository.findById(userId).isPresent());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void testDeleteThenSave2() {
+        // Insert user first
+        UserEntity userEntity = getSampleUserEntity();
+        userRepository.save(userEntity);
+
+        // Insert user-priv
+        UserPrivEntity userPrivEntity = new UserPrivEntity();
+        userPrivEntity.setUserId(userEntity.getId());
+        userPrivEntity.setPrivilegeId(MendelPrivilege.PRIV_CREATE_DOCUMENT.getId());
+        userPrivRepository.save(userPrivEntity);
+        long userPrivEntityId1 = userPrivEntity.getId();
+        assert (userPrivEntityId1 > 0);
+
+        // Delete user-priv by user id
+        //List<UserPrivEntity> deletedUserPrivs = userPrivRepository.deleteByUserId(userEntity.getId());
+        //assert (deletedUserPrivs.size() == 1);
+        // Directly delete the entity
+        userPrivRepository.delete(userPrivEntity);
 
         // Re-insert and see if it work (need to use new instance as userPrivEntity is treated as deleted)
         UserPrivEntity userPrivEntity2 = new UserPrivEntity();

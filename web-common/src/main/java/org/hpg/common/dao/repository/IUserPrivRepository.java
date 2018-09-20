@@ -9,6 +9,7 @@ import java.util.List;
 import org.hpg.common.model.entity.UserPrivEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * Repository for user-privilege mapping
@@ -36,4 +37,14 @@ public interface IUserPrivRepository extends ICRUDRepository<UserPrivEntity, Lon
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     List<UserPrivEntity> deleteByUserId(long userId) throws MendelRuntimeException;
 
+    /**
+     * Delete by user id
+     *
+     * @param userId
+     * @return
+     * @throws MendelRuntimeException When delete failed
+     */
+    @Modifying
+    @Query("delete from UserPrivEntity u where u.userId = ?1")
+    int deleteXXXX(long userId) throws MendelRuntimeException;
 }
