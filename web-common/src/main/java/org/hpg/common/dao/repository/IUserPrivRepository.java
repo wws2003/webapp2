@@ -28,23 +28,14 @@ public interface IUserPrivRepository extends ICRUDRepository<UserPrivEntity, Lon
     List<UserPrivEntity> findByUserId(long userId) throws MendelRuntimeException;
 
     /**
-     * Delete by user id
+     * Delete by user id (delete by default method does not take effect
+     * probably, so have to use this solution)
      *
      * @param userId
-     * @return
-     * @throws MendelRuntimeException When delete failed
-     */
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    List<UserPrivEntity> deleteByUserId(long userId) throws MendelRuntimeException;
-
-    /**
-     * Delete by user id
-     *
-     * @param userId
-     * @return
+     * @return Number of deleted records
      * @throws MendelRuntimeException When delete failed
      */
     @Modifying
     @Query("delete from UserPrivEntity u where u.userId = ?1")
-    int deleteXXXX(long userId) throws MendelRuntimeException;
+    int deleteByUserId(long userId) throws MendelRuntimeException;
 }

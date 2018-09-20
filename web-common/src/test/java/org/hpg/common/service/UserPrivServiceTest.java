@@ -57,7 +57,7 @@ public class UserPrivServiceTest extends WebCommonTestBase {
         assert (userPrivEntityId1 > 0);
 
         // Delete user-priv by user id
-        int deleteCnt = userPrivRepository.deleteXXXX(userEntity.getId());
+        int deleteCnt = userPrivRepository.deleteByUserId(userEntity.getId());
         assert (deleteCnt == 1);
 
         // Re-insert and see if it work (need to use new instance as userPrivEntity is treated as deleted)

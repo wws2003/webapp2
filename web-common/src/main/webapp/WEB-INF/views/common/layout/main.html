@@ -15,14 +15,16 @@ Reusable main layout
                 <!-- Logout button area -->
                 <div>
                     <form action="#" th:action="@{/admin/logout}" method="post">
-                        <button type="submit" class="btn btn-warning">Logout</button>
+                        <button type="submit" class="btn">Logout</button>
                     </form>
                 </div>
             </aside>
             <section class="col-xs-11">
-                <!-- Breadcrumb -->
+                <!-- Breadcrumb currently not used -->
+                <!--
                 <ol id="olBreadcrumb" class="breadcrumb">
                 </ol>
+                -->
                 <!-- Main content -->
                 <div id="dvMainContent" layout:fragment="frgContent">
                 </div>
