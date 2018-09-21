@@ -27,7 +27,7 @@ function CommonPagingFragmentRender() {
     /**
      * Options for record number per page
      */
-    this._recordCountOptions = [20, 50, 100];
+    this._recordCountOptions = [3, 20, 50, 100];
     /**
      * Records-control area elements
      */
@@ -37,14 +37,18 @@ function CommonPagingFragmentRender() {
      */
     this._tableClasses = '';
     /**
-     * Function to request page
+     * Page request subject
      */
-    this._pageRequestFunc = null;
+    this.pageRequestSubject = null;
     // Streamed observable for page request
     /**
      * Subscription for page request
      */
     this._pageRequestSubscription = null;
+    /**
+     * Subscription for page data response
+     */
+    this._pageResponseSubscription = null;
 }
 
 /**
@@ -98,17 +102,12 @@ CommonPagingFragmentRender.prototype.rowGenFunc = function (rowGenFunc) {
 };
 
 /**
- * Set function to request page data (after changing page number of records number per page)
- * @param {type} pageRequestFunc
+ * Set page request subject
+ * @param {Subject} pageRequestSubject
  * @returns {CommonPagingFragmentRender.prototype}
  */
-CommonPagingFragmentRender.prototype.pageRequestFunc = function (pageRequestFunc) {
-    this._pageRequestFunc = pageRequestFunc;
-    return this;
-};
-
-CommonPagingFragmentRender.prototype.pageRequestFuncAsFetchFromUrl = function (fetchUrl) {
-    // TODO Implement
+CommonPagingFragmentRender.prototype.pageRequestSubject = function (pageRequestSubject) {
+    this._pageRequestSubject = pageRequestSubject;
     return this;
 };
 
@@ -124,8 +123,9 @@ CommonPagingFragmentRender.prototype.renderRecordCtrlArea = function (frgPagingE
     recordsCtrlArea.html(this._recordCtrlAreaEles.reduce((acc, cur) => acc + cur, ''));
 };
 
+/*---------------------------------------Methods to effectively render------------------------------------------*/
 /**
- * Actual do the rendering
+ * Actual do the rendering for page
  * @param {JQuery} frgPagingEle
  * @param {Map} page
  * @returns {CommonPagingFragmentRender.prototype}
@@ -134,13 +134,11 @@ CommonPagingFragmentRender.prototype.renderPage = function (frgPagingEle, page) 
     // Initialize
     let self = this;
     let navBarEle = frgPagingEle.find('#dvPagingNavBar');
+    let lblPagingPageCount = frgPagingEle.find('#lblPagingPageCount');
     let tableEle = frgPagingEle.find('#tblPagingContent');
 
-    // Unsubscribe observer
-    this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
-
     // Nav bar
-    $('#lblPagingPageCount').text(page.totalPages); // From zero-based to one-based
+    lblPagingPageCount.text(page.totalPages); // From zero-based to one-based
     let txtPageNo = frgPagingEle.find('#txtPagingCurrent');
     txtPageNo.val(page.number + 1);
     this.setEnableState(navBarEle.find('#btnPagingFirst'), !(page.first));
@@ -168,13 +166,47 @@ CommonPagingFragmentRender.prototype.renderPage = function (frgPagingEle, page) 
             .subscribe(trs => tableEle.find('tbody').html(trs));
 
     // Events
+    // Unsubscribe observer
+    this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
     this._pageRequestSubscription = Rx.Observable
             .fromEvent(recordCountSelect, 'change')
             .merge(Rx.Observable.fromEvent(txtPageNo, 'blur'))
             .map(e => [txtPageNo.val(), recordCountSelect.val()])
             .distinctUntilChanged((pair1, pair2) => (pair1[0] === pair2[0] && pair1[1] === pair2[1])) // Do not fire event without any change
-            .subscribe(this.createObserverForPageRequest());
+            .subscribe(this._pageRequestSubject);
 
+    this._pageResponseSubscription && this._pageResponseSubscription.unsubscribe();
+    this._pageResponseSubscription = this._pageRequestSubject.subscribe(this.createObserverForPageResponse(frgPagingEle));
+
+    return true;
+};
+
+/**
+ * Clear data in paging fragment area
+ * @param {JQuery} frgPagingEle
+ * @returns {undefined}
+ */
+CommonPagingFragmentRender.prototype.renderEmpty = function (frgPagingEle) {
+    // Nav bar
+    let navBarEle = frgPagingEle.find('#dvPagingNavBar');
+    navBarEle.find('input').eleDisable();
+    navBarEle.find('button').eleDisable();
+
+    // Content table body
+    let tableEle = frgPagingEle.find('#tblPagingContent');
+    tableEle.find('tbody').html('');
+};
+
+/**
+ * Actual do the rendering for error message
+ * @param {JQuery} frgPagingEle
+ * @param {String} errorMessageHTML
+ * @returns {undefined}
+ */
+CommonPagingFragmentRender.prototype.renderError = function (frgPagingEle, errorMessageHTML) {
+    // TODO Any disable process ?
+    // Show messages
+    frgPagingEle.find('#dvPagingMessage').html(errorMessageHTML);
     return true;
 };
 
@@ -182,9 +214,10 @@ CommonPagingFragmentRender.prototype.renderPage = function (frgPagingEle, page) 
 
 /**
  * Create observer object for page request action
+ * @param {JQuery} frgPagingEle
  * @returns {Observer}
  */
-CommonPagingFragmentRender.prototype.createObserverForPageRequest = function () {
+CommonPagingFragmentRender.prototype.createObserverForPageResponse = function (frgPagingEle) {
     // TODO Implement
     return {
         next: e => {
