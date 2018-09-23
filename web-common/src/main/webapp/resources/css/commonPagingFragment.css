@@ -11,6 +11,10 @@ Default CSS classes for common paging fragment
     border: 1px solid lightgray
 }
 
+#dvPagingMessage {
+    color: red
+}
+
 #dvRecordCtrlArea {
     height: 34px
 }

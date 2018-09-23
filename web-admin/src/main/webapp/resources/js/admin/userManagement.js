@@ -92,7 +92,9 @@ var UserRecordsPageFragment = {
      */
     setSubject: function (reloadSubject, addSubject, updateSubject, deleteSubject, forceLogoutSubject) {
         // Reload
-        Rx.Observable.fromEvent(this._btnReload, 'click').subscribe(reloadSubject);
+        this.subscribeActionForPaging(Rx.Observable.fromEvent(this._btnReload, 'click'), reloadSubject);
+        // Paging action (same subject as reload)
+        this._pageRender.pageRequestSubject(reloadSubject);
 
         // Add
         Rx.Observable.fromEvent(this._btnAdd, 'click')
@@ -118,8 +120,7 @@ var UserRecordsPageFragment = {
      * @returns {undefined}
      */
     renderUsersPage: function (page) {
-        // Render to view
-        this._pageRender.renderPage(this._userRecordsPagingFragment, page);
+        // Render to view is done automatically by _pageRender, so do nothing here
         // Events on the page
         // TODO Unsubsribe old events ?
         Rx.Observable.fromEvent(this._userRecordsPagingFragment.find('button.mo_btnUpdate'), 'click')
@@ -193,6 +194,25 @@ var UserRecordsPageFragment = {
                 .td().withClass('col-xs-1').innerTagIf(() => isUserRole, 'button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
                 .then()
                 .build();
+    },
+
+    /**
+     * Subscribe paging action
+     * @param {Observable} actionObservable
+     * @param {Subject} pagingSubject
+     * @returns {undefined}
+     */
+    subscribeActionForPaging: function (actionObservable, pagingSubject) {
+        let userRecordsPagingFragment = this._userRecordsPagingFragment;
+        actionObservable
+                .map(() => {
+                    // Providing paging subject with page request form
+                    return {
+                        pageNumber: parseInt(userRecordsPagingFragment.find('#txtPagingCurrent').val()),
+                        recordCountPerPage: parseInt(userRecordsPagingFragment.find('#sltPagingRecordPerPage').val())
+                    };
+                })
+                .subscribe(pagingSubject);
     },
 
     /**
@@ -393,16 +413,23 @@ var UserActionSubjects = {
      */
     setupSubjects: function (userMgtWebService, serverResponseSubjects) {
         // Subscribe subjects to actions. Subjects now act as observable
-        // Index. TODO Move indexForm to view
-        this._indexSubject
+        // Index.
+        // TODO Move indexForm to view
+        // TODO Eliminate subject instace change
+        this._indexSubject = this._indexSubject
                 .map(e => {
-                    return {
-                        pageNumber: 1,
-                        recordCountPerPage: 20
-                    };
+                    // No param provided, consider as load page 1 of selected record count per page
+                    // TODO: Set selected record count per page properly
+                    if (!e) {
+                        return {
+                            pageNumber: 1,
+                            recordCountPerPage: 3
+                        };
+                    }
+                    return e;
                 })
-                .switchMap(indexForm => userMgtWebService.getIndexAJAXObservable(indexForm))
-                .subscribe(serverResponseSubjects.getIndexResponseObserver());
+                .switchMap(indexForm => userMgtWebService.getIndexAJAXObservable(indexForm));
+        this._indexSubject.subscribe(serverResponseSubjects.getIndexResponseObserver());
 
         // Get details
         this._getUserDetailsSubject
@@ -632,7 +659,6 @@ function initViews() {
 
     // Dialog
     UserDetailDlg.init($('#mdlUserAddUpdate'));
-
 }
 
 /**

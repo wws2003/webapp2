@@ -52,7 +52,7 @@ main>aside {
 }
 
 main>aside button {
-    border: 1px solid gray
+    border: 1px solid gray !important
 }
 
 main>section:first-of-type {

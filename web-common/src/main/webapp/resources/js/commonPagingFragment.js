@@ -39,7 +39,7 @@ function CommonPagingFragmentRender() {
     /**
      * Page request subject
      */
-    this.pageRequestSubject = null;
+    this._pageRequestSubject = null;
     // Streamed observable for page request
     /**
      * Subscription for page request
@@ -166,17 +166,7 @@ CommonPagingFragmentRender.prototype.renderPage = function (frgPagingEle, page) 
             .subscribe(trs => tableEle.find('tbody').html(trs));
 
     // Events
-    // Unsubscribe observer
-    this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
-    this._pageRequestSubscription = Rx.Observable
-            .fromEvent(recordCountSelect, 'change')
-            .merge(Rx.Observable.fromEvent(txtPageNo, 'blur'))
-            .map(e => [txtPageNo.val(), recordCountSelect.val()])
-            .distinctUntilChanged((pair1, pair2) => (pair1[0] === pair2[0] && pair1[1] === pair2[1])) // Do not fire event without any change
-            .subscribe(this._pageRequestSubject);
-
-    this._pageResponseSubscription && this._pageResponseSubscription.unsubscribe();
-    this._pageResponseSubscription = this._pageRequestSubject.subscribe(this.createObserverForPageResponse(frgPagingEle));
+    this.setupPagingEvents(frgPagingEle, page);
 
     return true;
 };
@@ -213,18 +203,87 @@ CommonPagingFragmentRender.prototype.renderError = function (frgPagingEle, error
 /*---------------------------------------Private methods------------------------------------------*/
 
 /**
+ * Setup paging events (next/prev, first/last page, change records count per page, change page number)
+ * @param {JQuery} frgPagingEle
+ * @param {Map} page
+ * @returns {undefined}
+ */
+CommonPagingFragmentRender.prototype.setupPagingEvents = function (frgPagingEle, page) {
+    // Initialize
+    let navBarEle = frgPagingEle.find('#dvPagingNavBar');
+    let txtPageNo = frgPagingEle.find('#txtPagingCurrent');
+    let recordCountSelect = frgPagingEle.find('#sltPagingRecordPerPage');
+    let btnFirstPage = navBarEle.find('#btnPagingFirst');
+    let btnPrevPage = navBarEle.find('#btnPagingPrev');
+    let btnNextPage = navBarEle.find('#btnPagingNext');
+    let btnLastPage = navBarEle.find('#btnPagingLast');
+    let currentPage = page.currentPage;
+    let lastPage = page.pageNumber;
+
+    // Go to page
+    let pageTransitionObservable = Rx.Observable.merge(
+            Rx.Observable.fromEvent(btnFirstPage, 'click').map(e => 1),
+            Rx.Observable.fromEvent(btnPrevPage, 'click').map(e => currentPage - 1),
+            Rx.Observable.fromEvent(btnNextPage, 'click').map(e => currentPage + 1),
+            Rx.Observable.fromEvent(btnLastPage, 'click').map(e => lastPage),
+            )
+            .map(targetPageNo => {
+                return {
+                    pageNumber: targetPageNo,
+                    recordCountPerPage: parseInt(recordCountSelect.val())
+                };
+            });
+
+    // {PageNo, records count per page}
+    let pagingInfoChangeObservable = Rx.Observable
+            .fromEvent(recordCountSelect, 'change')
+            .merge(Rx.Observable.fromEvent(txtPageNo, 'blur'))
+            .map(e => [txtPageNo.val(), recordCountSelect.val()])
+            .distinctUntilChanged((pair1, pair2) => (pair1[0] === pair2[0] && pair1[1] === pair2[1])) // Do not fire event without any change
+            .map(pair => {
+                return {
+                    pageNumber: parseInt(pair[0]),
+                    recordCountPerPage: parseInt(pair[1])
+                };
+            });
+
+    // Unsubscribe observer
+    this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
+    this._pageRequestSubscription = Rx.Observable
+            .merge(pageTransitionObservable, pagingInfoChangeObservable)
+            .subscribe(this._pageRequestSubject);
+
+    // Observer for response inside common paging fragment area
+    this._pageResponseSubscription && this._pageResponseSubscription.unsubscribe();
+    this._pageResponseSubscription = this._pageRequestSubject.subscribe(this.createObserverForPageResponse(frgPagingEle));
+};
+
+/**
  * Create observer object for page request action
  * @param {JQuery} frgPagingEle
  * @returns {Observer}
  */
 CommonPagingFragmentRender.prototype.createObserverForPageResponse = function (frgPagingEle) {
-    // TODO Implement
+    let renderFunc = CommonPagingFragmentRender.prototype.renderPage.bind(this, frgPagingEle);
+    let emptyFunc = CommonPagingFragmentRender.prototype.renderEmpty.bind(this, frgPagingEle);
+    let errorFunc = CommonPagingFragmentRender.prototype.renderError.bind(this, frgPagingEle);
     return {
-        next: e => {
-            console.log(e);
+        next: response => {
+            let isSuccess = response.success;
+            if (isSuccess) {
+                let page = response.resultObject;
+                renderFunc(page);
+            } else {
+                emptyFunc();
+                let erroMsg = response.errorMessages.reduce((acc, cur) => acc + cur + '<br>', '');
+                errorFunc(erroMsg);
+            }
         },
         error: err => {
+            // TODO Handle errors properly
             console.log(err);
+            emptyFunc();
+            errorFunc('Can not receive response properly');
         },
         complete: () => {
 
