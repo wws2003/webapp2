@@ -130,11 +130,11 @@ CommonPagingFragmentRender.prototype.pageRequestObservable = function (observabl
 /*---------------------------------------Methods to effectively render. Ideally outside instance should only care these methods------------------------------------------*/
 
 /**
- * Apply this instance attributes, properties into specified area
+ * Apply this instance attributes, properties into records control area
  * @param {JQuery} frgPagingEle
  * @returns {undefined}
  */
-CommonPagingFragmentRender.prototype.build = function (frgPagingEle) {
+CommonPagingFragmentRender.prototype.buildRecordsCtrlArea = function (frgPagingEle) {
     // Default records count per page options
     let recordCountSelect = frgPagingEle.find('#sltPagingRecordPerPage');
     Rx.Observable.from(this._recordCountOptions)
@@ -146,7 +146,14 @@ CommonPagingFragmentRender.prototype.build = function (frgPagingEle) {
     // Records control area
     let recordsCtrlArea = frgPagingEle.find('#dvRecordCtrlArea');
     recordsCtrlArea.html(this._recordCtrlAreaEles.reduce((acc, cur) => acc + cur, ''));
+};
 
+/**
+ * Apply this instance attributes, properties into specified area
+ * @param {JQuery} frgPagingEle
+ * @returns {undefined}
+ */
+CommonPagingFragmentRender.prototype.applyPageRequestSubject = function (frgPagingEle) {
     // Page request subject
     // Observer for response inside common paging fragment area
     this._pageResponseSubscription && this._pageResponseSubscription.unsubscribe();
@@ -203,8 +210,8 @@ CommonPagingFragmentRender.prototype.renderPage = function (frgPagingEle, page) 
     let txtPageNo = frgPagingEle.find('#txtPagingCurrent');
     txtPageNo.val(page.number + 1);
     this.setEnableState(navBarEle.find('#btnPagingFirst'), !(page.first));
-    this.setEnableState(navBarEle.find('#btnPagingPrev'), (page.hasPrevious));
-    this.setEnableState(navBarEle.find('#btnPagingNext'), (page.hasNext));
+    this.setEnableState(navBarEle.find('#btnPagingPrev'), (page.number > 0));
+    this.setEnableState(navBarEle.find('#btnPagingNext'), (page.number < page.totalPages - 1));
     this.setEnableState(navBarEle.find('#btnPagingLast'), !(page.last));
 
     // Set table styling classes
@@ -240,8 +247,8 @@ CommonPagingFragmentRender.prototype.setupPagingEvents = function (frgPagingEle,
     let btnPrevPage = navBarEle.find('#btnPagingPrev');
     let btnNextPage = navBarEle.find('#btnPagingNext');
     let btnLastPage = navBarEle.find('#btnPagingLast');
-    let currentPage = page.currentPage;
-    let lastPage = page.pageNumber;
+    let currentPage = page.number + 1; // 1-based
+    let lastPage = page.totalPages; // 1-based
 
     // Go to page
     let pageTransitionObservable = Rx.Observable.merge(

@@ -67,7 +67,10 @@ var UserRecordsPageFragment = {
                 .headerGenFunc(UserRecordsPageFragment.userTblHeadGenFunc)
                 .rowGenFunc(UserRecordsPageFragment.userTblRowGenFunc);
 
-        // Assign view components
+        // Build records control area first
+        this._pageRender.buildRecordsCtrlArea(userRecordsPagingFragment);
+
+        // Assign view componentsbi
         this._userRecordsPagingFragment = userRecordsPagingFragment;
         this._btnReload = userRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_RELOAD.id);
         this._btnAdd = userRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_ADD.id);
@@ -106,7 +109,7 @@ var UserRecordsPageFragment = {
     },
 
     /**
-     * Set page request subject
+     * Set page request subject. TODO Better implementation
      * @param {Subject} pageRequestSubject
      * @returns {undefined}
      */
@@ -114,7 +117,7 @@ var UserRecordsPageFragment = {
         // Paging action (same subject as reload)
         this._pageRender.pageRequestSubject(pageRequestSubject);
         // Build renderer onto current paging fragment area
-        this._pageRender.build(this._userRecordsPagingFragment);
+        this._pageRender.applyPageRequestSubject(this._userRecordsPagingFragment);
     },
 
     /**
