@@ -40,6 +40,10 @@ function CommonPagingFragmentRender() {
      * Page request subject
      */
     this._pageRequestSubject = null;
+    /**
+     * Page request observables
+     */
+    this._pageRequestObservables = [];
     // Streamed observable for page request
     /**
      * Subscription for page request
@@ -103,7 +107,7 @@ CommonPagingFragmentRender.prototype.rowGenFunc = function (rowGenFunc) {
 
 /**
  * Set page request subject
- * @param {Subject} pageRequestSubject
+ * @param {Subject} pageRequestSubject Should be a subject for data promise (such as result of switchMap())
  * @returns {CommonPagingFragmentRender.prototype}
  */
 CommonPagingFragmentRender.prototype.pageRequestSubject = function (pageRequestSubject) {
@@ -112,65 +116,46 @@ CommonPagingFragmentRender.prototype.pageRequestSubject = function (pageRequestS
 };
 
 /**
- * Show elements in records control area
+ * Add observable for reload subject (must be called after pageRequestSubject?)
+ * @param {Observable} observable
+ * @returns {undefined}
+ */
+CommonPagingFragmentRender.prototype.pageRequestObservable = function (observable) {
+    // For outside observables, currently do not unsubscribe
+    this._pageRequestObservables.push(observable);
+    observable.subscribe(this._pageRequestSubject);
+    return this;
+};
+
+/*---------------------------------------Methods to effectively render. Ideally outside instance should only care these methods------------------------------------------*/
+
+/**
+ * Apply this instance attributes, properties into specified area
  * @param {JQuery} frgPagingEle
  * @returns {undefined}
  */
-CommonPagingFragmentRender.prototype.renderRecordCtrlArea = function (frgPagingEle) {
-    let recordsCtrlArea = frgPagingEle.find('#dvRecordCtrlArea');
-
-    // Records control area
-    recordsCtrlArea.html(this._recordCtrlAreaEles.reduce((acc, cur) => acc + cur, ''));
-};
-
-/*---------------------------------------Methods to effectively render------------------------------------------*/
-/**
- * Actual do the rendering for page
- * @param {JQuery} frgPagingEle
- * @param {Map} page
- * @returns {CommonPagingFragmentRender.prototype}
- */
-CommonPagingFragmentRender.prototype.renderPage = function (frgPagingEle, page) {
-    // Initialize
-    let self = this;
-    let navBarEle = frgPagingEle.find('#dvPagingNavBar');
-    let lblPagingPageCount = frgPagingEle.find('#lblPagingPageCount');
-    let tableEle = frgPagingEle.find('#tblPagingContent');
-
-    // Nav bar
-    lblPagingPageCount.text(page.totalPages); // From zero-based to one-based
-    let txtPageNo = frgPagingEle.find('#txtPagingCurrent');
-    txtPageNo.val(page.number + 1);
-    this.setEnableState(navBarEle.find('#btnPagingFirst'), !(page.first));
-    this.setEnableState(navBarEle.find('#btnPagingPrev'), (page.hasPrevious));
-    this.setEnableState(navBarEle.find('#btnPagingNext'), (page.hasNext));
-    this.setEnableState(navBarEle.find('#btnPagingLast'), !(page.last));
-
-    // Record count options
+CommonPagingFragmentRender.prototype.build = function (frgPagingEle) {
+    // Default records count per page options
     let recordCountSelect = frgPagingEle.find('#sltPagingRecordPerPage');
     Rx.Observable.from(this._recordCountOptions)
             .map(rec => '<option val=' + rec + '>' + rec + '</option>')
             .scan((accOpts, opt) => accOpts + opt, '')
+            .defaultIfEmpty('')
             .subscribe(accOpts => recordCountSelect.html(accOpts));
 
-    // Set table styling classes
-    tableEle.addClass(this._tableClasses);
+    // Records control area
+    let recordsCtrlArea = frgPagingEle.find('#dvRecordCtrlArea');
+    recordsCtrlArea.html(this._recordCtrlAreaEles.reduce((acc, cur) => acc + cur, ''));
 
-    // Content table header
-    tableEle.find('thead').html(this._headerGenFunc(page));
+    // Page request subject
+    // Observer for response inside common paging fragment area
+    this._pageResponseSubscription && this._pageResponseSubscription.unsubscribe();
+    this._pageResponseSubscription = this._pageRequestSubject.subscribe(this.createObserverForPageResponse(frgPagingEle));
 
-    // Content table body
-    Rx.Observable.from(page.content)
-            .map(rec => self._rowGenFunc(rec))
-            .scan((accTrs, tr) => accTrs + tr, '')
-            .subscribe(trs => tableEle.find('tbody').html(trs));
-
-    // Events
-    this.setupPagingEvents(frgPagingEle, page);
-
-    return true;
+    return this;
 };
 
+/*---------------------------------------Private methods------------------------------------------*/
 /**
  * Clear data in paging fragment area
  * @param {JQuery} frgPagingEle
@@ -200,7 +185,45 @@ CommonPagingFragmentRender.prototype.renderError = function (frgPagingEle, error
     return true;
 };
 
-/*---------------------------------------Private methods------------------------------------------*/
+/**
+ * Actual do the rendering for page
+ * @param {JQuery} frgPagingEle
+ * @param {Map} page
+ * @returns {CommonPagingFragmentRender.prototype}
+ */
+CommonPagingFragmentRender.prototype.renderPage = function (frgPagingEle, page) {
+    // Initialize
+    let self = this;
+    let navBarEle = frgPagingEle.find('#dvPagingNavBar');
+    let lblPagingPageCount = frgPagingEle.find('#lblPagingPageCount');
+    let tableEle = frgPagingEle.find('#tblPagingContent');
+
+    // Nav bar
+    lblPagingPageCount.text(page.totalPages); // From zero-based to one-based
+    let txtPageNo = frgPagingEle.find('#txtPagingCurrent');
+    txtPageNo.val(page.number + 1);
+    this.setEnableState(navBarEle.find('#btnPagingFirst'), !(page.first));
+    this.setEnableState(navBarEle.find('#btnPagingPrev'), (page.hasPrevious));
+    this.setEnableState(navBarEle.find('#btnPagingNext'), (page.hasNext));
+    this.setEnableState(navBarEle.find('#btnPagingLast'), !(page.last));
+
+    // Set table styling classes
+    tableEle.addClass(this._tableClasses);
+
+    // Content table header
+    tableEle.find('thead').html(this._headerGenFunc(page));
+
+    // Content table body
+    Rx.Observable.from(page.content)
+            .map(rec => self._rowGenFunc(rec))
+            .scan((accTrs, tr) => accTrs + tr, '')
+            .subscribe(trs => tableEle.find('tbody').html(trs));
+
+    // Events
+    this.setupPagingEvents(frgPagingEle, page);
+
+    return true;
+};
 
 /**
  * Setup paging events (next/prev, first/last page, change records count per page, change page number)
@@ -252,10 +275,6 @@ CommonPagingFragmentRender.prototype.setupPagingEvents = function (frgPagingEle,
     this._pageRequestSubscription = Rx.Observable
             .merge(pageTransitionObservable, pagingInfoChangeObservable)
             .subscribe(this._pageRequestSubject);
-
-    // Observer for response inside common paging fragment area
-    this._pageResponseSubscription && this._pageResponseSubscription.unsubscribe();
-    this._pageResponseSubscription = this._pageRequestSubject.subscribe(this.createObserverForPageResponse(frgPagingEle));
 };
 
 /**

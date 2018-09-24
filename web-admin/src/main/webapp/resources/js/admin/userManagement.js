@@ -8,7 +8,7 @@
 /* global MendelApp, Tagger, MendelDialog  */
 
 var Rx = Rx || {};
-
+/*----------------------------------------------------Constansts----------------------------------------------------*/
 /**
  * Based urls
  * @type Map
@@ -45,7 +45,7 @@ let RecordsCtrlArea = {
     }
 };
 
-/*--------------------------Views--------------------------*/
+/*----------------------------------------------------Views----------------------------------------------------*/
 /**
  * Instance to handler UI stuffs (act basically as a view)
  * @type type
@@ -57,7 +57,7 @@ var UserRecordsPageFragment = {
      * @returns {undefined}
      */
     init: function (userRecordsPagingFragment) {
-        // Create view builders
+        // Create view builders onto paging fragment
         this._pageRender = (new CommonPagingFragmentRender())
                 .tableClass('lo_fixed_header_table')
                 .withRecordsCtrlElement(this.createRecordCtrlButtonHtml(RecordsCtrlArea.BTN_RELOAD))
@@ -66,9 +66,6 @@ var UserRecordsPageFragment = {
                 .withRecordsCtrlElement(this.createRecordCtrlButtonHtml(RecordsCtrlArea.BTN_FORECELOGOUT))
                 .headerGenFunc(UserRecordsPageFragment.userTblHeadGenFunc)
                 .rowGenFunc(UserRecordsPageFragment.userTblRowGenFunc);
-
-        // Render record control area
-        this._pageRender.renderRecordCtrlArea(userRecordsPagingFragment);
 
         // Assign view components
         this._userRecordsPagingFragment = userRecordsPagingFragment;
@@ -83,19 +80,13 @@ var UserRecordsPageFragment = {
 
     /**
      * Set subjects for user-interactions
-     * @param {Subject} reloadSubject
      * @param {Subject} addSubject
      * @param {Subject} updateSubject
      * @param {Subject} deleteSubject
      * @param {Subject} forceLogoutSubject
      * @returns {undefined}
      */
-    setSubject: function (reloadSubject, addSubject, updateSubject, deleteSubject, forceLogoutSubject) {
-        // Reload
-        this.subscribeActionForPaging(Rx.Observable.fromEvent(this._btnReload, 'click'), reloadSubject);
-        // Paging action (same subject as reload)
-        this._pageRender.pageRequestSubject(reloadSubject);
-
+    setUserActionSubjects: function (addSubject, updateSubject, deleteSubject, forceLogoutSubject) {
         // Add
         Rx.Observable.fromEvent(this._btnAdd, 'click')
                 .subscribe(addSubject);
@@ -112,6 +103,63 @@ var UserRecordsPageFragment = {
 
         // Update (for later use)
         this._userUpdateSubject = updateSubject;
+    },
+
+    /**
+     * Set page request subject
+     * @param {Subject} pageRequestSubject
+     * @returns {undefined}
+     */
+    setPageRequestSubject: function (pageRequestSubject) {
+        // Paging action (same subject as reload)
+        this._pageRender.pageRequestSubject(pageRequestSubject);
+        // Build renderer onto current paging fragment area
+        this._pageRender.build(this._userRecordsPagingFragment);
+    },
+
+    /**
+     * Setup observables for page request
+     * @param {Observable} screenIntializedObservable
+     * @param {Observable} addSuccessObservable
+     * @param {Observable} deleteSuccessObservable
+     * @param {Observable} forceLogoutSuccessObservable
+     * @returns {undefined}
+     */
+    setObservablesForPageRequest: function (screenIntializedObservable, addSuccessObservable, deleteSuccessObservable, forceLogoutSuccessObservable) {
+        // Apart from add and delete success, clicking on button Reload also included
+        let userRecordsPagingFragment = this._userRecordsPagingFragment;
+        let getRecordCountPerPageFunc = () => userRecordsPagingFragment.find('#sltPagingRecordPerPage').val();
+
+        this._pageRender
+                .pageRequestObservable(Rx.Observable.fromEvent(this._btnReload, 'click').map(() => {
+                    // Providing paging subject with page request form
+                    return {
+                        pageNumber: parseInt(userRecordsPagingFragment.find('#txtPagingCurrent').val()),
+                        recordCountPerPage: getRecordCountPerPageFunc()
+                    };
+                }))
+                .pageRequestObservable(screenIntializedObservable.map(() => {
+                    // Providing paging subject with page request form (starting from page 1)
+                    return {
+                        pageNumber: 1,
+                        recordCountPerPage: getRecordCountPerPageFunc()
+                    };
+                }))
+                .pageRequestObservable(addSuccessObservable.map(() => {
+                    // Providing paging subject with page request form (starting from page 1)
+                    return {
+                        pageNumber: 1,
+                        recordCountPerPage: getRecordCountPerPageFunc()
+                    };
+                }))
+                .pageRequestObservable(deleteSuccessObservable.map(() => {
+                    // Providing paging subject with page request form (starting from page 1)
+                    return {
+                        pageNumber: 1,
+                        recordCountPerPage: getRecordCountPerPageFunc()
+                    };
+                }));
+        // TODO Handle forceLogoutSuccessObservable
     },
 
     /**
@@ -187,32 +235,13 @@ var UserRecordsPageFragment = {
                 .then()
                 .td(userRecord.loggingIn).withClass('col-xs-2')
                 .then()
-                .td().withClass('col-xs-2').innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
+                .td().withClasses('col-xs-2 mo_checkbox_wrapper').innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
                 .then()
-                .td().withClass('col-xs-1').innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
+                .td().withClasses('col-xs-1 mo_checkbox_wrapper').innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
                 .then()
                 .td().withClass('col-xs-1').innerTagIf(() => isUserRole, 'button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
                 .then()
                 .build();
-    },
-
-    /**
-     * Subscribe paging action
-     * @param {Observable} actionObservable
-     * @param {Subject} pagingSubject
-     * @returns {undefined}
-     */
-    subscribeActionForPaging: function (actionObservable, pagingSubject) {
-        let userRecordsPagingFragment = this._userRecordsPagingFragment;
-        actionObservable
-                .map(() => {
-                    // Providing paging subject with page request form
-                    return {
-                        pageNumber: parseInt(userRecordsPagingFragment.find('#txtPagingCurrent').val()),
-                        recordCountPerPage: parseInt(userRecordsPagingFragment.find('#sltPagingRecordPerPage').val())
-                    };
-                })
-                .subscribe(pagingSubject);
     },
 
     /**
@@ -389,7 +418,7 @@ var UserDetailDlg = {
     }
 };
 
-/*--------------------------Subjects--------------------------*/
+/*----------------------------------------------------Subjects----------------------------------------------------*/
 var UserActionSubjects = {
 
     /**
@@ -397,7 +426,6 @@ var UserActionSubjects = {
      */
     init: function () {
         // Subjects
-        this._indexSubject = new Rx.Subject();
         this._getUserDetailsSubject = new Rx.Subject();
         this._addUserSubject = new Rx.Subject();
         this._updateUserSubject = new Rx.Subject();
@@ -412,25 +440,6 @@ var UserActionSubjects = {
      * @returns {undefined}
      */
     setupSubjects: function (userMgtWebService, serverResponseSubjects) {
-        // Subscribe subjects to actions. Subjects now act as observable
-        // Index.
-        // TODO Move indexForm to view
-        // TODO Eliminate subject instace change
-        this._indexSubject = this._indexSubject
-                .map(e => {
-                    // No param provided, consider as load page 1 of selected record count per page
-                    // TODO: Set selected record count per page properly
-                    if (!e) {
-                        return {
-                            pageNumber: 1,
-                            recordCountPerPage: 3
-                        };
-                    }
-                    return e;
-                })
-                .switchMap(indexForm => userMgtWebService.getIndexAJAXObservable(indexForm));
-        this._indexSubject.subscribe(serverResponseSubjects.getIndexResponseObserver());
-
         // Get details
         this._getUserDetailsSubject
                 .switchMap(userId => userMgtWebService.getUserDetailsRetrieveAJAXObservable(userId))
@@ -456,6 +465,47 @@ var UserActionSubjects = {
 };
 
 /**
+ * Subject for page request
+ * @type Map
+ */
+var PageRequestSubject = {
+    /**
+     * Initialize subjects from user interacting events
+     */
+    init: function () {
+        // Subjects
+        this._indexSubject = new Rx.Subject();
+        this._pageRequestSubect = undefined;
+    },
+
+    /**
+     * Init by providing controller instance
+     * @param {Map} userMgtWebService
+     * @returns {undefined}
+     */
+    setupSubjects: function (userMgtWebService) {
+        this._pageRequestSubect = this._indexSubject.switchMap(indexForm => userMgtWebService.getIndexAJAXObservable(indexForm));
+    }
+};
+
+/**
+ * Observables for page request subject (i.e. firing page request for each value emitted)
+ * @type Map
+ */
+var PageRequestObservables = {
+    /**
+     * Initialize
+     * @returns {undefined}
+     */
+    init: function () {
+        this._pageRequestAfterScreenInitialized = new Rx.Subject();
+        this._pageRequestAfterAddSuccess = new Rx.Subject();
+        this._pageRequestAfterDeleteSuccess = new Rx.Subject();
+        this._pageRequestAfterForceLogoutSuccess = new Rx.Subject();
+    }
+};
+
+/**
  * Subjects for server response
  * @type Map
  */
@@ -464,13 +514,17 @@ var ServerResponseSubjects = {
      * Initialize by views and one user interaction subject (for index action)
      * @param {Map} userRecordsPageFragment
      * @param {Map} userDetailDlg
-     * @param {Subject} indexActionSubject
+     * @param {Subject} addSuccessSubject
+     * @param {Subject} deleteSuccessSubject
+     * @param {Subject} forceLogoutSuccessSubject
      * @returns {undefined}
      */
-    init: function (userRecordsPageFragment, userDetailDlg, indexActionSubject) {
+    init: function (userRecordsPageFragment, userDetailDlg, addSuccessSubject, deleteSuccessSubject, forceLogoutSuccessSubject) {
         this._userRecordsPageFragment = userRecordsPageFragment;
         this._userDetailDlg = userDetailDlg;
-        this._indexActionSubject = indexActionSubject;
+        this._addSuccessSubject = addSuccessSubject;
+        this._deleteSuccessSubject = deleteSuccessSubject;
+        this._forceLogoutSuccessSubject = forceLogoutSuccessSubject;
     },
 
     /**
@@ -515,14 +569,14 @@ var ServerResponseSubjects = {
      */
     getSaveUserResponseObserver: function () {
         // TODO Implement properly, handle messages and error
-        let indexSubject = this._indexActionSubject;
+        let addSuccessSubject = this._addSuccessSubject;
         let userDetailDlg = this._userDetailDlg;
         return  {
             next: (response) => {
                 userDetailDlg.hide();
                 if (response.success) {
                     // Show dialog after hide dialog, then reload
-                    MendelDialog.info('Message', response.successMessages[0], () => indexSubject.next());
+                    MendelDialog.info('Message', response.successMessages[0], () => addSuccessSubject.next());
                 } else {
                     // Show error message
                     MendelDialog.error('Message', response.errorMessages[0]);
@@ -537,13 +591,13 @@ var ServerResponseSubjects = {
      */
     getDeleteUserResponseObserver: function () {
         // TODO Implement properly, handle messages and error
-        let indexSubject = this._indexActionSubject;
+        let deleteSuccessSubject = this._deleteSuccessSubject;
         let userDetailDlg = this._userDetailDlg;
         return  {
             next: (response) => {
                 userDetailDlg.hide();
                 // Show dialog after hide dialog
-                MendelDialog.info('Message', response.successMessages[0], () => indexSubject.next());
+                MendelDialog.info('Message', response.successMessages[0], () => deleteSuccessSubject.next());
             }
         };
     },
@@ -561,7 +615,7 @@ var ServerResponseSubjects = {
     }
 };
 
-/*--------------------------Controller------------------------*/
+/*--------------------------------------------------Service------------------------------------------------*/
 /**
  * Instance to handle WEB requests
  * @type
@@ -641,7 +695,7 @@ var UserMgtWebService = {
     }
 };
 
-/*--------------------------Main actions------------------------*/
+/*--------------------------------------------------Main actions------------------------------------------------*/
 // Entry point
 $(document).ready(function () {
     initViews();
@@ -667,17 +721,34 @@ function initViews() {
  */
 function setupEvents() {
     // Initialize subjects
+    // Page request subject
+    PageRequestSubject.init();
+    PageRequestSubject.setupSubjects(UserMgtWebService);
+    // Page request observables
+    PageRequestObservables.init();
+    // Server response subjects
+    ServerResponseSubjects.init(UserRecordsPageFragment,
+            UserDetailDlg,
+            PageRequestObservables._pageRequestAfterAddSuccess,
+            PageRequestObservables._pageRequestAfterDeleteSuccess,
+            PageRequestObservables._pageRequestAfterForceLogoutSuccess);
+    // User action subjects
     UserActionSubjects.init();
-    ServerResponseSubjects.init(UserRecordsPageFragment, UserDetailDlg, UserActionSubjects._indexSubject);
     UserActionSubjects.setupSubjects(UserMgtWebService, ServerResponseSubjects);
 
     // Wire subjects to views
+    // User detail dialog
     UserDetailDlg.setSubject(UserActionSubjects._updateUserSubject);
-    UserRecordsPageFragment.setSubject(UserActionSubjects._indexSubject,
-            UserActionSubjects._addUserSubject,
+    // Paging fragment
+    UserRecordsPageFragment.setUserActionSubjects(UserActionSubjects._addUserSubject,
             UserActionSubjects._getUserDetailsSubject,
             UserActionSubjects._deleteUsersSubject,
             UserActionSubjects._forceLogoutUsersSubject);
+    UserRecordsPageFragment.setPageRequestSubject(PageRequestSubject._pageRequestSubect);
+    UserRecordsPageFragment.setObservablesForPageRequest(PageRequestObservables._pageRequestAfterScreenInitialized,
+            PageRequestObservables._pageRequestAfterAddSuccess,
+            PageRequestObservables._pageRequestAfterDeleteSuccess,
+            PageRequestObservables._pageRequestAfterForceLogoutSuccess);
 }
 
 /**
@@ -686,5 +757,5 @@ function setupEvents() {
  */
 function loadInitialData() {
     // Here subject acts as an observer
-    UserActionSubjects._indexSubject.next();
+    PageRequestObservables._pageRequestAfterScreenInitialized.next();
 }

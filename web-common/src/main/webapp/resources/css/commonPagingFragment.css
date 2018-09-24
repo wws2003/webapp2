@@ -11,6 +11,10 @@ Default CSS classes for common paging fragment
     border: 1px solid lightgray
 }
 
+#dvPagingNavBar {
+    margin-bottom: 15px
+}
+
 #dvPagingMessage {
     color: red
 }
