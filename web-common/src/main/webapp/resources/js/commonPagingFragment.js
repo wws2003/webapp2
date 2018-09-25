@@ -3,6 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+/* global MendelDialog */
+
 var Rx = Rx || {};
 
 function CommonPagingFragmentRender() {
@@ -23,6 +25,15 @@ function CommonPagingFragmentRender() {
     this._rowGenFunc = function (record) {
         // Return empty row
         return '<tr><td></td></tr>';
+    };
+    /**
+     * Function to decorate rendered table
+     *
+     * @param {JQuery} tableEle
+     * @returns {undefined}
+     */
+    this._renderedTableDecorateFunc = function (tableEle) {
+        // Default do nothing
     };
     /**
      * Options for record number per page
@@ -104,6 +115,17 @@ CommonPagingFragmentRender.prototype.rowGenFunc = function (rowGenFunc) {
     this._rowGenFunc = rowGenFunc;
     return this;
 };
+
+/**
+ * Set function to decorate table after rendered
+ * @param {Function} renderedTableDecorateFunc
+ * @returns {CommonPagingFragmentRender.prototype}
+ */
+CommonPagingFragmentRender.prototype.renderedTableDecorateFunc = function (renderedTableDecorateFunc) {
+    this._renderedTableDecorateFunc = renderedTableDecorateFunc;
+    return this;
+};
+
 
 /**
  * Set page request subject
@@ -229,6 +251,9 @@ CommonPagingFragmentRender.prototype.renderPage = function (frgPagingEle, page) 
     // Events
     this.setupPagingEvents(frgPagingEle, page);
 
+    // Call decorate function on the records table
+    this._renderedTableDecorateFunc(tableEle);
+
     return true;
 };
 
@@ -264,7 +289,7 @@ CommonPagingFragmentRender.prototype.setupPagingEvents = function (frgPagingEle,
                 };
             });
 
-    // {PageNo, records count per page}
+    // {PageNo, records count per page} with error checker
     let pagingInfoChangeObservable = Rx.Observable
             .fromEvent(recordCountSelect, 'change')
             .merge(Rx.Observable.fromEvent(txtPageNo, 'blur'))
@@ -277,11 +302,24 @@ CommonPagingFragmentRender.prototype.setupPagingEvents = function (frgPagingEle,
                 };
             });
 
-    // Unsubscribe observer
-    this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
-    this._pageRequestSubscription = Rx.Observable
+    // Merged observable
+    let mergedPageRequestObservables = Rx.Observable
             .merge(pageTransitionObservable, pagingInfoChangeObservable)
-            .subscribe(this._pageRequestSubject);
+            .partition(pair => pair.pageNumber > 0 && pair.pageNumber <= lastPage);
+
+    // Normal page number
+    let pageRequestObservable = mergedPageRequestObservables[0];
+    // Error page number
+    let pageNumberErrorObservable = mergedPageRequestObservables[1];
+
+    // Re-subscribe to page request subject
+    this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
+    this._pageRequestSubscription = pageRequestObservable.subscribe(this._pageRequestSubject);
+
+    // Error
+    pageNumberErrorObservable.subscribe(e => {
+        MendelDialog.error('Mendel pager', 'Invalid page number');
+    });
 };
 
 /**

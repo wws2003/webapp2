@@ -65,12 +65,13 @@ var UserRecordsPageFragment = {
                 .withRecordsCtrlElement(this.createRecordCtrlButtonHtml(RecordsCtrlArea.BTN_DELETE))
                 .withRecordsCtrlElement(this.createRecordCtrlButtonHtml(RecordsCtrlArea.BTN_FORECELOGOUT))
                 .headerGenFunc(UserRecordsPageFragment.userTblHeadGenFunc)
-                .rowGenFunc(UserRecordsPageFragment.userTblRowGenFunc);
+                .rowGenFunc(UserRecordsPageFragment.userTblRowGenFunc)
+                .renderedTableDecorateFunc(UserRecordsPageFragment.userTblDecorateFunc.bind(this));
 
         // Build records control area first
         this._pageRender.buildRecordsCtrlArea(userRecordsPagingFragment);
 
-        // Assign view componentsbi
+        // Assign view components
         this._userRecordsPagingFragment = userRecordsPagingFragment;
         this._btnReload = userRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_RELOAD.id);
         this._btnAdd = userRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_ADD.id);
@@ -165,21 +166,6 @@ var UserRecordsPageFragment = {
         // TODO Handle forceLogoutSuccessObservable
     },
 
-    /**
-     * Render page
-     * @param {Map} page
-     * @returns {undefined}
-     */
-    renderUsersPage: function (page) {
-        // Render to view is done automatically by _pageRender, so do nothing here
-        // Events on the page
-        // TODO Unsubsribe old events ?
-        Rx.Observable.fromEvent(this._userRecordsPagingFragment.find('button.mo_btnUpdate'), 'click')
-                .map(e => $(e.target).attr('id').split('_')[1])
-                .map(idStr => parseInt(idStr))
-                .subscribe(this._userUpdateSubject);
-    },
-
     renderErrors: function (errorMessages) {
         // TODO Implement
     },
@@ -245,6 +231,21 @@ var UserRecordsPageFragment = {
                 .td().withClass('col-xs-1').innerTagIf(() => isUserRole, 'button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
                 .then()
                 .build();
+    },
+
+    /**
+     * Function to decorate rendered user table, here is to set events for button update
+     * @param {JQuery} tableEle
+     * @returns {undefined}
+     */
+    userTblDecorateFunc: function (tableEle) {
+        // Render to view is done automatically by _pageRender, so do nothing here
+        // Events on the page
+        // TODO Unsubsribe old events ?
+        Rx.Observable.fromEvent(tableEle.find('button.mo_btnUpdate'), 'click')
+                .map(e => $(e.target).attr('id').split('_')[1])
+                .map(idStr => parseInt(idStr))
+                .subscribe(this._userUpdateSubject);
     },
 
     /**
@@ -484,15 +485,6 @@ var PageRequestSubject = {
         this._userMgtWebService = userMgtWebService;
         // Subjects
         this._pageRequestSubject = (new Rx.Subject()).switchMap(indexForm => userMgtWebService.getIndexAJAXObservable(indexForm));
-    },
-
-    /**
-     * Init by providing controller instance
-     * @param {Map} serverResponseSubjects
-     * @returns {undefined}
-     */
-    setupObservers: function (serverResponseSubjects) {
-        this._pageRequestSubject.subscribe(serverResponseSubjects.getIndexResponseObserver());
     }
 };
 
@@ -533,18 +525,6 @@ var ServerResponseObservers = {
         this._addSuccessSubject = addSuccessSubject;
         this._deleteSuccessSubject = deleteSuccessSubject;
         this._forceLogoutSuccessSubject = forceLogoutSuccessSubject;
-    },
-
-    /**
-     * Get observer for index response
-     * @type Map
-     */
-    getIndexResponseObserver: function () {
-        let successResponseFunc = UserRecordsPageFragment.renderUsersPage.bind(this._userRecordsPageFragment);
-        return  {
-            // TODO Handle error
-            next: (response) => successResponseFunc(response.resultObject)
-        };
     },
 
     /**
@@ -756,7 +736,6 @@ function setupEvents() {
             PageRequestObservables._pageRequestAfterAddSuccess,
             PageRequestObservables._pageRequestAfterDeleteSuccess,
             PageRequestObservables._pageRequestAfterForceLogoutSuccess);
-    PageRequestSubject.setupObservers(ServerResponseObservers);
     UserActionSubjects.setupObservers(ServerResponseObservers);
 }
 
