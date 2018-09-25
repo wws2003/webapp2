@@ -296,7 +296,7 @@ var UserDetailDlg = {
      * @param {Subject} saveSubject
      * @returns {undefined}
      */
-    setSubject: function (saveSubject) {
+    setUserActionSubject: function (saveSubject) {
         this._saveSubject = saveSubject;
     },
 
@@ -426,8 +426,11 @@ var UserActionSubjects = {
 
     /**
      * Initialize subjects from user interacting events
+     * @param {Map} userMgtWebService
      */
-    init: function () {
+    init: function (userMgtWebService) {
+        // Service wiring
+        this._userMgtWebService = userMgtWebService;
         // Subjects
         this._getUserDetailsSubject = new Rx.Subject();
         this._addUserSubject = new Rx.Subject();
@@ -438,30 +441,30 @@ var UserActionSubjects = {
 
     /**
      * Init by providing controller instance
-     * @param {Map} userMgtWebService
-     * @param {Map} serverResponseSubjects
+     * @param {Map} serverResponseOberservers
      * @returns {undefined}
      */
-    setupSubjects: function (userMgtWebService, serverResponseSubjects) {
+    setupObservers: function (serverResponseOberservers) {
+        let userMgtWebService = this._userMgtWebService;
         // Get details
         this._getUserDetailsSubject
                 .switchMap(userId => userMgtWebService.getUserDetailsRetrieveAJAXObservable(userId))
-                .subscribe(serverResponseSubjects.getRetrieveUserDetailsResponseObserver());
+                .subscribe(serverResponseOberservers.getRetrieveUserDetailsResponseObserver());
 
         // Add
         this._addUserSubject
                 .switchMap(userId => userMgtWebService.getAllUserPrivsRetrieveAJAXObservable(userId))
-                .subscribe(serverResponseSubjects.getRetrieveAllUserPrivsResponseObserver());
+                .subscribe(serverResponseOberservers.getRetrieveAllUserPrivsResponseObserver());
 
         // Update
         this._updateUserSubject
                 .switchMap(saveForm => userMgtWebService.getSaveAJAXObservable(saveForm))
-                .subscribe(serverResponseSubjects.getSaveUserResponseObserver());
+                .subscribe(serverResponseOberservers.getSaveUserResponseObserver());
 
         // Delete
         this._deleteUsersSubject
                 .switchMap(userIdsToDelete => userMgtWebService.getDeleteAJAXObservable(userIdsToDelete))
-                .subscribe(serverResponseSubjects.getDeleteUserResponseObserver());
+                .subscribe(serverResponseOberservers.getDeleteUserResponseObserver());
 
         // Force logout TODO Implement
     }
@@ -474,20 +477,22 @@ var UserActionSubjects = {
 var PageRequestSubject = {
     /**
      * Initialize subjects from user interacting events
+     * @param {Map} userMgtWebService
      */
-    init: function () {
+    init: function (userMgtWebService) {
+        // Service wiring
+        this._userMgtWebService = userMgtWebService;
         // Subjects
-        this._indexSubject = new Rx.Subject();
-        this._pageRequestSubect = undefined;
+        this._pageRequestSubject = (new Rx.Subject()).switchMap(indexForm => userMgtWebService.getIndexAJAXObservable(indexForm));
     },
 
     /**
      * Init by providing controller instance
-     * @param {Map} userMgtWebService
+     * @param {Map} serverResponseSubjects
      * @returns {undefined}
      */
-    setupSubjects: function (userMgtWebService) {
-        this._pageRequestSubect = this._indexSubject.switchMap(indexForm => userMgtWebService.getIndexAJAXObservable(indexForm));
+    setupObservers: function (serverResponseSubjects) {
+        this._pageRequestSubject.subscribe(serverResponseSubjects.getIndexResponseObserver());
     }
 };
 
@@ -509,10 +514,10 @@ var PageRequestObservables = {
 };
 
 /**
- * Subjects for server response
+ * Observers for server response
  * @type Map
  */
-var ServerResponseSubjects = {
+var ServerResponseObservers = {
     /**
      * Initialize by views and one user interaction subject (for index action)
      * @param {Map} userRecordsPageFragment
@@ -724,34 +729,35 @@ function initViews() {
  */
 function setupEvents() {
     // Initialize subjects
-    // Page request subject
-    PageRequestSubject.init();
-    PageRequestSubject.setupSubjects(UserMgtWebService);
     // Page request observables
     PageRequestObservables.init();
+    // Page request subject
+    PageRequestSubject.init(UserMgtWebService);
     // Server response subjects
-    ServerResponseSubjects.init(UserRecordsPageFragment,
+    ServerResponseObservers.init(UserRecordsPageFragment,
             UserDetailDlg,
             PageRequestObservables._pageRequestAfterAddSuccess,
             PageRequestObservables._pageRequestAfterDeleteSuccess,
             PageRequestObservables._pageRequestAfterForceLogoutSuccess);
     // User action subjects
-    UserActionSubjects.init();
-    UserActionSubjects.setupSubjects(UserMgtWebService, ServerResponseSubjects);
+    UserActionSubjects.init(UserMgtWebService);
 
-    // Wire subjects to views
+    // Wire observable to observers
+    // User actions
     // User detail dialog
-    UserDetailDlg.setSubject(UserActionSubjects._updateUserSubject);
-    // Paging fragment
+    UserDetailDlg.setUserActionSubject(UserActionSubjects._updateUserSubject);
     UserRecordsPageFragment.setUserActionSubjects(UserActionSubjects._addUserSubject,
             UserActionSubjects._getUserDetailsSubject,
             UserActionSubjects._deleteUsersSubject,
             UserActionSubjects._forceLogoutUsersSubject);
-    UserRecordsPageFragment.setPageRequestSubject(PageRequestSubject._pageRequestSubect);
+    // Page-request related
+    UserRecordsPageFragment.setPageRequestSubject(PageRequestSubject._pageRequestSubject);
     UserRecordsPageFragment.setObservablesForPageRequest(PageRequestObservables._pageRequestAfterScreenInitialized,
             PageRequestObservables._pageRequestAfterAddSuccess,
             PageRequestObservables._pageRequestAfterDeleteSuccess,
             PageRequestObservables._pageRequestAfterForceLogoutSuccess);
+    PageRequestSubject.setupObservers(ServerResponseObservers);
+    UserActionSubjects.setupObservers(ServerResponseObservers);
 }
 
 /**
