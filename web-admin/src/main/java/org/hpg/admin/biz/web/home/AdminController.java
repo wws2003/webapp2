@@ -11,7 +11,7 @@ import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.constant.MendelTransactionalLevel;
-import org.hpg.common.model.message.LoginMessage;
+import org.hpg.common.model.message.RecentLoginStatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -76,11 +76,10 @@ public class AdminController {
      */
     @MessageMapping("/loginCheck")
     @SendTo("/topic/loginCheck")
-    public LoginMessage fff() throws Exception {
+    public RecentLoginStatusMessage fff() throws Exception {
         // This does not get called after being triggered
         Thread.sleep(1000); // simulated delay
-        LoginMessage msg = new LoginMessage();
-        msg.setMsg("Who are you ?");
+        RecentLoginStatusMessage msg = new RecentLoginStatusMessage();
         return msg;
     }
 

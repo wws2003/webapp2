@@ -166,6 +166,19 @@ MendelHTMLTag.prototype.withAttrIf = function (predicator, attrName, attrVal) {
 };
 
 /**
+ * Add new attribute if predicate true
+ * @param {Function} predicator
+ * @param {String} attrName
+ * @param {String} attrVal
+ * @param {String} alternativeAttrVal
+ * @returns {undefined}
+ */
+MendelHTMLTag.prototype.withAttrIfOrElse = function (predicator, attrName, attrVal, alternativeAttrVal) {
+    let val = predicator() ? attrVal : alternativeAttrVal;
+    return this.withAttr(attrName, val);
+};
+
+/**
  * Clear all values have been set
  * @returns {undefined}
  */

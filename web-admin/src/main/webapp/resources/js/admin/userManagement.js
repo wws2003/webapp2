@@ -15,12 +15,16 @@ var Rx = Rx || {};
  */
 let Urls = {
     USER_MGT_BASE_URL: MendelApp.BASE_URL + location.pathname,
+    USER_MGT_LOGIN_CHECK_TOPIC: '/' + MendelApp.APP_NAME + '/public/ws-ep',
     USER_MGT_INDEX_ACTION: 'index',
     USER_MGT_ADDUPDATE_ACTION: 'addUpdate',
     USER_MGT_GETDETAIL_ACTION: 'detail',
     USER_MGT_GETALLUSERPRIVS_ACTION: 'userPrivs',
-    USER_MGT_DELETE_ACTION: 'delete',
-    USER_MGT_LOGIN_CHECK_TOPIC: '/' + MendelApp.APP_NAME + '/public/ws-ep'
+    USER_MGT_DELETE_ACTION: 'delete'
+};
+
+let Topics = {
+    RECENT_LOGIN_STATUS: '/topic/loginCheck'
 };
 
 let RecordsCtrlArea = {
@@ -167,16 +171,34 @@ var UserRecordsPageFragment = {
         // TODO Handle forceLogoutSuccessObservable
     },
 
-    renderErrors: function (errorMessages) {
-        // TODO Implement
-    },
-
     /**
-     * Disable interactions
+     * Update login status of displaying user records
+     * @param {Array} recentLoggedInUserIds
+     * @param {Array} recentLoggedOutUserIds
      * @returns {undefined}
      */
-    disable: function () {
-        [this._btnReload, this._btnAdd, this._btnDelete, this._btnForceLogout].eleDisable();
+    renderRecentLoginStatus: function (recentLoggedInUserIds, recentLoggedOutUserIds) {
+        // TODO Implement properly
+        let userTrs = this._userRecordsPagingFragment.find('#tblPagingContent tbody tr');
+        Rx.Observable.merge(
+                Rx.Observable.from(userTrs).filter(tr => recentLoggedInUserIds.indexOf(parseInt(tr.attr('user_id'))) >= 0)
+                .map(tr => {
+                    return {
+                        tableEle: tr,
+                        loginStateHtml: 'True'
+                    };
+                }),
+                Rx.Observable.from(userTrs).filter(tr => recentLoggedOutUserIds.indexOf(parseInt(tr.attr('user_id'))) >= 0)
+                .map(tr => {
+                    return {
+                        tableEle: tr,
+                        loginStateHtml: 'False'
+                    };
+                })
+                )
+                .subscribe(trInfo => {
+                    trInfo.tableEle.find('td:nth-child(4)').html(trInfo.loginStateHtml);
+                });
     },
 
     /*--------------------Private methods-------------------*/
@@ -215,7 +237,7 @@ var UserRecordsPageFragment = {
 
     userTblRowGenFunc: function (userRecord) {
         // TODO Better solution
-        let isUserRole = userRecord.role === 'USER';
+        let isUserRolePred = () => (userRecord.role === 'USER');
         return Tagger.tr()
                 .td(userRecord.name).withClass('col-xs-2')
                 .then()
@@ -225,12 +247,13 @@ var UserRecordsPageFragment = {
                 .then()
                 .td(userRecord.loggingIn).withClass('col-xs-2')
                 .then()
-                .td().withClasses('col-xs-2 mo_checkbox_wrapper').innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
+                .td().withClasses('col-xs-2 mo_checkbox_wrapper').innerTagIf(isUserRolePred, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
                 .then()
-                .td().withClasses('col-xs-1 mo_checkbox_wrapper').innerTagIf(() => isUserRole, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
+                .td().withClasses('col-xs-1 mo_checkbox_wrapper').innerTagIf(isUserRolePred, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
                 .then()
-                .td().withClass('col-xs-1').innerTagIf(() => isUserRole, 'button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
+                .td().withClass('col-xs-1').innerTagIf(isUserRolePred, 'button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
                 .then()
+                .withAttrIfOrElse(isUserRolePred, 'user_id', userRecord.id, -1)
                 .build();
     },
 
@@ -276,7 +299,7 @@ var UserDetailDlg = {
         this._mdlUserAddUpdate = mdlUserAddUpdate;
         // Observers and subscriptions
         this._userInfoFormObservable = Rx.Observable.fromEvent(mdlUserAddUpdate.find('#btnUserAddUpdateDone'), 'click')
-                .map(function (ev) {
+                .map(ev => {
                     return {
                         userName: mdlUserAddUpdate.find('#txtUserName').val(),
                         userDispName: mdlUserAddUpdate.find('#txtDispName').val(),
@@ -308,8 +331,6 @@ var UserDetailDlg = {
      * @returns {undefined}
      */
     showForUpdate: function (userDetails) {
-        // TODO Implement properly
-        console.log(userDetails);
         let mdlUserAddUpdate = this._mdlUserAddUpdate;
         // Render
         mdlUserAddUpdate.find('#lblUserDialogTitle').text('Update user info');
@@ -423,7 +444,7 @@ var UserDetailDlg = {
     }
 };
 
-/*----------------------------------------------------Subjects----------------------------------------------------*/
+/*----------------------------------------------------Observable, Subjects, Observers----------------------------------------------------*/
 var UserActionSubjects = {
 
     /**
@@ -602,6 +623,59 @@ var ServerResponseObservers = {
     }
 };
 
+/**
+ * Observable for server message
+ * @type Map
+ */
+var ServerMessageObservables = {
+
+    /**
+     * Initialize with observer ?
+     * @param {Function} serverMessageObserver
+     * @returns {undefined}
+     */
+    init: function (serverMessageObserver) {
+        // Web socket very first experimental
+        // In the case WebSocket is not supported, SockJS can emulate it by xhr-streaming, xhr-polling, etc.
+        // Currently does not deal with Spring security
+        let socket = new SockJS(Urls.USER_MGT_LOGIN_CHECK_TOPIC);
+        // STOMP (a so-called Streaming text oriented message protocol) is trying to work on WebSocket API
+        // STOMP: A lightweight protocol over TCP, can be conducted by WebSocket API
+        let stompClient = Stomp.over(socket);
+        stompClient.connect({}, frame => {
+            // For debug
+            console.log('CONNECTED');
+            // After connected, start listening to server
+            stompClient.subscribe(Topics.RECENT_LOGIN_STATUS, serverMessageObserver);
+        });
+    }
+};
+
+/**
+ * Observers for server message (e.g. via websocket)
+ * @type Map
+ */
+var ServerMessageObservers = {
+    /**
+     * Initialize by views and one user interaction subject (for index action)
+     * @param {Map} userRecordsPageFragment
+     * @returns {undefined}
+     */
+    init: function (userRecordsPageFragment) {
+        this._userRecordsPageFragment = userRecordsPageFragment;
+    },
+
+    getRecentLoginStatusChangedObserver: function () {
+        let successResponseFunc = UserRecordsPageFragment.renderRecentLoginStatus.bind(this._userRecordsPageFragment);
+        return msg => {
+            // TODO Implement
+            let recentLoggedInUserIds = [];
+            let recentLoggedOutUserIds = [];
+            successResponseFunc(recentLoggedInUserIds, recentLoggedOutUserIds);
+        };
+    }
+};
+
 /*--------------------------------------------------Service------------------------------------------------*/
 /**
  * Instance to handle WEB requests
@@ -720,6 +794,9 @@ function setupEvents() {
             PageRequestObservables._pageRequestAfterForceLogoutSuccess);
     // User action subjects
     UserActionSubjects.init(UserMgtWebService);
+    // Server message
+    ServerMessageObservers.init(UserRecordsPageFragment);
+    ServerMessageObservables.init(ServerMessageObservers.getRecentLoginStatusChangedObserver());
 
     // Wire observable to observers
     // User actions
@@ -745,23 +822,4 @@ function setupEvents() {
 function loadInitialData() {
     // Here subject acts as an observer
     PageRequestObservables._pageRequestAfterScreenInitialized.next();
-
-    // Web socket very first experimental
-    // In the case WebSocket is not supported, SockJS can emulate it by xhr-streaming, xhr-polling, etc.
-    // Currently does not deal with Spring security
-    let socket = new SockJS(Urls.USER_MGT_LOGIN_CHECK_TOPIC);
-    // STOMP (a so-called Streaming text oriented message protocol) is trying to work on WebSocket API
-    // STOMP: A lightweight protocol over TCP, can be conducted by WebSocket API
-    let stompClient = Stomp.over(socket);
-    stompClient.connect({}, frame => {
-        console.log('Connected');
-        console.log(frame);
-        // After connected, start listening to server
-        stompClient.subscribe('/topic/loginCheck', message => {
-            // Currently do not send any thing but just listen to server
-            console.log('Received message');
-            console.log(message);
-        });
-    });
-
 }
