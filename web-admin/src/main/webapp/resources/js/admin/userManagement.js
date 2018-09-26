@@ -5,7 +5,7 @@
  */
 
 /* Values is initialized by let and therefore can not be redeclared here */
-/* global MendelApp, Tagger, MendelDialog  */
+/* global MendelApp, Tagger, MendelDialog, Stomp  */
 
 var Rx = Rx || {};
 /*----------------------------------------------------Constansts----------------------------------------------------*/
@@ -19,7 +19,8 @@ let Urls = {
     USER_MGT_ADDUPDATE_ACTION: 'addUpdate',
     USER_MGT_GETDETAIL_ACTION: 'detail',
     USER_MGT_GETALLUSERPRIVS_ACTION: 'userPrivs',
-    USER_MGT_DELETE_ACTION: 'delete'
+    USER_MGT_DELETE_ACTION: 'delete',
+    USER_MGT_LOGIN_CHECK_TOPIC: '/' + MendelApp.APP_NAME + '/public/ws-ep'
 };
 
 let RecordsCtrlArea = {
@@ -481,8 +482,6 @@ var PageRequestSubject = {
      * @param {Map} userMgtWebService
      */
     init: function (userMgtWebService) {
-        // Service wiring
-        this._userMgtWebService = userMgtWebService;
         // Subjects
         this._pageRequestSubject = (new Rx.Subject()).switchMap(indexForm => userMgtWebService.getIndexAJAXObservable(indexForm));
     }
@@ -746,4 +745,23 @@ function setupEvents() {
 function loadInitialData() {
     // Here subject acts as an observer
     PageRequestObservables._pageRequestAfterScreenInitialized.next();
+
+    // Web socket very first experimental
+    // In the case WebSocket is not supported, SockJS can emulate it by xhr-streaming, xhr-polling, etc.
+    // Currently does not deal with Spring security
+    let socket = new SockJS(Urls.USER_MGT_LOGIN_CHECK_TOPIC);
+    // STOMP (a so-called Streaming text oriented message protocol) is trying to work on WebSocket API
+    // STOMP: A lightweight protocol over TCP, can be conducted by WebSocket API
+    let stompClient = Stomp.over(socket);
+    stompClient.connect({}, frame => {
+        console.log('Connected');
+        console.log(frame);
+        // After connected, start listening to server
+        stompClient.subscribe('/topic/loginCheck', message => {
+            // Currently do not send any thing but just listen to server
+            console.log('Received message');
+            console.log(message);
+        });
+    });
+
 }

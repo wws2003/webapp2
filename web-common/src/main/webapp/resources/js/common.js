@@ -19,6 +19,12 @@ let MendelApp = {
     BASE_URL: location.protocol + '//' + location.hostname + ':' + location.port,
 
     /**
+     * Application name. Should be mendel-all
+     * @returns {undefined}
+     */
+    APP_NAME: location.pathname.split('/')[1],
+
+    /**
      * Initial setup
      * @returns {undefined}
      */

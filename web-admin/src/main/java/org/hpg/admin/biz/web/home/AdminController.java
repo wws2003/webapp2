@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.admin.biz.web;
+package org.hpg.admin.biz.web.home;
 
 import java.util.HashMap;
 import org.hpg.admin.constant.AdminUrls;
@@ -11,7 +11,10 @@ import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.constant.MendelTransactionalLevel;
+import org.hpg.common.model.message.LoginMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,6 +66,22 @@ public class AdminController {
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 fm -> new ModelAndView(userMgtPage),
                 userMgtPage);
+    }
+
+    /**
+     * This is to listen to client sending data
+     *
+     * @return
+     * @throws java.lang.Exception
+     */
+    @MessageMapping("/loginCheck")
+    @SendTo("/topic/loginCheck")
+    public LoginMessage fff() throws Exception {
+        // This does not get called after being triggered
+        Thread.sleep(1000); // simulated delay
+        LoginMessage msg = new LoginMessage();
+        msg.setMsg("Who are you ?");
+        return msg;
     }
 
     /**

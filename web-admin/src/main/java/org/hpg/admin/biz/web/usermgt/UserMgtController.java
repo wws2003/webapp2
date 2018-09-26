@@ -16,6 +16,7 @@ import org.hpg.common.constant.MendelRole;
 import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,9 @@ public class UserMgtController {
 
     @Autowired
     private IUserMgtScrnService userMgtScrnService;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     /**
      * Indexing
@@ -61,6 +65,10 @@ public class UserMgtController {
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_USER_DETAILS)
     @ResponseBody
     public AjaxResult getUserDetailInfo(@RequestBody UserDetailForm form) {
+        // Very first exepriment to send message to client via web socket
+        String msg = "[Who are you?]";
+        messagingTemplate.convertAndSend("/topic/loginCheck", msg);
+
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 userMgtScrnService::getUserDetailInfo);

@@ -64,12 +64,7 @@
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        <!-- Spring WebFlux -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webflux</artifactId>
-            <version>5.0.5.RELEASE</version>
-        </dependency>
+        <!-- Spring WebFlux - currently un-used -->
         <!-- Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -118,12 +113,7 @@
             <artifactId>spring-data-jpa</artifactId>
             <version>2.0.6.RELEASE</version>
         </dependency>
-        <!-- Hikari connection pool -->
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>2.6.1</version>
-        </dependency>
+        <!-- Hikari connection pool-currently ununsed -->
         <!-- JPA -->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
@@ -211,6 +201,18 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
+        </dependency>
+        <!-- Web socket -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>5.0.8.RELEASE</version>
+        </dependency>
+        <!-- Spring messaging -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>5.0.8.RELEASE</version>
         </dependency>
         <!-- Test -->
         <dependency>

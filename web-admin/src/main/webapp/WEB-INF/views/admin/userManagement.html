@@ -10,6 +10,8 @@ and open the template in the editor.
         <link href="../../../resources/css/commonModal.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/commonModal.css?'+ ${timeToken}}" />
         <link href="../../../../resources/css/admin/userManagement.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/admin/userManagement.css?' + ${timeToken}}"/>
         <script src="../../../../resources/js/admin/userManagement.js" th:src="@{'/resources/js/admin/userManagement.js?' +  ${timeToken}}"></script>
+        <script src="../../../resources/assets/js/sockjs.min.js" th:src="@{/resources/assets/js/sockjs.min.js}"></script>
+        <script src="../../../resources/assets/js/stomp.min.js" th:src="@{/resources/assets/js/stomp.min.js}"></script>
     </head>
     <body>
         <!-- /* Content of this page will be decorated by the elements of layout.html (task/layout) */ -->

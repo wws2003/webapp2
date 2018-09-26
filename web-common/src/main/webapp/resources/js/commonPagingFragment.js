@@ -368,4 +368,3 @@ CommonPagingFragmentRender.prototype.setEnableState = function (ele, isEnabled) 
         ele.eleDisable();
     }
 };
-
