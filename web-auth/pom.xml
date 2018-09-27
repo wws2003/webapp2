@@ -53,6 +53,7 @@
             <artifactId>spring-security-config</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <!-- JMS -->
         <!-- Dependency on lib-common module -->
         <dependency>
             <groupId>org.hpg.multi</groupId>
