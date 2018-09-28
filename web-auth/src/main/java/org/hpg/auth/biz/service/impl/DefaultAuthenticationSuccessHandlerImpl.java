@@ -13,6 +13,7 @@ import org.hpg.auth.model.MendelUserDetails;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.model.dto.principal.LoginInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -30,6 +31,9 @@ public class DefaultAuthenticationSuccessHandlerImpl extends SavedRequestAwareAu
     @Autowired
     private IUserSession userSession;
 
+    @Autowired
+    private JmsTemplate jmsTemplate;
+
     /**
      * Constructor with default URL
      *
@@ -46,6 +50,8 @@ public class DefaultAuthenticationSuccessHandlerImpl extends SavedRequestAwareAu
         // Retrieve login info
         LoginInfo authenticatedLoginInfo = ((MendelUserDetails) a.getPrincipal()).getLoginInfo();
         userSession.setCurrentLoginInfo(authenticatedLoginInfo);
-    }
 
+        // Send message sample (to default destination)
+        jmsTemplate.convertAndSend("Something");
+    }
 }

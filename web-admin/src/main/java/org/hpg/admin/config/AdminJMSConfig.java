@@ -13,6 +13,6 @@ import org.springframework.context.annotation.Configuration;
  * @author trungpt
  */
 @Configuration
-public class JMSConfig {
+public class AdminJMSConfig {
 
 }
