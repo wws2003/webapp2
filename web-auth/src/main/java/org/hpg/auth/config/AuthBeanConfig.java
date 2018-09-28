@@ -5,11 +5,13 @@
  */
 package org.hpg.auth.config;
 
+import org.hpg.auth.biz.service.abstr.ILoginLogoutMessageService;
 import org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationFailureHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationSuccessHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultPasswordEncoderImpl;
 import org.hpg.auth.biz.service.impl.DefaultUserDetailsServiceImpl;
+import org.hpg.auth.biz.service.impl.LoginLogoutJMSImpl;
 import org.hpg.common.biz.service.abstr.IPasswordService;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.constant.MendelRole;
@@ -116,5 +118,11 @@ public class AuthBeanConfig {
     public AuthenticationSuccessHandler getAuthenticationSuccessHandlerForUserRole() {
         // TODO Confirm: Is it possible to wire dependency via new operator ?
         return new DefaultAuthenticationSuccessHandlerImpl("/user/home");
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public ILoginLogoutMessageService getLoginLogoutMessageService() {
+        return new LoginLogoutJMSImpl();
     }
 }

@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import org.springframework.jms.listener.MessageListenerContainer;
+import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.support.converter.SimpleMessageConverter;
 import org.springframework.jndi.JndiObjectFactoryBean;
 
 /**
@@ -79,15 +79,12 @@ public class AuthJMSConfig {
     }
 
     /**
-     * For receiving message
+     * Message converter
      *
      * @return
      */
     @Bean
-    public MessageListenerContainer getMessageListenerContainer() {
-        DefaultMessageListenerContainer container = new DefaultMessageListenerContainer();
-        container.setConnectionFactory(getJMSConnectionFactory());
-        container.setDestinationName(JNDI_AUTH_TOPIC);
-        return container;
+    public MessageConverter converter() {
+        return new SimpleMessageConverter();
     }
 }
