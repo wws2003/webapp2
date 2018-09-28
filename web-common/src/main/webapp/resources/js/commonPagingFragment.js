@@ -57,6 +57,10 @@ function CommonPagingFragmentRender() {
     this._pageRequestObservables = [];
     // Streamed observable for page request
     /**
+     * Subscription for page error observable
+     */
+    this._pagingErrorSubscription = null;
+    /**
      * Subscription for page request
      */
     this._pageRequestSubscription = null;
@@ -289,7 +293,7 @@ CommonPagingFragmentRender.prototype.setupPagingEvents = function (frgPagingEle,
                 };
             });
 
-    // {PageNo, records count per page} with error checker
+    // {PageNo, records count per page}
     let pagingInfoChangeObservable = Rx.Observable
             .fromEvent(recordCountSelect, 'change')
             .merge(Rx.Observable.fromEvent(txtPageNo, 'blur'))
@@ -302,23 +306,24 @@ CommonPagingFragmentRender.prototype.setupPagingEvents = function (frgPagingEle,
                 };
             });
 
-    // Merged observable
+    // Merged observable (store previous value to rollback in the case of error)
     let mergedPageRequestObservables = Rx.Observable
             .merge(pageTransitionObservable, pagingInfoChangeObservable)
-            .partition(pair => pair.pageNumber > 0 && pair.pageNumber <= lastPage);
-
-    // Normal page number
-    let pageRequestObservable = mergedPageRequestObservables[0];
-    // Error page number
-    let pageNumberErrorObservable = mergedPageRequestObservables[1];
+            .scan((prevcur, latest) => [prevcur[1], latest], [null, {pageNumber: 1, recordCountPerPage: parseInt(recordCountSelect.val())}])
+            .partition(prevcur => prevcur[1].pageNumber > 0 && prevcur[1].pageNumber <= lastPage);
 
     // Re-subscribe to page request subject
     this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
-    this._pageRequestSubscription = pageRequestObservable.subscribe(this._pageRequestSubject);
+    this._pageRequestSubscription = mergedPageRequestObservables[0].map(prevcur => prevcur[1]).subscribe(this._pageRequestSubject);
 
     // Error
-    pageNumberErrorObservable.subscribe(e => {
-        MendelDialog.error('Mendel pager', 'Invalid page number');
+    this._pagingErrorSubscription && this._pagingErrorSubscription.unsubscribe();
+    this._pagingErrorSubscription = mergedPageRequestObservables[1].subscribe(e => {
+        let prev = e[0];
+        let cur = e[1];
+        MendelDialog.error('Mendel pager', 'Invalid page number [' + cur.pageNumber + ', ' + cur.recordCountPerPage + ']', () => {
+            txtPageNo.val(prev.pageNumber);
+        });
     });
 };
 
