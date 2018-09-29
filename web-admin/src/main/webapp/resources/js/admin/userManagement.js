@@ -181,14 +181,14 @@ var UserRecordsPageFragment = {
         // TODO Implement properly
         let userTrs = this._userRecordsPagingFragment.find('#tblPagingContent tbody tr');
         Rx.Observable.merge(
-                Rx.Observable.from(userTrs).filter(tr => recentLoggedInUserIds.indexOf(parseInt(tr.attr('user_id'))) >= 0)
+                Rx.Observable.from(userTrs).filter(tr => recentLoggedInUserIds.indexOf(parseInt($(tr).attr('user_id'))) >= 0)
                 .map(tr => {
                     return {
                         tableEle: tr,
                         loginStateHtml: 'True'
                     };
                 }),
-                Rx.Observable.from(userTrs).filter(tr => recentLoggedOutUserIds.indexOf(parseInt(tr.attr('user_id'))) >= 0)
+                Rx.Observable.from(userTrs).filter(tr => recentLoggedOutUserIds.indexOf(parseInt($(tr).attr('user_id'))) >= 0)
                 .map(tr => {
                     return {
                         tableEle: tr,

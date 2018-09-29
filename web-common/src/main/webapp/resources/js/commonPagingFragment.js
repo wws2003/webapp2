@@ -298,7 +298,6 @@ CommonPagingFragmentRender.prototype.setupPagingEvents = function (frgPagingEle,
             .fromEvent(recordCountSelect, 'change')
             .merge(Rx.Observable.fromEvent(txtPageNo, 'blur'))
             .map(e => [txtPageNo.val(), recordCountSelect.val()])
-            .distinctUntilChanged((pair1, pair2) => (pair1[0] === pair2[0] && pair1[1] === pair2[1])) // Do not fire event without any change
             .map(pair => {
                 return {
                     pageNumber: parseInt(pair[0]),
@@ -307,24 +306,11 @@ CommonPagingFragmentRender.prototype.setupPagingEvents = function (frgPagingEle,
             });
 
     // Merged observable (store previous value to rollback in the case of error)
-    let mergedPageRequestObservables = Rx.Observable
-            .merge(pageTransitionObservable, pagingInfoChangeObservable)
-            .scan((prevcur, latest) => [prevcur[1], latest], [null, {pageNumber: 1, recordCountPerPage: parseInt(recordCountSelect.val())}])
-            .partition(prevcur => prevcur[1].pageNumber > 0 && prevcur[1].pageNumber <= lastPage);
+    let mergedPageRequestObservable = Rx.Observable
+            .merge(pageTransitionObservable, pagingInfoChangeObservable);
 
-    // Re-subscribe to page request subject
-    this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
-    this._pageRequestSubscription = mergedPageRequestObservables[0].map(prevcur => prevcur[1]).subscribe(this._pageRequestSubject);
-
-    // Error
-    this._pagingErrorSubscription && this._pagingErrorSubscription.unsubscribe();
-    this._pagingErrorSubscription = mergedPageRequestObservables[1].subscribe(e => {
-        let prev = e[0];
-        let cur = e[1];
-        MendelDialog.error('Mendel pager', 'Invalid page number [' + cur.pageNumber + ', ' + cur.recordCountPerPage + ']', () => {
-            txtPageNo.val(prev.pageNumber);
-        });
-    });
+    // Setup paging actions
+    this.setupPagingObservable(frgPagingEle, lastPage, mergedPageRequestObservable);
 };
 
 /**
@@ -372,4 +358,47 @@ CommonPagingFragmentRender.prototype.setEnableState = function (ele, isEnabled) 
     } else {
         ele.eleDisable();
     }
+};
+
+/**
+ * Setup paging function by subscribing paging observable
+ * @param {JQuery} frgPagingEle
+ * @param {Number} pageCount
+ * @param {Observable} pagingObservable
+ * @returns {undefined}
+ */
+CommonPagingFragmentRender.prototype.setupPagingObservable = function (frgPagingEle, pageCount, pagingObservable) {
+    // Initial process
+    this._pageRequestSubscription && this._pageRequestSubscription.unsubscribe();
+    this._pagingErrorSubscription && this._pagingErrorSubscription.unsubscribe();
+    let txtPageNo = frgPagingEle.find('#txtPagingCurrent');
+    let recordCountSelect = frgPagingEle.find('#sltPagingRecordPerPage');
+
+    // Branch into normal and error stream
+    let branchedPagingObservables = pagingObservable
+            .scan((prevcur, latest) => [prevcur[1], latest], [null, {pageNumber: parseInt(txtPageNo.val()), recordCountPerPage: parseInt(recordCountSelect.val())}])
+            .partition(
+                    prevcur => prevcur[1].pageNumber > 0 && prevcur[1].pageNumber <= pageCount
+            );
+    let normalPagingObservable = branchedPagingObservables[0];
+    let errorPagingObservable = branchedPagingObservables[1];
+
+    // Re-subscribe to page request subject
+    // Filter distinct manually as distinctUntilChanged does not work since the subscription is reset after each load !
+    this._pageRequestSubscription = normalPagingObservable
+            .filter((prevcur) => !prevcur[0] || (prevcur[0].pageNumber !== prevcur[1].pageNumber || prevcur[0].recordCountPerPage !== prevcur[1].recordCountPerPage))
+            .map(prevcur => prevcur[1])
+            .subscribe(this._pageRequestSubject);
+
+    // Error
+    this._pagingErrorSubscription = errorPagingObservable.subscribe(e => {
+        let prev = e[0];
+        let cur = e[1];
+        MendelDialog.error('Mendel pager', 'Invalid page number [' + cur.pageNumber + ', ' + cur.recordCountPerPage + ']', () => {
+            txtPageNo.val(prev.pageNumber);
+            // Try to trigger event.
+            txtPageNo.focus();
+            txtPageNo.blur();
+        });
+    });
 };
