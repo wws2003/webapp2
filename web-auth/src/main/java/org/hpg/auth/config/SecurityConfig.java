@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.config;
 
+import org.hpg.auth.constant.AuthBeanConstant;
 import org.hpg.auth.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,18 +33,18 @@ public class SecurityConfig {
     public static class SecurityUserRoleConfig extends WebSecurityConfigurerAdapter {
 
         @Autowired
-        @Qualifier("userDetailsServiceForUser")
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_USER_DETAILS_SERVICE_FOR_USERROLE)
         private UserDetailsService mUserUserDetailsService;
 
         @Autowired
         private PasswordEncoder mPasswordEncoder;
 
         @Autowired
-        @Qualifier("authenticationSuccessHandlerForUserRole")
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_SUCCESS_HANDLER_FOR_USERROLE)
         private AuthenticationSuccessHandler authenticationSuccessHandler;
 
         @Autowired
-        @Qualifier("defaultAuthenticationFailureHandlerForUserRole")
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_FAILURE_HANDLER_FOR_USERROLE)
         private AuthenticationFailureHandler authenticationFailureHandler;
 
         @Override
@@ -80,18 +81,18 @@ public class SecurityConfig {
     public static class SecurityAdminRoleConfig extends WebSecurityConfigurerAdapter {
 
         @Autowired
-        @Qualifier("userDetailsServiceForAdmin")
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_USER_DETAILS_SERVICE_FOR_ADMINROLE)
         private UserDetailsService mAdminUserDetailsService;
 
         @Autowired
         private PasswordEncoder mPasswordEncoder;
 
         @Autowired
-        @Qualifier("authenticationSuccessHandlerForAdminRole")
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_SUCCESS_HANDLER_FOR_ADMINROLE)
         private AuthenticationSuccessHandler authenticationSuccessHandler;
 
         @Autowired
-        @Qualifier("defaultAuthenticationFailureHandlerForAdminRole")
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_FAILURE_HANDLER_FOR_ADMINROLE)
         private AuthenticationFailureHandler authenticationFailureHandler;
 
         @Override

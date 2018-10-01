@@ -39,6 +39,18 @@ CREATE TABLE TBL_USER(
 	FOREIGN KEY (role_id) REFERENCES TBL_ROLE(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+-- List of login user
+--  ID (8-bytes auto incremental, PK)
+--  User_ID (foreign key)
+--  Login TIMESTAMP
+DROP TABLE IF EXISTS TBL_LOGIN_USER;
+CREATE TABLE TBL_LOGIN_USER(
+	id bigserial PRIMARY KEY NOT NULL,
+	user_id bigint NOT NULL,
+	login_timestamp timestamp(3) with time zone NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 -- User-Privileges mapping
 --  ID (8-bytes auto incremental, PK)
 --  User_ID (foreign key)

@@ -11,7 +11,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import org.hpg.common.model.message.RecentLoginStatusMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
 
@@ -22,8 +21,11 @@ import org.springframework.jms.support.converter.MessageConverter;
  */
 public class LoginLogoutMessageReceiverImpl implements MessageListener {
 
-    @Autowired
-    private MessageConverter messageConverter;
+    private final MessageConverter messageConverter;
+
+    public LoginLogoutMessageReceiverImpl(MessageConverter messageConverter) {
+        this.messageConverter = messageConverter;
+    }
 
     @Override
     public void onMessage(Message msg) {

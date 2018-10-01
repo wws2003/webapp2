@@ -12,6 +12,7 @@ import org.hpg.auth.biz.service.impl.DefaultAuthenticationSuccessHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultPasswordEncoderImpl;
 import org.hpg.auth.biz.service.impl.DefaultUserDetailsServiceImpl;
 import org.hpg.auth.biz.service.impl.LoginLogoutJMSImpl;
+import org.hpg.auth.constant.AuthBeanConstant;
 import org.hpg.common.biz.service.abstr.IPasswordService;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.constant.MendelRole;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -37,7 +39,7 @@ public class AuthBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier("userDetailsServiceForAdmin")
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_USER_DETAILS_SERVICE_FOR_ADMINROLE)
     public UserDetailsService getUserDetailsServiceForAdmin() {
         // TODO Confirm: Is it possible to wire dependency via new operator ?
         return new DefaultUserDetailsServiceImpl(MendelRole.ADMIN);
@@ -45,7 +47,7 @@ public class AuthBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier("userDetailsServiceForUser")
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_USER_DETAILS_SERVICE_FOR_USERROLE)
     public UserDetailsService getUserDetailsServiceForUser() {
         // TODO Confirm: Is it possible to wire dependency via new operator ?
         return new DefaultUserDetailsServiceImpl(MendelRole.USER);
@@ -60,7 +62,7 @@ public class AuthBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier("defaultAuthenticationFailureHandlerForAdminRole")
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_FAILURE_HANDLER_FOR_ADMINROLE)
     public AuthenticationFailureHandler getDefaultAuthenticationFailureHandlerForAdminRole() {
         // TODO Confirm: Is it possible to wire dependency via new operator ?
         return new DefaultAuthenticationFailureHandlerImpl(MendelRole.ADMIN);
@@ -68,7 +70,7 @@ public class AuthBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier("defaultAuthenticationFailureHandlerForUserRole")
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_FAILURE_HANDLER_FOR_USERROLE)
     public AuthenticationFailureHandler getDefaultAuthenticationFailureHandlerForUserRole() {
         // TODO Confirm: Is it possible to wire dependency via new operator ?
         return new DefaultAuthenticationFailureHandlerImpl(MendelRole.USER);
@@ -88,10 +90,18 @@ public class AuthBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier("authenticationSuccessHandlerForAdminRole")
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_SUCCESS_HANDLER_FOR_ADMINROLE)
     public AuthenticationSuccessHandler getAuthenticationSuccessHandlerForAdminRole() {
         // TODO Confirm: Is it possible to wire dependency via new operator ?
         return new DefaultAuthenticationSuccessHandlerImpl("/admin/home");
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_SUCCESS_HANDLER_FOR_USERROLE)
+    public AuthenticationSuccessHandler getAuthenticationSuccessHandlerForUserRole() {
+        // TODO Confirm: Is it possible to wire dependency via new operator ?
+        return new DefaultAuthenticationSuccessHandlerImpl("/user/home");
     }
 
     /**
@@ -114,15 +124,7 @@ public class AuthBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier("authenticationSuccessHandlerForUserRole")
-    public AuthenticationSuccessHandler getAuthenticationSuccessHandlerForUserRole() {
-        // TODO Confirm: Is it possible to wire dependency via new operator ?
-        return new DefaultAuthenticationSuccessHandlerImpl("/user/home");
-    }
-
-    @Bean
-    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public ILoginLogoutMessageService getLoginLogoutMessageService() {
-        return new LoginLogoutJMSImpl();
+    public ILoginLogoutMessageService getLoginLogoutMessageService(@Qualifier(AuthBeanConstant.Qualifier.AUTH_TOPIC_JMS_TEMPLATE) JmsTemplate template) {
+        return new LoginLogoutJMSImpl(template);
     }
 }

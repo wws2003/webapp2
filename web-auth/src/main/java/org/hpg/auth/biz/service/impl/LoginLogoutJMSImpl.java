@@ -9,7 +9,6 @@ import java.util.Arrays;
 import org.hpg.auth.biz.service.abstr.ILoginLogoutMessageService;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.model.message.RecentLoginStatusMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -19,8 +18,11 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public class LoginLogoutJMSImpl implements ILoginLogoutMessageService {
 
-    @Autowired
-    private JmsTemplate jmsTemplate;
+    private final JmsTemplate jmsTemplate;
+
+    public LoginLogoutJMSImpl(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
+    }
 
     @Override
     public void notifyUserLogin(long loginUserId) throws MendelRuntimeException {
