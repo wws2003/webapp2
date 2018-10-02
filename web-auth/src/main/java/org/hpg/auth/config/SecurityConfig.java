@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 /**
  * Implementation of Security policy using Spring-sec libraries
@@ -37,15 +38,19 @@ public class SecurityConfig {
         private UserDetailsService mUserUserDetailsService;
 
         @Autowired
-        private PasswordEncoder mPasswordEncoder;
-
-        @Autowired
         @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_SUCCESS_HANDLER_FOR_USERROLE)
         private AuthenticationSuccessHandler authenticationSuccessHandler;
 
         @Autowired
         @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_FAILURE_HANDLER_FOR_USERROLE)
         private AuthenticationFailureHandler authenticationFailureHandler;
+
+        @Autowired
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_USERROLE)
+        private LogoutSuccessHandler logoutSuccessHandlerForUserRole;
+
+        @Autowired
+        private PasswordEncoder mPasswordEncoder;
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -71,8 +76,8 @@ public class SecurityConfig {
                     .and()
                     .logout()
                     .logoutUrl("/user/logout") // Prefix 'must' be /user (?), default is clearing authentication and httpsession
-                    .permitAll()
-                    .logoutSuccessUrl("/auth/userLogin");
+                    .logoutSuccessHandler(logoutSuccessHandlerForUserRole)
+                    .permitAll();
         }
     }
 
@@ -94,6 +99,10 @@ public class SecurityConfig {
         @Autowired
         @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_AUTH_FAILURE_HANDLER_FOR_ADMINROLE)
         private AuthenticationFailureHandler authenticationFailureHandler;
+
+        @Autowired
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_ADMINROLE)
+        private LogoutSuccessHandler logoutSuccessHandlerForAdminRole;
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -119,8 +128,8 @@ public class SecurityConfig {
                     .and()
                     .logout()
                     .logoutUrl("/admin/logout") // Prefix 'must' be /admin (?), default is clearing authentication and httpsession
-                    .permitAll()
-                    .logoutSuccessUrl("/auth/adminLogin");
+                    .logoutSuccessHandler(logoutSuccessHandlerForAdminRole)
+                    .permitAll();
         }
     }
 }

@@ -54,4 +54,10 @@ public class DefaultAuthenticationSuccessHandlerImpl extends SavedRequestAwareAu
         // Notify
         messageService.notifyUserLogin(authenticatedLoginInfo.getLoginUser().getId());
     }
+
+    @Override
+    public final void setDefaultTargetUrl(String defaultTargetUrl) {
+        // Make this method final just to make warning in constructor disappear
+        super.setDefaultTargetUrl(defaultTargetUrl);
+    }
 }

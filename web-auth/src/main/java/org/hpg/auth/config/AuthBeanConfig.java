@@ -9,6 +9,7 @@ import org.hpg.auth.biz.service.abstr.ILoginLogoutMessageService;
 import org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationFailureHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationSuccessHandlerImpl;
+import org.hpg.auth.biz.service.impl.DefaultLogoutHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultPasswordEncoderImpl;
 import org.hpg.auth.biz.service.impl.DefaultUserDetailsServiceImpl;
 import org.hpg.auth.biz.service.impl.LoginLogoutJMSImpl;
@@ -26,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
@@ -126,5 +128,19 @@ public class AuthBeanConfig {
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public ILoginLogoutMessageService getLoginLogoutMessageService(@Qualifier(AuthBeanConstant.Qualifier.AUTH_TOPIC_JMS_TEMPLATE) JmsTemplate template) {
         return new LoginLogoutJMSImpl(template);
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_ADMINROLE)
+    public LogoutSuccessHandler getLogoutSuccessHandlerForAdminRole() {
+        return new DefaultLogoutHandlerImpl("/auth/adminLogin");
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_USERROLE)
+    public LogoutSuccessHandler getLogoutSuccessHandlerForUserRole() {
+        return new DefaultLogoutHandlerImpl("/auth/userLogin");
     }
 }

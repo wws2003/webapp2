@@ -5,6 +5,10 @@
  */
 package org.hpg.common.biz.service.abstr;
 
+import java.util.Date;
+import java.util.Optional;
+import org.hpg.common.model.exception.MendelRuntimeException;
+
 /**
  * Service to work with login users
  *
@@ -12,4 +16,14 @@ package org.hpg.common.biz.service.abstr;
  */
 public interface ILoginUserService {
     // TODO Add methods
+
+    /**
+     * Get beginning timestamp of user session. <BR>
+     * Return empty is user not logged in
+     *
+     * @param userId
+     * @return
+     * @throws MendelRuntimeException When retrieval failed
+     */
+    public Optional<Date> getLoginDate(long userId) throws MendelRuntimeException;
 }
