@@ -6,6 +6,7 @@
 package org.hpg.common.model.dto.principal;
 
 import java.io.Serializable;
+import java.util.Date;
 import org.hpg.common.model.dto.user.MendelUser;
 
 /**
@@ -19,6 +20,11 @@ public class LoginInfo implements Serializable {
      * Login user
      */
     private final MendelUser mLoginUser;
+
+    /**
+     * Login timestamp. TODO Better data type
+     */
+    private final Date mLoginTimeStamp;
 
     /**
      * Flag to detect authenticated to detect if guest account (probably change
@@ -57,8 +63,9 @@ public class LoginInfo implements Serializable {
      * @param accountNonLocked
      * @param authorities
      */
-    private LoginInfo(MendelUser loginUser, boolean isAuthenticated, boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled) {
+    private LoginInfo(MendelUser loginUser, Date loginTimeStamp, boolean isAuthenticated, boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled) {
         mLoginUser = loginUser;
+        mLoginTimeStamp = loginTimeStamp;
         mIsAuthenticated = isAuthenticated;
         mAccountNonExpired = accountNonExpired;
         mAccountNonLocked = accountNonLocked;
@@ -73,6 +80,15 @@ public class LoginInfo implements Serializable {
      */
     public MendelUser getLoginUser() {
         return mLoginUser;
+    }
+
+    /**
+     * Get login timestamp
+     *
+     * @return
+     */
+    public Date getLoginTimeStamp() {
+        return mLoginTimeStamp;
     }
 
     /**
@@ -129,6 +145,7 @@ public class LoginInfo implements Serializable {
 
         // The instance to build
         private MendelUser mLoginUser;
+        private Date mLoginTimeStamp = null;
         private boolean isAuthenticated = true;
         private boolean accountExpired = false;
         private boolean accountLocked = false;
@@ -141,6 +158,11 @@ public class LoginInfo implements Serializable {
 
         public Builder withUser(MendelUser loginUser) {
             mLoginUser = loginUser;
+            return this;
+        }
+
+        public Builder loginAt(Date loginTimeStamp) {
+            mLoginTimeStamp = loginTimeStamp;
             return this;
         }
 
@@ -175,7 +197,7 @@ public class LoginInfo implements Serializable {
          * @return
          */
         public LoginInfo build() {
-            return new LoginInfo(mLoginUser, isAuthenticated, !accountExpired, !accountLocked, !credentialsExpired, !disabled);
+            return new LoginInfo(mLoginUser, mLoginTimeStamp, isAuthenticated, !accountExpired, !accountLocked, !credentialsExpired, !disabled);
         }
     }
 }

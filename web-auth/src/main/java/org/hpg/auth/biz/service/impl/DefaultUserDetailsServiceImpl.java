@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.biz.service.impl;
 
+import java.util.Date;
 import org.hpg.auth.model.MendelUserDetails;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelRole;
@@ -42,7 +43,12 @@ public class DefaultUserDetailsServiceImpl implements UserDetailsService {
 
         return mUserService.findUserByName(userName, this.mRole)
                 .map(mendelUser -> {
-                    return new MendelUserDetails(LoginInfo.withUser(mendelUser).build(), mUserService.getUserGrantedPrivileges(mendelUser.getId()));
+                    return new MendelUserDetails(
+                            LoginInfo.withUser(mendelUser)
+                                    .loginAt(new Date())
+                                    .build(),
+                            mUserService.getUserGrantedPrivileges(mendelUser.getId())
+                    );
                 })
                 .orElseThrow(() -> new UsernameNotFoundException(userName));
     }

@@ -13,7 +13,9 @@ import org.hpg.auth.biz.service.impl.DefaultLogoutHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultPasswordEncoderImpl;
 import org.hpg.auth.biz.service.impl.DefaultUserDetailsServiceImpl;
 import org.hpg.auth.biz.service.impl.LoginLogoutJMSImpl;
+import org.hpg.auth.biz.service.impl.SessionRegistryLoginUserServiceImpl;
 import org.hpg.auth.constant.AuthBeanConstant;
+import org.hpg.common.biz.service.abstr.ILoginUserService;
 import org.hpg.common.biz.service.abstr.IPasswordService;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.constant.MendelRole;
@@ -142,5 +144,11 @@ public class AuthBeanConfig {
     @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_USERROLE)
     public LogoutSuccessHandler getLogoutSuccessHandlerForUserRole() {
         return new DefaultLogoutHandlerImpl("/auth/userLogin");
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public ILoginUserService getLoginUserService() {
+        return new SessionRegistryLoginUserServiceImpl();
     }
 }
