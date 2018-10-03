@@ -15,6 +15,7 @@ import org.hpg.libcommon.Tuple;
 import org.hpg.libcommon.Tuple2;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.core.session.SessionRegistry;
 
 /**
  * Wrapper for HttpSecurity config
@@ -40,6 +41,19 @@ public class HttpSecurityRolePrivsConfigurer {
 
     private HttpSecurityRolePrivsConfigurer(HttpSecurity httpSecurity) {
         mHttpSecurity = httpSecurity;
+    }
+
+    /**
+     * Configure session
+     *
+     * @param maximumSessions
+     * @param sessionRegistry
+     * @return
+     * @throws java.lang.Exception
+     */
+    public HttpSecurityRolePrivsConfigurer sessionManagement(int maximumSessions, SessionRegistry sessionRegistry) throws Exception {
+        mHttpSecurity.sessionManagement().maximumSessions(maximumSessions).sessionRegistry(sessionRegistry);
+        return this;
     }
 
     public HttpSecurityRolePrivsConfigurer forUserRole() throws Exception {

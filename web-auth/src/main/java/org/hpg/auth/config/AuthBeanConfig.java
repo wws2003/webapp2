@@ -25,6 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -150,5 +152,11 @@ public class AuthBeanConfig {
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public ILoginUserService getLoginUserService() {
         return new SessionRegistryLoginUserServiceImpl();
+    }
+
+    @Bean
+    public SessionRegistry getSessionRegistry() {
+        // TODO Better implementation ?
+        return new SessionRegistryImpl();
     }
 }

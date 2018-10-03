@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -52,6 +53,9 @@ public class SecurityConfig {
         @Autowired
         private PasswordEncoder mPasswordEncoder;
 
+        @Autowired
+        private SessionRegistry sessionRegistry;
+
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
             auth.userDetailsService(mUserUserDetailsService)
@@ -61,6 +65,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             HttpSecurityRolePrivsConfigurer.instance(http)
+                    .sessionManagement(100, sessionRegistry)
                     .forUserRole()
                     .forUrlPrivileges(AuthUtil.getUrlPrivilesMap(UrlPrivilegeConfig.UserRole.class))
                     .buildInterceptUrlRegistry()
@@ -104,6 +109,9 @@ public class SecurityConfig {
         @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_ADMINROLE)
         private LogoutSuccessHandler logoutSuccessHandlerForAdminRole;
 
+        @Autowired
+        private SessionRegistry sessionRegistry;
+
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
             auth.userDetailsService(mAdminUserDetailsService)
@@ -113,6 +121,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             HttpSecurityRolePrivsConfigurer.instance(http)
+                    .sessionManagement(1, sessionRegistry)
                     .forAdminRole()
                     .forUrlPrivileges(AuthUtil.getUrlPrivilesMap(UrlPrivilegeConfig.AdminRole.class))
                     .buildInterceptUrlRegistry()

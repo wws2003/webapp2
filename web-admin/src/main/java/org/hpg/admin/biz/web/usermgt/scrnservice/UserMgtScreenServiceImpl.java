@@ -15,6 +15,7 @@ import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserDetail;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserRecord;
+import org.hpg.common.biz.service.abstr.ILoginUserService;
 import org.hpg.common.biz.service.abstr.IPagingService;
 import org.hpg.common.biz.service.abstr.IPasswordService;
 import org.hpg.common.biz.service.abstr.IPrivilegeService;
@@ -57,6 +58,9 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     @Autowired
     private IPasswordService passwordService;
 
+    @Autowired
+    private ILoginUserService loginUserService;
+
     @Override
     public AjaxResult indexUsers(UsersIndexForm form) throws MendelRuntimeException {
         Pageable pageRequest = PageRequest.of(form.getPageNumber() - 1,
@@ -65,9 +69,9 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
                 "name");
 
         // Get data
-        // TODO Detect login status properly
+        // TODO Detect login status properly. Possibly not just true/false but login timestamp
         Page<ScrnUserRecord> currentPage = userPagingService.getPage(pageRequest)
-                .map(usr -> new ScrnUserRecord(usr, false));
+                .map(usr -> new ScrnUserRecord(usr, loginUserService.getLoginInfo(usr.getId()).isPresent()));
 
         return AjaxResultBuilder.successInstance()
                 .resultObject(currentPage)

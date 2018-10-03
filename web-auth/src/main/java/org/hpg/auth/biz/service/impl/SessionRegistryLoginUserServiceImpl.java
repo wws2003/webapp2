@@ -10,6 +10,7 @@ import org.hpg.auth.model.MendelUserDetails;
 import org.hpg.common.biz.service.abstr.ILoginUserService;
 import org.hpg.common.model.dto.principal.LoginInfo;
 import org.hpg.common.model.exception.MendelRuntimeException;
+import org.hpg.libcommon.CH;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionRegistry;
 
@@ -27,6 +28,7 @@ public class SessionRegistryLoginUserServiceImpl implements ILoginUserService {
     public Optional<LoginInfo> getLoginInfo(long userId) throws MendelRuntimeException {
         return sessionRegistry.getAllPrincipals()
                 .stream()
+                .filter(principal -> !CH.isEmpty(sessionRegistry.getAllSessions(principal, false)))
                 .map(principal -> ((MendelUserDetails) principal).getLoginInfo())
                 .filter(loginInfo -> loginInfo.getLoginUser().getId() == userId)
                 .findFirst();
