@@ -9,6 +9,7 @@ import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  *
  * @author trungpt
  */
+@Order(1)
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
