@@ -13,6 +13,7 @@ import javax.jms.MessageListener;
 import org.hpg.common.model.message.RecentLoginStatusMessage;
 import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.messaging.core.MessageSendingOperations;
 
 /**
  * Receiver for messages from login/logout action
@@ -23,8 +24,11 @@ public class LoginLogoutMessageReceiverImpl implements MessageListener {
 
     private final MessageConverter messageConverter;
 
-    public LoginLogoutMessageReceiverImpl(MessageConverter messageConverter) {
+    private final MessageSendingOperations<String> messagingTemplate;
+
+    public LoginLogoutMessageReceiverImpl(MessageConverter messageConverter, MessageSendingOperations<String> messagingTemplate) {
         this.messageConverter = messageConverter;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Override
@@ -33,6 +37,8 @@ public class LoginLogoutMessageReceiverImpl implements MessageListener {
             // TODO Implement properly
             RecentLoginStatusMessage response = (RecentLoginStatusMessage) messageConverter.fromMessage(msg);
             System.out.println(response);
+            // [EXPERIMENT] Try to sent to client via websocket
+            messagingTemplate.convertAndSend("/topic/loginCheck", response);
         } catch (JMSException | MessageConversionException ex) {
             Logger.getLogger(LoginLogoutMessageReceiverImpl.class.getName()).log(Level.SEVERE, null, ex);
         }

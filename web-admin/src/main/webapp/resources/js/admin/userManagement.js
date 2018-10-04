@@ -184,15 +184,15 @@ var UserRecordsPageFragment = {
                 Rx.Observable.from(userTrs).filter(tr => recentLoggedInUserIds.indexOf(parseInt($(tr).attr('user_id'))) >= 0)
                 .map(tr => {
                     return {
-                        tableEle: tr,
+                        tableEle: $(tr),
                         loginStateHtml: 'True'
                     };
                 }),
                 Rx.Observable.from(userTrs).filter(tr => recentLoggedOutUserIds.indexOf(parseInt($(tr).attr('user_id'))) >= 0)
                 .map(tr => {
                     return {
-                        tableEle: tr,
-                        loginStateHtml: 'False'
+                        tableEle: $(tr),
+                        loginStateHtml: ''
                     };
                 })
                 )
@@ -668,9 +668,9 @@ var ServerMessageObservers = {
     getRecentLoginStatusChangedObserver: function () {
         let successResponseFunc = UserRecordsPageFragment.renderRecentLoginStatus.bind(this._userRecordsPageFragment);
         return msg => {
-            // TODO Implement
-            let recentLoggedInUserIds = [];
-            let recentLoggedOutUserIds = [];
+            let msgObj = JSON.parse(msg.body);
+            let recentLoggedInUserIds = msgObj.loggedInUserIds !== null ? msgObj.loggedInUserIds : [];
+            let recentLoggedOutUserIds = msgObj.loggedOutUserIds !== null ? msgObj.loggedOutUserIds : [];
             successResponseFunc(recentLoggedInUserIds, recentLoggedOutUserIds);
         };
     }

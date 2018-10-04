@@ -8,10 +8,12 @@ package org.hpg.admin.config;
 import javax.jms.MessageListener;
 import org.hpg.admin.biz.message.impl.LoginLogoutMessageReceiverImpl;
 import org.hpg.admin.constant.AdminBeanConstant;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 /**
  * Config for JMS
@@ -20,6 +22,10 @@ import org.springframework.jms.support.converter.MessageConverter;
  */
 @Configuration
 public class AdminJMSConfig {
+
+    // TODO Make clear about the internal message channel
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     /**
      * Message listener
@@ -30,6 +36,6 @@ public class AdminJMSConfig {
     @Bean
     @Qualifier(AdminBeanConstant.Qualifier.AUTH_TOPIC_JMS_MESSAGE_LISTENER)
     public MessageListener getMessageListenerForLoginLogoutAction(MessageConverter messageConverter) {
-        return new LoginLogoutMessageReceiverImpl(messageConverter);
+        return new LoginLogoutMessageReceiverImpl(messageConverter, simpMessagingTemplate);
     }
 }

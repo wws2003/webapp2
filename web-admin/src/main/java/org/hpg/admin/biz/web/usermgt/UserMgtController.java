@@ -65,10 +65,6 @@ public class UserMgtController {
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_USER_DETAILS)
     @ResponseBody
     public AjaxResult getUserDetailInfo(@RequestBody UserDetailForm form) {
-        // Very first exepriment to send message to client via web socket
-        String msg = "[Who are you?]";
-        messagingTemplate.convertAndSend("/topic/loginCheck", msg);
-
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 userMgtScrnService::getUserDetailInfo);

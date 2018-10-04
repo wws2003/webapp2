@@ -8,6 +8,10 @@ table.lo_fixed_header_table tbody {
     max-height: 450px
 }
 
+td.mo_logged_in {
+    color: green
+}
+
 table.lo_fixed_header_table td.mo_checkbox_wrapper {
     padding-left: 20px
 }
