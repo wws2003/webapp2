@@ -25,22 +25,24 @@ public class ScrnUserRecord implements Serializable {
     private final MendelRole role;
 
     /**
-     * Flag to determine login status
+     * Login timestamp in YYYY/MM/DD hh:mm:ss format. Empty if user not
+     * login<BR>
+     * TODO Use serializable Optional
      */
-    private final boolean loggingIn;
+    private final String loginTimeStamp;
 
     /**
      * Constructor. Almost info retrieved from the base model
      *
      * @param user
-     * @param loggingIn
+     * @param loginTimeStamp
      */
-    public ScrnUserRecord(MendelUser user, boolean loggingIn) {
+    public ScrnUserRecord(MendelUser user, String loginTimeStamp) {
         this.id = user.getId();
         this.name = user.getName();
         this.displayedName = user.getDispName();
         this.role = user.getRole();
-        this.loggingIn = loggingIn;
+        this.loginTimeStamp = loginTimeStamp;
     }
 
     public long getId() {
@@ -55,8 +57,8 @@ public class ScrnUserRecord implements Serializable {
         return displayedName;
     }
 
-    public boolean isLoggingIn() {
-        return loggingIn;
+    public String getLoginTimeStamp() {
+        return loginTimeStamp;
     }
 
     public MendelRole getRole() {
@@ -65,6 +67,6 @@ public class ScrnUserRecord implements Serializable {
 
     @Override
     public String toString() {
-        return "ScrnUserRecord{" + "id=" + id + ", name=" + name + ", displayedName=" + displayedName + ", role=" + role + ", loggingIn=" + loggingIn + '}';
+        return "ScrnUserRecord{" + "id=" + id + ", name=" + name + ", displayedName=" + displayedName + ", role=" + role + ", loginTimeStamp=" + loginTimeStamp + '}';
     }
 }

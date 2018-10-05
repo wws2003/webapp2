@@ -27,6 +27,8 @@ import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.util.AjaxResultBuilder;
 import org.hpg.libcommon.CH;
+import org.hpg.libcommon.DateFormatConst;
+import org.hpg.libcommon.DateUtil;
 import org.hpg.libcommon.Tuple;
 import org.hpg.libcommon.Tuple3;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +73,14 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
         // Get data
         // TODO Detect login status properly. Possibly not just true/false but login timestamp
         Page<ScrnUserRecord> currentPage = userPagingService.getPage(pageRequest)
-                .map(usr -> new ScrnUserRecord(usr, loginUserService.getLoginInfo(usr.getId()).isPresent()));
+                .map(
+                        usr -> new ScrnUserRecord(
+                                usr,
+                                loginUserService.getLoginInfo(usr.getId())
+                                        .map(usrInfo -> usrInfo.getLoginTimeStamp())
+                                        .map(tmsp -> DateUtil.dateTime2String(tmsp, DateFormatConst.FULL_SEC_A)).orElse("")
+                        )
+                );
 
         return AjaxResultBuilder.successInstance()
                 .resultObject(currentPage)

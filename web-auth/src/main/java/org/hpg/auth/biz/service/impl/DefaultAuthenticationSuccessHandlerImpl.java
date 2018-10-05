@@ -52,7 +52,7 @@ public class DefaultAuthenticationSuccessHandlerImpl extends SavedRequestAwareAu
         userSession.setCurrentLoginInfo(authenticatedLoginInfo);
 
         // Notify
-        messageService.notifyUserLogin(authenticatedLoginInfo.getLoginUser().getId());
+        messageService.notifyUserLogin(authenticatedLoginInfo.getLoginUser().getId(), authenticatedLoginInfo.getLoginTimeStamp());
     }
 
     @Override

@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.biz.service.abstr;
 
+import java.time.LocalDateTime;
 import org.hpg.common.model.exception.MendelRuntimeException;
 
 /**
@@ -18,9 +19,10 @@ public interface ILoginLogoutMessageService {
      * Notify the system that a user has been successfully login
      *
      * @param loginUserId
+     * @param loginTimeStamp
      * @throws MendelRuntimeException
      */
-    public void notifyUserLogin(long loginUserId) throws MendelRuntimeException;
+    public void notifyUserLogin(long loginUserId, LocalDateTime loginTimeStamp) throws MendelRuntimeException;
 
     /**
      * Notify the system that a user has been successfully logout

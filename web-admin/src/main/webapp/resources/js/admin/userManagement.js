@@ -173,19 +173,19 @@ var UserRecordsPageFragment = {
 
     /**
      * Update login status of displaying user records
-     * @param {Array} recentLoggedInUserIds
+     * @param {Map} loggedInUserMap
      * @param {Array} recentLoggedOutUserIds
      * @returns {undefined}
      */
-    renderRecentLoginStatus: function (recentLoggedInUserIds, recentLoggedOutUserIds) {
+    renderRecentLoginStatus: function (loggedInUserMap, recentLoggedOutUserIds) {
         // TODO Implement properly
         let userTrs = this._userRecordsPagingFragment.find('#tblPagingContent tbody tr');
         Rx.Observable.merge(
-                Rx.Observable.from(userTrs).filter(tr => recentLoggedInUserIds.indexOf(parseInt($(tr).attr('user_id'))) >= 0)
+                Rx.Observable.from(userTrs).filter(tr => parseInt($(tr).attr('user_id')) in loggedInUserMap)
                 .map(tr => {
                     return {
                         tableEle: $(tr),
-                        loginStateHtml: 'True'
+                        loginStateHtml: loggedInUserMap[parseInt($(tr).attr('user_id'))]
                     };
                 }),
                 Rx.Observable.from(userTrs).filter(tr => recentLoggedOutUserIds.indexOf(parseInt($(tr).attr('user_id'))) >= 0)
@@ -224,7 +224,7 @@ var UserRecordsPageFragment = {
                 .then()
                 .th('Role').withClass('col-xs-2')
                 .then()
-                .th('Login status').withClass('col-xs-2')
+                .th('Login since').withClass('col-xs-2')
                 .then()
                 .th('Force logout').withClass('col-xs-2')
                 .then()
@@ -245,7 +245,7 @@ var UserRecordsPageFragment = {
                 .then()
                 .td(userRecord.role).withClass('col-xs-2')
                 .then()
-                .td(userRecord.loggingIn).withClass('col-xs-2')
+                .td(userRecord.loginTimeStamp).withClasses('col-xs-2 mo_logged_in')
                 .then()
                 .td().withClasses('col-xs-2 mo_checkbox_wrapper').innerTagIf(isUserRolePred, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
                 .then()
@@ -669,9 +669,9 @@ var ServerMessageObservers = {
         let successResponseFunc = UserRecordsPageFragment.renderRecentLoginStatus.bind(this._userRecordsPageFragment);
         return msg => {
             let msgObj = JSON.parse(msg.body);
-            let recentLoggedInUserIds = msgObj.loggedInUserIds !== null ? msgObj.loggedInUserIds : [];
+            let recentLoggedInUserMap = msgObj.loggedInUserMap !== null ? msgObj.loggedInUserMap : {};
             let recentLoggedOutUserIds = msgObj.loggedOutUserIds !== null ? msgObj.loggedOutUserIds : [];
-            successResponseFunc(recentLoggedInUserIds, recentLoggedOutUserIds);
+            successResponseFunc(recentLoggedInUserMap, recentLoggedOutUserIds);
         };
     }
 };

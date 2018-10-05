@@ -6,7 +6,7 @@
 package org.hpg.common.model.dto.principal;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import org.hpg.common.model.dto.user.MendelUser;
 
 /**
@@ -24,7 +24,7 @@ public class LoginInfo implements Serializable {
     /**
      * Login timestamp. TODO Better data type
      */
-    private final Date mLoginTimeStamp;
+    private final LocalDateTime mLoginTimeStamp;
 
     /**
      * Flag to detect authenticated to detect if guest account (probably change
@@ -63,7 +63,7 @@ public class LoginInfo implements Serializable {
      * @param accountNonLocked
      * @param authorities
      */
-    private LoginInfo(MendelUser loginUser, Date loginTimeStamp, boolean isAuthenticated, boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled) {
+    private LoginInfo(MendelUser loginUser, LocalDateTime loginTimeStamp, boolean isAuthenticated, boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled) {
         mLoginUser = loginUser;
         mLoginTimeStamp = loginTimeStamp;
         mIsAuthenticated = isAuthenticated;
@@ -87,7 +87,7 @@ public class LoginInfo implements Serializable {
      *
      * @return
      */
-    public Date getLoginTimeStamp() {
+    public LocalDateTime getLoginTimeStamp() {
         return mLoginTimeStamp;
     }
 
@@ -145,7 +145,7 @@ public class LoginInfo implements Serializable {
 
         // The instance to build
         private MendelUser mLoginUser;
-        private Date mLoginTimeStamp = null;
+        private LocalDateTime mLoginTimeStamp = null;
         private boolean isAuthenticated = true;
         private boolean accountExpired = false;
         private boolean accountLocked = false;
@@ -161,7 +161,7 @@ public class LoginInfo implements Serializable {
             return this;
         }
 
-        public Builder loginAt(Date loginTimeStamp) {
+        public Builder loginAt(LocalDateTime loginTimeStamp) {
             mLoginTimeStamp = loginTimeStamp;
             return this;
         }

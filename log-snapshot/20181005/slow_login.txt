@@ -1,0 +1,81 @@
+#|2018-10-05T08:52:26.259+0700|INFO|glassfish 4.1||_ThreadID=33;_ThreadName=Thread-8;_TimeMillis=1538704346259;_LevelValue=800;|
+  Hibernate:
+    select
+        roleentity0_.id as id1_2_0_,
+        roleentity0_.name as name2_2_0_
+    from
+        TBL_ROLE roleentity0_
+    where
+        roleentity0_.id=?|#]
+
+[#|2018-10-05T08:52:26.288+0700|INFO|glassfish 4.1||_ThreadID=33;_ThreadName=Thread-8;_TimeMillis=1538704346288;_LevelValue=800;|
+  2018-10-05 08:52:26,288 DEBUG - Closing JPA EntityManager|#]
+
+[#|2018-10-05T08:52:26.310+0700|INFO|glassfish 4.1||_ThreadID=33;_ThreadName=Thread-8;_TimeMillis=1538704346310;_LevelValue=800;|
+  2018-10-05 08:52:26,310 DEBUG - Creating new EntityManager for shared EntityManager invocation|#]
+
+[#|2018-10-05T08:52:26.341+0700|INFO|glassfish 4.1||_ThreadID=33;_ThreadName=Thread-8;_TimeMillis=1538704346341;_LevelValue=800;|
+  Hibernate:
+    select
+        userpriven0_.id as id1_4_,
+        userpriven0_.privilege_id as privileg2_4_,
+        userpriven0_.user_id as user_id3_4_
+    from
+        TBL_USER_PRIV userpriven0_
+    where
+        userpriven0_.user_id=?|#]
+
+[#|2018-10-05T08:52:26.346+0700|INFO|glassfish 4.1||_ThreadID=33;_ThreadName=Thread-8;_TimeMillis=1538704346346;_LevelValue=800;|
+  2018-10-05 08:52:26,346 DEBUG - Closing JPA EntityManager|#]
+
+[#|2018-10-05T08:52:36.942+0700|WARNING|glassfish 4.1|javax.enterprise.web.core|_ThreadID=34;_ThreadName=http-listener-1(5);_TimeMillis=1538704356942;_LevelValue=900;_MessageID=AS-WEB-CORE-00059;|
+  Unable to set request character encoding to UTF-8 from context /mendel-all, because request parameters have already been read, or ServletRequest.getReader() has already been called|#]
+
+[#|2018-10-05T08:52:37.051+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1538704357051;_LevelValue=800;|
+  2018-10-05 08:52:37,051 DEBUG - Opening JPA EntityManager|#]
+
+[#|2018-10-05T08:52:37.064+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1538704357064;_LevelValue=800;|
+  2018-10-05 08:52:37,064 DEBUG - Registering transaction synchronization for JPA EntityManager|#]
+
+[#|2018-10-05T08:52:37.098+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1538704357098;_LevelValue=800;|
+  Hibernate:
+    select
+        userentity0_.id as id1_3_,
+        userentity0_.displayed_name as displaye2_3_,
+        userentity0_.password as password3_3_,
+        userentity0_.name as name4_3_,
+        userentity0_.role_id as role_id5_3_
+    from
+        TBL_USER userentity0_
+    order by
+        userentity0_.name asc limit ?|#]
+
+[#|2018-10-05T08:52:37.103+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1538704357103;_LevelValue=800;|
+  Hibernate:
+    select
+        roleentity0_.id as id1_2_0_,
+        roleentity0_.name as name2_2_0_
+    from
+        TBL_ROLE roleentity0_
+    where
+        roleentity0_.id=?|#]
+
+[#|2018-10-05T08:52:37.105+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1538704357105;_LevelValue=800;|
+  Hibernate:
+    select
+        roleentity0_.id as id1_2_0_,
+        roleentity0_.name as name2_2_0_
+    from
+        TBL_ROLE roleentity0_
+    where
+        roleentity0_.id=?|#]
+
+[#|2018-10-05T08:52:37.125+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1538704357125;_LevelValue=800;|
+  Hibernate:
+    select
+        count(userentity0_.id) as col_0_0_
+    from
+        TBL_USER userentity0_|#]
+
+[#|2018-10-05T08:52:37.144+0700|INFO|glassfish 4.1||_ThreadID=31;_ThreadName=Thread-8;_TimeMillis=1538704357144;_LevelValue=800;|
+  2018-10-05 08:52:37,144 DEBUG - Closing JPA EntityManager|#]

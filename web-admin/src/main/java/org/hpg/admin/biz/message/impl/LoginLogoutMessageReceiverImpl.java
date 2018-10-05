@@ -36,8 +36,7 @@ public class LoginLogoutMessageReceiverImpl implements MessageListener {
         try {
             // TODO Implement properly
             RecentLoginStatusMessage response = (RecentLoginStatusMessage) messageConverter.fromMessage(msg);
-            System.out.println(response);
-            // [EXPERIMENT] Try to sent to client via websocket
+            // [EXPERIMENT] Try to sent message object as string to client via websocket without any modification
             messagingTemplate.convertAndSend("/topic/loginCheck", response);
         } catch (JMSException | MessageConversionException ex) {
             Logger.getLogger(LoginLogoutMessageReceiverImpl.class.getName()).log(Level.SEVERE, null, ex);

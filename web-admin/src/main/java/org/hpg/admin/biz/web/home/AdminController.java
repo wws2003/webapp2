@@ -8,13 +8,9 @@ package org.hpg.admin.biz.web.home;
 import java.util.HashMap;
 import org.hpg.admin.constant.AdminUrls;
 import org.hpg.common.biz.service.abstr.IScreenService;
-import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.constant.MendelTransactionalLevel;
-import org.hpg.common.model.message.RecentLoginStatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,9 +28,6 @@ public class AdminController {
 
     @Autowired
     private IUserSession userSession;
-
-    @Autowired
-    private IUserService userService;
 
     @Autowired
     private IScreenService screenService;
@@ -66,21 +59,6 @@ public class AdminController {
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 fm -> new ModelAndView(userMgtPage),
                 userMgtPage);
-    }
-
-    /**
-     * This is to listen to client sending data
-     *
-     * @return
-     * @throws java.lang.Exception
-     */
-    @MessageMapping("/loginCheck")
-    @SendTo("/topic/loginCheck")
-    public RecentLoginStatusMessage fff() throws Exception {
-        // This does not get called after being triggered
-        Thread.sleep(1000); // simulated delay
-        RecentLoginStatusMessage msg = new RecentLoginStatusMessage();
-        return msg;
     }
 
     /**

@@ -9,7 +9,7 @@ table.lo_fixed_header_table tbody {
 }
 
 td.mo_logged_in {
-    color: green
+    color: #04B431
 }
 
 table.lo_fixed_header_table td.mo_checkbox_wrapper {

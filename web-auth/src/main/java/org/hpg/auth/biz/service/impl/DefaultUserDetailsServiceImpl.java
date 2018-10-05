@@ -5,7 +5,7 @@
  */
 package org.hpg.auth.biz.service.impl;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import org.hpg.auth.model.MendelUserDetails;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelRole;
@@ -45,7 +45,7 @@ public class DefaultUserDetailsServiceImpl implements UserDetailsService {
                 .map(mendelUser -> {
                     return new MendelUserDetails(
                             LoginInfo.withUser(mendelUser)
-                                    .loginAt(new Date())
+                                    .loginAt(LocalDateTime.now())
                                     .build(),
                             mUserService.getUserGrantedPrivileges(mendelUser.getId())
                     );

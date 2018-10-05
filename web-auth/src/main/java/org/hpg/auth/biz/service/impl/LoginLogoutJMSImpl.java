@@ -5,10 +5,15 @@
  */
 package org.hpg.auth.biz.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.hpg.auth.biz.service.abstr.ILoginLogoutMessageService;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.model.message.RecentLoginStatusMessage;
+import org.hpg.libcommon.DateFormatConst;
+import org.hpg.libcommon.DateUtil;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -25,9 +30,11 @@ public class LoginLogoutJMSImpl implements ILoginLogoutMessageService {
     }
 
     @Override
-    public void notifyUserLogin(long loginUserId) throws MendelRuntimeException {
+    public void notifyUserLogin(long loginUserId, LocalDateTime loginTimeStamp) throws MendelRuntimeException {
         RecentLoginStatusMessage message = new RecentLoginStatusMessage();
-        message.setLoggedInUserIds(Arrays.asList(loginUserId));
+        Map<Long, String> loggedInUserMap = new LinkedHashMap();
+        loggedInUserMap.put(loginUserId, DateUtil.dateTime2String(loginTimeStamp, DateFormatConst.FULL_SEC_A));
+        message.setLoggedInUserMap(loggedInUserMap);
         jmsTemplate.convertAndSend(message);
     }
 

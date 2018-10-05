@@ -7,6 +7,7 @@ package org.hpg.common.model.message;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Message contents info of recently login/logout user
@@ -16,21 +17,21 @@ import java.util.List;
 public class RecentLoginStatusMessage implements Serializable {
 
     /**
-     * Most recent login user ids
+     * Most recent login user ids (with logintimestamp info)
      */
-    private List<Long> loggedInUserIds;
+    private Map<Long, String> loggedInUserMap;
 
     /**
      * Most recent logout user ids
      */
     private List<Long> loggedOutUserIds;
 
-    public List<Long> getLoggedInUserIds() {
-        return loggedInUserIds;
+    public Map<Long, String> getLoggedInUserMap() {
+        return loggedInUserMap;
     }
 
-    public void setLoggedInUserIds(List<Long> loggedInUserIds) {
-        this.loggedInUserIds = loggedInUserIds;
+    public void setLoggedInUserMap(Map<Long, String> loggedInUserMap) {
+        this.loggedInUserMap = loggedInUserMap;
     }
 
     public List<Long> getLoggedOutUserIds() {
@@ -43,6 +44,6 @@ public class RecentLoginStatusMessage implements Serializable {
 
     @Override
     public String toString() {
-        return "LoginMessage{" + "loggedInUserIds=" + loggedInUserIds + ", loggedOutUserIds=" + loggedOutUserIds + '}';
+        return "LoginMessage{" + "loggedInUserIds=" + loggedInUserMap + ", loggedOutUserIds=" + loggedOutUserIds + '}';
     }
 }
