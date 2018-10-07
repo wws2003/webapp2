@@ -5,7 +5,7 @@
  */
 
 /* Values is initialized by let and therefore can not be redeclared here */
-/* global MendelApp, Tagger, MendelDialog, Stomp  */
+/* global MendelApp, Tagger, MendelDialog, Stomp, MendelCommon  */
 
 var Rx = Rx || {};
 /*----------------------------------------------------Constansts----------------------------------------------------*/
@@ -20,7 +20,8 @@ let Urls = {
     USER_MGT_ADDUPDATE_ACTION: 'addUpdate',
     USER_MGT_GETDETAIL_ACTION: 'detail',
     USER_MGT_GETALLUSERPRIVS_ACTION: 'userPrivs',
-    USER_MGT_DELETE_ACTION: 'delete'
+    USER_MGT_DELETE_ACTION: 'delete',
+    USER_MGT_DELETE_FORCE_LOGOUT: 'forceLogout'
 };
 
 let Topics = {
@@ -167,6 +168,13 @@ var UserRecordsPageFragment = {
                         pageNumber: 1,
                         recordCountPerPage: getRecordCountPerPageFunc()
                     };
+                }))
+                .pageRequestObservable(forceLogoutSuccessObservable.map(() => {
+                    // Providing paging subject with page request form (starting from page 1)
+                    return {
+                        pageNumber: 1,
+                        recordCountPerPage: getRecordCountPerPageFunc()
+                    };
                 }));
         // TODO Handle forceLogoutSuccessObservable
     },
@@ -185,19 +193,27 @@ var UserRecordsPageFragment = {
                 .map(tr => {
                     return {
                         tableEle: $(tr),
-                        loginStateHtml: loggedInUserMap[parseInt($(tr).attr('user_id'))]
+                        loginStateHtml: loggedInUserMap[parseInt($(tr).attr('user_id'))],
+                        chckBoxDeleteFunc: MendelCommon.disableEle,
+                        btnUpdateFunc: MendelCommon.disableEle
                     };
                 }),
                 Rx.Observable.from(userTrs).filter(tr => recentLoggedOutUserIds.indexOf(parseInt($(tr).attr('user_id'))) >= 0)
                 .map(tr => {
                     return {
                         tableEle: $(tr),
-                        loginStateHtml: ''
+                        loginStateHtml: '',
+                        chckBoxDeleteFunc: MendelCommon.enableEle,
+                        btnUpdateFunc: MendelCommon.enableEle
                     };
                 })
                 )
                 .subscribe(trInfo => {
+                    // Login since label
                     trInfo.tableEle.find('td:nth-child(4)').html(trInfo.loginStateHtml);
+                    // Delete, Update button
+                    trInfo.chckBoxDeleteFunc(trInfo.tableEle.find('td:nth-child(6) input[type="checkbox"]'));
+                    trInfo.btnUpdateFunc(trInfo.tableEle.find('td:nth-child(7) button'));
                 });
     },
 
@@ -236,8 +252,9 @@ var UserRecordsPageFragment = {
     },
 
     userTblRowGenFunc: function (userRecord) {
-        // TODO Better solution
         let isUserRolePred = () => (userRecord.role === 'USER');
+        // Only update users not login
+        let userCanNotUpdatePred = () => (!isUserRolePred() || userRecord.loginTimeStamp);
         return Tagger.tr()
                 .td(userRecord.name).withClass('col-xs-2')
                 .then()
@@ -249,9 +266,9 @@ var UserRecordsPageFragment = {
                 .then()
                 .td().withClasses('col-xs-2 mo_checkbox_wrapper').innerTagIf(isUserRolePred, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
                 .then()
-                .td().withClasses('col-xs-1 mo_checkbox_wrapper').innerTagIf(isUserRolePred, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
+                .td().withClasses('col-xs-1 mo_checkbox_wrapper').withAttrIf(userCanNotUpdatePred, 'disabled', 'disabled').innerTagIf(isUserRolePred, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
                 .then()
-                .td().withClass('col-xs-1').innerTagIf(isUserRolePred, 'button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
+                .td().withClass('col-xs-1').innerTagIf(isUserRolePred, 'button').withAttrIf(userCanNotUpdatePred, 'disabled', 'disabled').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
                 .then()
                 .withAttrIfOrElse(isUserRolePred, 'user_id', userRecord.id, -1)
                 .build();
@@ -489,7 +506,10 @@ var UserActionSubjects = {
                 .switchMap(userIdsToDelete => userMgtWebService.getDeleteAJAXObservable(userIdsToDelete))
                 .subscribe(serverResponseOberservers.getDeleteUserResponseObserver());
 
-        // Force logout TODO Implement
+        // Force logout
+        this._forceLogoutUsersSubject
+                .switchMap(userIdsToForceLogout => userMgtWebService.getForceLogoutAJAXObservable(userIdsToForceLogout))
+                .subscribe(serverResponseOberservers.getForceLogoutUserResponseObserver());
     }
 };
 
@@ -611,13 +631,18 @@ var ServerResponseObservers = {
     },
 
     /**
-     *Subject for user force logout action
-     * @returns {Map}
+     * Subject for user force logout action
+     * @type Map
      */
-    getForceLogoutResponseObserver: function () {
-        // TODO Implement
+    getForceLogoutUserResponseObserver: function () {
+        // TODO Implement properly, handle messages and error
+        let forceLogoutSuccessSubject = this._forceLogoutSuccessSubject;
+        let userDetailDlg = this._userDetailDlg;
         return  {
             next: (response) => {
+                userDetailDlg.hide();
+                // Show dialog after hide dialog
+                MendelDialog.info('Message', response.successMessages[0], () => forceLogoutSuccessSubject.next());
             }
         };
     }
@@ -728,6 +753,15 @@ var UserMgtWebService = {
         return this.getPostActionObservable(deleteUrl, deleteForm);
     },
 
+    getForceLogoutAJAXObservable: function (userIdsToForceLogout) {
+        let forceLogoutForm = {
+            userIdsToForceLogout: userIdsToForceLogout
+        };
+        // Create
+        let forLogoutUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_DELETE_FORCE_LOGOUT;
+        return this.getPostActionObservable(forLogoutUrl, forceLogoutForm);
+    },
+
     /*--------------------Private methods--------------------*/
     /**
      * Shortcut for Post AJAX promise
@@ -786,6 +820,7 @@ function setupEvents() {
     PageRequestObservables.init();
     // Page request subject
     PageRequestSubject.init(UserMgtWebService);
+
     // Server response subjects
     ServerResponseObservers.init(UserRecordsPageFragment,
             UserDetailDlg,
@@ -794,6 +829,7 @@ function setupEvents() {
             PageRequestObservables._pageRequestAfterForceLogoutSuccess);
     // User action subjects
     UserActionSubjects.init(UserMgtWebService);
+
     // Server message
     ServerMessageObservers.init(UserRecordsPageFragment);
     ServerMessageObservables.init(ServerMessageObservers.getRecentLoginStatusChangedObserver());

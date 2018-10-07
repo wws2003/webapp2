@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.biz.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 import org.hpg.auth.model.MendelUserDetails;
 import org.hpg.common.biz.service.abstr.ILoginUserService;
@@ -32,5 +33,18 @@ public class SessionRegistryLoginUserServiceImpl implements ILoginUserService {
                 .map(principal -> ((MendelUserDetails) principal).getLoginInfo())
                 .filter(loginInfo -> loginInfo.getLoginUser().getId() == userId)
                 .findFirst();
+    }
+
+    @Override
+    public void forceLogout(List<Long> userIdsToForceLogout) throws MendelRuntimeException {
+        sessionRegistry.getAllPrincipals()
+                .stream()
+                .map(principal -> ((MendelUserDetails) principal))
+                .filter(principal -> userIdsToForceLogout.contains(principal.getLoginInfo().getLoginUser().getId()))
+                .flatMap(principal -> sessionRegistry.getAllSessions(principal, true).stream())
+                .forEach((sessionInfo) -> {
+                    sessionInfo.expireNow();
+                    sessionRegistry.removeSessionInformation(sessionInfo.getSessionId());
+                });
     }
 }

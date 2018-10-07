@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
+import org.hpg.admin.biz.web.usermgt.form.UserForceLogoutForm;
 import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserDetail;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserRecord;
@@ -138,13 +139,22 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     }
 
     @Override
-    public AjaxResult deleteUser(UserDeleteForm form) throws MendelRuntimeException {
+    public AjaxResult deleteUsers(UserDeleteForm form) throws MendelRuntimeException {
         userService.deleteUsers(form.getUserIdsToDelete());
         // Return sucess result. TODO Set message properly
         return AjaxResultBuilder.successInstance()
                 .oneSuccessMessage("Users have been successfully deleted")
                 .build();
 
+    }
+
+    @Override
+    public AjaxResult forceLogoutUsers(UserForceLogoutForm form) throws MendelRuntimeException {
+        loginUserService.forceLogout(form.getUserIdsToForceLogout());
+        // Return sucess result. TODO Set message properly
+        return AjaxResultBuilder.successInstance()
+                .oneSuccessMessage("Users have been successfully forced to logout")
+                .build();
     }
 
     /**

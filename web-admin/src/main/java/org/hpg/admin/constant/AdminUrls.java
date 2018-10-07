@@ -58,6 +58,11 @@ public class AdminUrls {
     public static final String ADMIN_USER_MANAGEMENT_DELETE = "/delete";
 
     /**
+     * User manager: Force logout
+     */
+    public static final String ADMIN_USER_FORCE_LOGOUT = "/forceLogout";
+
+    /**
      * System manager URL
      */
     public static final String ADMIN_SYSTEM_MANAGEMENT = "/systemMgt";

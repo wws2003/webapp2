@@ -73,6 +73,38 @@ let MendelCommon = {
         return 1;
     },
 
+    /**
+     * Enable element
+     * @param {JQuery} ele
+     * @returns {undefined}
+     */
+    enableEle: function (ele) {
+        ele.eleEnable();
+    },
+
+    /**
+     * Disable element
+     * @param {JQuery} ele
+     * @returns {undefined}
+     */
+    disableEle: function (ele) {
+        ele.eleDisable();
+    },
+
+    /**
+     * Enable/Disable element
+     * @param {JQuery} ele
+     * @param {Boolean} enableFlg
+     * @returns {undefined}
+     */
+    setEleEnable: function (ele, enableFlg) {
+        if (enableFlg) {
+            ele.eleEnable();
+        } else {
+            ele.eleDisable();
+        }
+    },
+
     /*--------------------------------Private methods--------------------------------*/
 
     /**

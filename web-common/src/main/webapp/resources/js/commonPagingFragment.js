@@ -38,7 +38,7 @@ function CommonPagingFragmentRender() {
     /**
      * Options for record number per page
      */
-    this._recordCountOptions = [3, 20, 50, 100];
+    this._recordCountOptions = [10, 20, 50, 100];
     /**
      * Records-control area elements
      */

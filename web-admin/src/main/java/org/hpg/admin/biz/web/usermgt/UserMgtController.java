@@ -8,6 +8,7 @@ package org.hpg.admin.biz.web.usermgt;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
+import org.hpg.admin.biz.web.usermgt.form.UserForceLogoutForm;
 import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
 import org.hpg.admin.biz.web.usermgt.scrnservice.IUserMgtScrnService;
 import org.hpg.admin.constant.AdminUrls;
@@ -109,7 +110,22 @@ public class UserMgtController {
     public AjaxResult deleteUser(@RequestBody UserDeleteForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT,
-                userMgtScrnService::deleteUser,
+                userMgtScrnService::deleteUsers,
                 (fm, ret) -> String.format("Users have been successfully deleted {%s} for {%s}", fm, ret));
+    }
+
+    /**
+     * Force logout user action
+     *
+     * @param form
+     * @return
+     */
+    @PostMapping(AdminUrls.ADMIN_USER_FORCE_LOGOUT)
+    @ResponseBody
+    public AjaxResult forceLogout(@RequestBody UserForceLogoutForm form) {
+        return actionFlowService.executeSyncForAjaxResult(form,
+                MendelTransactionalLevel.DEFAULT,
+                userMgtScrnService::forceLogoutUsers,
+                (fm, ret) -> String.format("Users have been successfully forced to logout {%s} for {%s}", fm, ret));
     }
 }

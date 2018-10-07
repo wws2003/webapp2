@@ -8,6 +8,7 @@ package org.hpg.admin.biz.web.usermgt.scrnservice;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
+import org.hpg.admin.biz.web.usermgt.form.UserForceLogoutForm;
 import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.web.AjaxResult;
@@ -62,6 +63,16 @@ public interface IUserMgtScrnService {
      * @return
      * @throws MendelRuntimeException When delete failed
      */
-    public AjaxResult deleteUser(UserDeleteForm form) throws MendelRuntimeException;
+    public AjaxResult deleteUsers(UserDeleteForm form) throws MendelRuntimeException;
+
+    /**
+     * Start forcing logout. Just return OK status if staring logout has been
+     * done properly
+     *
+     * @param form
+     * @return
+     * @throws MendelRuntimeException
+     */
+    public AjaxResult forceLogoutUsers(UserForceLogoutForm form) throws MendelRuntimeException;
 
 }

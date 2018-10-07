@@ -5,6 +5,7 @@
  */
 package org.hpg.common.biz.service.abstr;
 
+import java.util.List;
 import java.util.Optional;
 import org.hpg.common.model.dto.principal.LoginInfo;
 import org.hpg.common.model.exception.MendelRuntimeException;
@@ -26,4 +27,12 @@ public interface ILoginUserService {
      * @throws MendelRuntimeException When retrieval failed
      */
     public Optional<LoginInfo> getLoginInfo(long userId) throws MendelRuntimeException;
+
+    /**
+     * Force logout users (if user has not logged in, do nothing)
+     *
+     * @param userIdsToForceLogout
+     * @throws MendelRuntimeException When logout failed
+     */
+    public void forceLogout(List<Long> userIdsToForceLogout) throws MendelRuntimeException;
 }
