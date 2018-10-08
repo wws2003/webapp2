@@ -8,6 +8,7 @@ package org.hpg.auth.biz.service.impl;
 import java.util.List;
 import java.util.Optional;
 import org.hpg.auth.model.MendelUserDetails;
+import org.hpg.common.biz.service.abstr.ILogger;
 import org.hpg.common.biz.service.abstr.ILoginUserService;
 import org.hpg.common.model.dto.principal.LoginInfo;
 import org.hpg.common.model.exception.MendelRuntimeException;
@@ -24,6 +25,9 @@ public class SessionRegistryLoginUserServiceImpl implements ILoginUserService {
 
     @Autowired
     private SessionRegistry sessionRegistry;
+
+    @Autowired
+    private ILogger logger;
 
     @Override
     public Optional<LoginInfo> getLoginInfo(long userId) throws MendelRuntimeException {
@@ -43,8 +47,8 @@ public class SessionRegistryLoginUserServiceImpl implements ILoginUserService {
                 .filter(principal -> userIdsToForceLogout.contains(principal.getLoginInfo().getLoginUser().getId()))
                 .flatMap(principal -> sessionRegistry.getAllSessions(principal, true).stream())
                 .forEach((sessionInfo) -> {
+                    logger.info("Try to expire session id = " + sessionInfo.getSessionId());
                     sessionInfo.expireNow();
-                    sessionRegistry.removeSessionInformation(sessionInfo.getSessionId());
                 });
     }
 }

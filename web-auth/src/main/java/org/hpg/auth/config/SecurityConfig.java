@@ -65,7 +65,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             HttpSecurityRolePrivsConfigurer.instance(http)
-                    .sessionManagement(100, sessionRegistry)
+                    .sessionManagement(1, sessionRegistry) // No more one session for one user
                     .forUserRole()
                     .forUrlPrivileges(AuthUtil.getUrlPrivilesMap(UrlPrivilegeConfig.UserRole.class))
                     .buildInterceptUrlRegistry()

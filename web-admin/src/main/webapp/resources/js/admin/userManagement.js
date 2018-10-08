@@ -266,7 +266,7 @@ var UserRecordsPageFragment = {
                 .then()
                 .td().withClasses('col-xs-2 mo_checkbox_wrapper').innerTagIf(isUserRolePred, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkForceLogout').id('chkForceLogout_' + userRecord.id).then()
                 .then()
-                .td().withClasses('col-xs-1 mo_checkbox_wrapper').withAttrIf(userCanNotUpdatePred, 'disabled', 'disabled').innerTagIf(isUserRolePred, 'input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
+                .td().withClasses('col-xs-1 mo_checkbox_wrapper').innerTagIf(isUserRolePred, 'input').withAttrIf(userCanNotUpdatePred, 'disabled', 'disabled').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + userRecord.id).then()
                 .then()
                 .td().withClass('col-xs-1').innerTagIf(isUserRolePred, 'button').withAttrIf(userCanNotUpdatePred, 'disabled', 'disabled').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + userRecord.id).then()
                 .then()

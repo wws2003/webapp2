@@ -52,7 +52,10 @@ public class HttpSecurityRolePrivsConfigurer {
      * @throws java.lang.Exception
      */
     public HttpSecurityRolePrivsConfigurer sessionManagement(int maximumSessions, SessionRegistry sessionRegistry) throws Exception {
-        mHttpSecurity.sessionManagement().maximumSessions(maximumSessions).sessionRegistry(sessionRegistry);
+        mHttpSecurity.sessionManagement()
+                .maximumSessions(maximumSessions)
+                .sessionRegistry(sessionRegistry)
+                .maxSessionsPreventsLogin(true);
         return this;
     }
 
