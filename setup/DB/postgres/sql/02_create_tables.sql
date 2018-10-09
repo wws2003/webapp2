@@ -39,18 +39,6 @@ CREATE TABLE TBL_USER(
 	FOREIGN KEY (role_id) REFERENCES TBL_ROLE(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- List of login user
---  ID (8-bytes auto incremental, PK)
---  User_ID (foreign key)
---  Login TIMESTAMP
-DROP TABLE IF EXISTS TBL_LOGIN_USER;
-CREATE TABLE TBL_LOGIN_USER(
-	id bigserial PRIMARY KEY NOT NULL,
-	user_id bigint NOT NULL,
-	login_timestamp timestamp(3) with time zone NOT NULL,
-	FOREIGN KEY (user_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
 -- User-Privileges mapping
 --  ID (8-bytes auto incremental, PK)
 --  User_ID (foreign key)
@@ -64,6 +52,40 @@ CREATE TABLE TBL_USER_PRIV(
 	FOREIGN KEY (user_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (privilege_id) REFERENCES TBL_PRIVILEGE(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	UNIQUE(user_id, privilege_id)
+);
+
+-- Project
+--  ID (8-bytes auto incremental, PK)
+--  Name
+--  Description
+--  Status (1: Open, 2: Close)
+--  Scope (1: Public, 2: Private)
+--  CDate
+--  MDate
+DROP TABLE IF EXISTS TBL_PROJECT;
+CREATE TABLE TBL_PROJECT(
+	id bigserial PRIMARY KEY NOT NULL,
+	name varchar(20) NOT NULL,
+	description varchar(4000) NOT NULL,
+	status smallint NOT NULL,
+	scope smallint NOT NULL,
+	cdate timestamp(3) with time zone NOT NULL,
+	mdate timestamp(3) with time zone NOT NULL,
+);
+
+-- User-Project mapping
+--  ID (8-bytes auto incremental, PK)
+--  User_ID (foreign key)
+--  Project_ID (foreign key)
+--  User_ID + Project_ID -> Unique key
+DROP TABLE IF EXISTS TBL_USER_PROJECT;
+CREATE TABLE TBL_USER_PROJECT(
+	id bigserial PRIMARY KEY NOT NULL,
+	user_id bigint NOT NULL,
+	project_id bigint NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (project_id) REFERENCES TBL_PROJECT(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	UNIQUE(user_id, project_id)
 );
 
 -- Document
