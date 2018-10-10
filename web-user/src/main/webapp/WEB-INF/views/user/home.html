@@ -5,8 +5,10 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org">
-    <head th:replace="common/fragments/commonHeader :: frg_common_header(~{::title},~{},~{})">
+    <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
         <title>Home</title>
+        <link href="../../../../resources/css/user/user.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/user/user.css?' + ${timeToken}}"/>
+        <script src="../../../../resources/js/user/user.js" th:src="@{'/resources/js/user/user.js?' +  ${timeToken}}"></script>
     </head>
     <body>
         <div>
@@ -19,6 +21,9 @@ and open the template in the editor.
             </div>
             <div>
                 <a href="#" th:href="@{/user/activityLog}">Activity log</a>
+            </div>
+            <div>
+                <button id="btnTest" class="btn btn-primary" type="button">Test Ajax</button>
             </div>
         </div>
         <form action="#" th:action="@{/user/logout}" method="post">

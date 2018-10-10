@@ -8,6 +8,7 @@ package org.hpg.auth.config;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import org.hpg.auth.biz.service.impl.SessionAuthenticationFailureHandlerImpl;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.sec.MendelActionSecurity;
@@ -53,6 +54,7 @@ public class HttpSecurityRolePrivsConfigurer {
      */
     public HttpSecurityRolePrivsConfigurer sessionManagement(int maximumSessions, SessionRegistry sessionRegistry) throws Exception {
         mHttpSecurity.sessionManagement()
+                .sessionAuthenticationFailureHandler(new SessionAuthenticationFailureHandlerImpl()) // FOR EXPERIMENT
                 .maximumSessions(maximumSessions)
                 .sessionRegistry(sessionRegistry)
                 .maxSessionsPreventsLogin(true);

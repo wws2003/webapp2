@@ -6,6 +6,7 @@
 package org.hpg.admin.biz.web.usermgt.scrnservice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 /**
@@ -66,13 +68,13 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
 
     @Override
     public AjaxResult indexUsers(UsersIndexForm form) throws MendelRuntimeException {
+        List<Order> orders = Arrays.asList(Order.asc("role.id"), Order.asc("name").ignoreCase());
+        Sort sort = Sort.by(orders);
         Pageable pageRequest = PageRequest.of(form.getPageNumber() - 1,
                 form.getRecordCountPerPage(),
-                Sort.Direction.ASC,
-                "name");
+                sort);
 
         // Get data
-        // TODO Detect login status properly. Possibly not just true/false but login timestamp
         Page<ScrnUserRecord> currentPage = userPagingService.getPage(pageRequest)
                 .map(
                         usr -> new ScrnUserRecord(
