@@ -43,4 +43,14 @@ public class AuthUrls {
      * 403 error
      */
     public static final String FORBIDDEN = "/forbidden";
+
+    /**
+     * Session error for admin
+     */
+    public static final String ADMIN_SESSION_AUTH_FAILURE_URL = "adminSessionFailure";
+
+    /**
+     * Session error for user
+     */
+    public static final String USER_SESSION_AUTH_FAILURE_URL = "userSessionFailure";
 }

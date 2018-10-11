@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org">
+    <head th:replace="common/fragments/commonHeader :: frg_common_header(~{::title},~{},~{})">
+        <title>Session authentication failure</title>
+    </head>
+    <body>
+        <div>
+            <h3>Session authentication failure</h3>
+            <div>
+                <a href="#" th:href="@{/${reloginUrl}}">Re-login as current role</a>
+            </div>
+            <div>
+                <a href="#" th:href="@{/}">To home page</a>
+            </div>
+        </div>
+    </body>
+</html>

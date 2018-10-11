@@ -51,6 +51,10 @@ public class SecurityConfig {
         private LogoutSuccessHandler logoutSuccessHandlerForUserRole;
 
         @Autowired
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_AUTH_FAILURE_HANDLER_FOR_USERROLE)
+        private AuthenticationFailureHandler sessionAuthFailureHandler;
+
+        @Autowired
         private PasswordEncoder mPasswordEncoder;
 
         @Autowired
@@ -65,7 +69,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             HttpSecurityRolePrivsConfigurer.instance(http)
-                    .sessionManagement(1, sessionRegistry) // No more one session for one user
+                    .sessionManagement(1, sessionRegistry, sessionAuthFailureHandler) // No more one session for one user
                     .forUserRole()
                     .forUrlPrivileges(AuthUtil.getUrlPrivilesMap(UrlPrivilegeConfig.UserRole.class))
                     .buildInterceptUrlRegistry()
@@ -110,6 +114,10 @@ public class SecurityConfig {
         private LogoutSuccessHandler logoutSuccessHandlerForAdminRole;
 
         @Autowired
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_AUTH_FAILURE_HANDLER_FOR_ADMINROLE)
+        private AuthenticationFailureHandler sessionAuthFailureHandler;
+
+        @Autowired
         private SessionRegistry sessionRegistry;
 
         @Override
@@ -121,7 +129,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             HttpSecurityRolePrivsConfigurer.instance(http)
-                    .sessionManagement(1, sessionRegistry)
+                    .sessionManagement(1, sessionRegistry, sessionAuthFailureHandler)
                     .forAdminRole()
                     .forUrlPrivileges(AuthUtil.getUrlPrivilesMap(UrlPrivilegeConfig.AdminRole.class))
                     .buildInterceptUrlRegistry()

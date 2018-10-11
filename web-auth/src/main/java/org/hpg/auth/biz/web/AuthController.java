@@ -5,12 +5,15 @@
  */
 package org.hpg.auth.biz.web;
 
+import java.util.HashMap;
 import org.hpg.auth.constant.AuthUrls;
 import org.hpg.common.biz.service.abstr.IUserSession;
+import org.hpg.libcommon.MapBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Authentication controller
@@ -56,5 +59,25 @@ public class AuthController {
     @GetMapping(AuthUrls.FORBIDDEN)
     public String forbiden() {
         return "auth/forbidden";
+    }
+
+    /**
+     * Session error
+     *
+     * @return
+     */
+    @GetMapping(AuthUrls.USER_SESSION_AUTH_FAILURE_URL)
+    public ModelAndView userSessionAuthFailure() {
+        return new ModelAndView("auth/sessionAuthFail", MapBuilder.instance(new HashMap<String, String>()).add("reloginUrl", "auth/userLogin").build());
+    }
+
+    /**
+     * Session error
+     *
+     * @return
+     */
+    @GetMapping(AuthUrls.ADMIN_SESSION_AUTH_FAILURE_URL)
+    public ModelAndView adminSessionAuthFailure() {
+        return new ModelAndView("auth/sessionAuthFail", MapBuilder.instance(new HashMap<String, String>()).add("reloginUrl", "auth/adminLogin").build());
     }
 }

@@ -8,7 +8,6 @@ package org.hpg.auth.config;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import org.hpg.auth.biz.service.impl.SessionAuthenticationFailureHandlerImpl;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.sec.MendelActionSecurity;
@@ -17,6 +16,7 @@ import org.hpg.libcommon.Tuple2;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 /**
  * Wrapper for HttpSecurity config
@@ -49,12 +49,13 @@ public class HttpSecurityRolePrivsConfigurer {
      *
      * @param maximumSessions
      * @param sessionRegistry
+     * @param sessionAuthFailureHandler
      * @return
      * @throws java.lang.Exception
      */
-    public HttpSecurityRolePrivsConfigurer sessionManagement(int maximumSessions, SessionRegistry sessionRegistry) throws Exception {
+    public HttpSecurityRolePrivsConfigurer sessionManagement(int maximumSessions, SessionRegistry sessionRegistry, AuthenticationFailureHandler sessionAuthFailureHandler) throws Exception {
         mHttpSecurity.sessionManagement()
-                .sessionAuthenticationFailureHandler(new SessionAuthenticationFailureHandlerImpl()) // FOR EXPERIMENT
+                .sessionAuthenticationFailureHandler(sessionAuthFailureHandler)
                 .maximumSessions(maximumSessions)
                 .sessionRegistry(sessionRegistry)
                 .maxSessionsPreventsLogin(true);

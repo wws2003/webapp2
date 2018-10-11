@@ -22,6 +22,8 @@ public class AuthBeanConstant {
         public static final String DEFAULT_AUTH_SUCCESS_HANDLER_FOR_USERROLE = "authenticationSuccessHandlerForUserRole";
         public static final String DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_ADMINROLE = "logoutSuccessHandlerForAdminRole";
         public static final String DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_USERROLE = "logoutSuccessHandlerForUserRole";
+        public static final String DEFAULT_SESSION_AUTH_FAILURE_HANDLER_FOR_ADMINROLE = "sessionAuthenFailureHandlerForAdminRole";
+        public static final String DEFAULT_SESSION_AUTH_FAILURE_HANDLER_FOR_USERROLE = "sessionAuthenFailureHandlerForUserRole";
 
         // TODO Get value from somewhere to avoid potential conflict (currently hard-coded from JMSConfig)
         public static final String AUTH_TOPIC_JMS_TEMPLATE = "authTopicJMSTemplate";
