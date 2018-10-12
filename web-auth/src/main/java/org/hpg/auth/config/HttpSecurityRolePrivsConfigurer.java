@@ -16,7 +16,7 @@ import org.hpg.libcommon.Tuple2;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 /**
  * Wrapper for HttpSecurity config
@@ -49,14 +49,14 @@ public class HttpSecurityRolePrivsConfigurer {
      *
      * @param maximumSessions
      * @param sessionRegistry
-     * @param sessionAuthFailureHandler
+     * @param sessionInformationExpiredStrategy
      * @return
      * @throws java.lang.Exception
      */
-    public HttpSecurityRolePrivsConfigurer sessionManagement(int maximumSessions, SessionRegistry sessionRegistry, AuthenticationFailureHandler sessionAuthFailureHandler) throws Exception {
+    public HttpSecurityRolePrivsConfigurer sessionManagement(int maximumSessions, SessionRegistry sessionRegistry, SessionInformationExpiredStrategy sessionInformationExpiredStrategy) throws Exception {
         mHttpSecurity.sessionManagement()
-                .sessionAuthenticationFailureHandler(sessionAuthFailureHandler)
                 .maximumSessions(maximumSessions)
+                .expiredSessionStrategy(sessionInformationExpiredStrategy)
                 .sessionRegistry(sessionRegistry)
                 .maxSessionsPreventsLogin(true);
         return this;

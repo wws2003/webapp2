@@ -11,9 +11,9 @@ import org.hpg.auth.biz.service.impl.DefaultAuthenticationFailureHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationSuccessHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultLogoutHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultPasswordEncoderImpl;
+import org.hpg.auth.biz.service.impl.DefaultSessionExpiredStrategyImpl;
 import org.hpg.auth.biz.service.impl.DefaultUserDetailsServiceImpl;
 import org.hpg.auth.biz.service.impl.LoginLogoutJMSImpl;
-import org.hpg.auth.biz.service.impl.SessionAuthenticationFailureHandlerImpl;
 import org.hpg.auth.biz.service.impl.SessionRegistryLoginUserServiceImpl;
 import org.hpg.auth.constant.AuthBeanConstant;
 import org.hpg.common.biz.service.abstr.ILoginUserService;
@@ -33,6 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
@@ -151,16 +152,16 @@ public class AuthBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_AUTH_FAILURE_HANDLER_FOR_ADMINROLE)
-    public AuthenticationFailureHandler getSessionAuthFailureHandlerForAdminRole() {
-        return new SessionAuthenticationFailureHandlerImpl("/auth/adminSessionFailure");
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_ADMINROLE)
+    public SessionInformationExpiredStrategy getSessionAuthFailureHandlerForAdminRole() {
+        return new DefaultSessionExpiredStrategyImpl("/auth/adminSessionFailure");
     }
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_AUTH_FAILURE_HANDLER_FOR_USERROLE)
-    public AuthenticationFailureHandler getSessionAuthFailureHandlerForUserRole() {
-        return new SessionAuthenticationFailureHandlerImpl("/auth/userSessionFailure");
+    @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_USERROLE)
+    public SessionInformationExpiredStrategy getSessionAuthFailureHandlerForUserRole() {
+        return new DefaultSessionExpiredStrategyImpl("/auth/userSessionFailure");
     }
 
     @Bean

@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 /**
  * Implementation of Security policy using Spring-sec libraries
@@ -51,8 +52,8 @@ public class SecurityConfig {
         private LogoutSuccessHandler logoutSuccessHandlerForUserRole;
 
         @Autowired
-        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_AUTH_FAILURE_HANDLER_FOR_USERROLE)
-        private AuthenticationFailureHandler sessionAuthFailureHandler;
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_USERROLE)
+        private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
         @Autowired
         private PasswordEncoder mPasswordEncoder;
@@ -69,7 +70,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             HttpSecurityRolePrivsConfigurer.instance(http)
-                    .sessionManagement(1, sessionRegistry, sessionAuthFailureHandler) // No more one session for one user
+                    .sessionManagement(1, sessionRegistry, sessionInformationExpiredStrategy) // No more one session for one user
                     .forUserRole()
                     .forUrlPrivileges(AuthUtil.getUrlPrivilesMap(UrlPrivilegeConfig.UserRole.class))
                     .buildInterceptUrlRegistry()
@@ -114,8 +115,8 @@ public class SecurityConfig {
         private LogoutSuccessHandler logoutSuccessHandlerForAdminRole;
 
         @Autowired
-        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_AUTH_FAILURE_HANDLER_FOR_ADMINROLE)
-        private AuthenticationFailureHandler sessionAuthFailureHandler;
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_ADMINROLE)
+        private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
         @Autowired
         private SessionRegistry sessionRegistry;
@@ -129,7 +130,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             HttpSecurityRolePrivsConfigurer.instance(http)
-                    .sessionManagement(1, sessionRegistry, sessionAuthFailureHandler)
+                    .sessionManagement(1, sessionRegistry, sessionInformationExpiredStrategy)
                     .forAdminRole()
                     .forUrlPrivileges(AuthUtil.getUrlPrivilesMap(UrlPrivilegeConfig.AdminRole.class))
                     .buildInterceptUrlRegistry()
