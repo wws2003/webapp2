@@ -12,7 +12,7 @@ and open the template in the editor.
         <div>
             <h3>Session authentication failure</h3>
             <div>
-                <a href="#" th:href="@{/${reloginUrl}}">Re-login as current role</a>
+                <a href="#" th:href="@{'/' + ${reloginUrl}}">Re-login as current role</a>
             </div>
             <div>
                 <a href="#" th:href="@{/}">To home page</a>

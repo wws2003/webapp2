@@ -20,7 +20,7 @@ fi
 if [ $# -eq 2 -a $1 -eq 1 ]
 then
     echo "======================================To build and install web-common======================================"
-    mvn clean install -pl web-common -am
+    mvn clean install -ff -DskipTests=true -pl web-common -am
 fi
 
 module_code=2

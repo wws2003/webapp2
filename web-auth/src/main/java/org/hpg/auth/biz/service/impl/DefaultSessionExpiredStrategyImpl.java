@@ -5,7 +5,12 @@
  */
 package org.hpg.auth.biz.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +42,11 @@ public class DefaultSessionExpiredStrategyImpl implements SessionInformationExpi
         HttpServletResponse response = event.getResponse();
         HttpServletRequest request = event.getRequest();
         if (isToProduceAjaxResult(request)) {
-            response.getOutputStream().print(createAjaxResultForSessionExpiredEvent().toString());
+            AjaxResult sessionErrorResult = createAjaxResultForSessionExpiredEvent();
+            response.setContentType("application/json; charset=utf-8");
+            PrintWriter printWriter = response.getWriter();
+            printWriter.append(serializeAjaxResult(sessionErrorResult));
+            printWriter.flush();
         } else {
             RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
             redirectStrategy.sendRedirect(request, response, redirectUrl);
@@ -63,6 +72,25 @@ public class DefaultSessionExpiredStrategyImpl implements SessionInformationExpi
      * @return
      */
     private AjaxResult createAjaxResultForSessionExpiredEvent() {
-        return AjaxResultBuilder.failedInstance(true).oneErrorMessage("[MDL0099]Invalid session, due to expire or force logout").build();
+        return AjaxResultBuilder.failedInstance(true)
+                .oneErrorMessage("[MDL0099]Invalid session, due to expire or force logout")
+                .resultObject(this.redirectUrl)
+                .build();
+    }
+
+    /**
+     * Get JSON format of Ajax result to send to the client
+     *
+     * @param ajaxResult
+     * @return
+     */
+    private String serializeAjaxResult(AjaxResult ajaxResult) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(ajaxResult);
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(DefaultSessionExpiredStrategyImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
     }
 }

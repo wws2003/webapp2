@@ -353,8 +353,8 @@ var UserDetailDlg = {
         mdlUserAddUpdate.find('#lblUserDialogTitle').text('Update user info');
         mdlUserAddUpdate.find('#txtUserName').val(userDetails.name);
         mdlUserAddUpdate.find('#txtDispName').val(userDetails.dispName);
-        mdlUserAddUpdate.find('#txtPassword').val('somepass');
-        mdlUserAddUpdate.find('#txtPasswordConfirm').val('somepass');
+        mdlUserAddUpdate.find('#txtPassword').val('pass001');
+        mdlUserAddUpdate.find('#txtPasswordConfirm').val('pass001');
         // Re-construct subsription
         this.modifySubscription({
             toCreateUser: false,

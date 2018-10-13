@@ -1,4 +1,4 @@
-/* global MendelApp */
+/* global MendelApp, Rx, MendelDefaultAjaxResponseObserverBuilder, MendelDialog */
 
 /**
  * Based urls
@@ -17,10 +17,21 @@ $(document).ready(function () {
                 .url(Urls.USER_BASE_URL + '/' + Urls.TEST_URL)
                 .formData({})
                 .getPromise();
-        promise.done(ret => {
-            console.log(ret);
-        }).fail(ret => {
-            console.log(ret);
-        });
+
+        let observable = Rx.Observable.fromPromise(promise);
+
+        let defaultObserver = {
+            next: (response) => {
+                MendelDialog.info('Message', response.resultObject);
+            },
+            error: (response) => {
+                console.error(response);
+            },
+            complete: (response) => {
+
+            }
+        };
+
+        observable.subscribe(MendelDefaultAjaxResponseObserverBuilder.createAjaxResponseObserver(defaultObserver));
     });
 });

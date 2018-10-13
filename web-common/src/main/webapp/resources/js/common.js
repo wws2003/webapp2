@@ -59,7 +59,7 @@ let MendelCommon = {
      * @returns {Undefined}
      */
     goToUrl: function (url, paramMap) {
-        window.location = this.createGetUrlFromParam(url, paramMap);
+        window.location = MendelCommon.createGetUrlFromParam(url, paramMap);
     },
 
     /**
@@ -114,8 +114,9 @@ let MendelCommon = {
      * @returns {String}
      */
     createGetUrlFromParam: function (rootUrl, paramMap) {
+        let prms = paramMap ? paramMap : [];
         let paramPart = $
-                .map(paramMap, function (k, v) {
+                .map(prms, function (k, v) {
                     return k + '=' + v;
                 })
                 .join('&');
