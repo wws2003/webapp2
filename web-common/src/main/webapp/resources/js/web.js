@@ -10,6 +10,8 @@ let MendelAjaxCommonErrorCode = {
 
 /* global MendelDialog, MendelCommon, MendelApp */
 
+var Rx = Rx || {};
+
 /**
  * Default (empty) constructor
  * @returns {MendelAjaxExecutor}
@@ -53,7 +55,7 @@ MendelAjaxExecutor.prototype.async = function (async) {
 };
 
 /**
- * Execute server call
+ * Get promise for server POST request (not request data from server yet)
  * @returns {undefined}
  */
 MendelAjaxExecutor.prototype.getPromise = function () {
@@ -70,6 +72,56 @@ MendelAjaxExecutor.prototype.getPromise = function () {
     }
 
     return $.ajax(ajaxObj);
+};
+
+/**
+ * Get Observable for server GET request (not request data from server yet)
+ * @returns {Observable}
+ */
+MendelAjaxExecutor.prototype.getObservable = function () {
+    Rx.Observable.fromPromise(this.getPromise());
+};
+
+/**
+ * Namespace for util functions
+ * @type Map (namespace)
+ */
+let MendelAjaxObservableBuilder = {
+    /**
+     * Create AJAX observable for POST request
+     * @param {String} url
+     * @param {Map} form
+     * @returns {Observable}
+     */
+    createPostActionObservable: function (url, form) {
+        let promise = (new MendelAjaxExecutor())
+                .url(url)
+                .formData(form)
+                .getPromise();
+        return Rx.Observable.fromPromise(promise);
+        // Below code does not work as .ajax call immediately executed !?
+//        return (new MendelAjaxExecutor())
+//                .url(url)
+//                .formData(form)
+//                .getObservable();
+    },
+
+    /**
+     * Create AJAX observable for GET request
+     * @param {String} url
+     * @returns {Observable}
+     */
+    createGetActionObservable: function (url) {
+        let promise = (new MendelAjaxExecutor())
+                .url(url)
+                .getPromise();
+        return Rx.Observable.fromPromise(promise);
+
+        // Below code does not work as .ajax call immediately executed !?
+//        return (new MendelAjaxExecutor())
+//                .url(url)
+//                .getObservable();
+    }
 };
 
 /*-----------------------------AJAX response observer builder------------------------------------*/

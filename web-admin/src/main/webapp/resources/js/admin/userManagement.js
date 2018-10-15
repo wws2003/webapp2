@@ -5,7 +5,7 @@
  */
 
 /* Values is initialized by let and therefore can not be redeclared here */
-/* global MendelApp, Tagger, MendelDialog, Stomp, MendelCommon  */
+/* global MendelApp, Tagger, MendelDialog, Stomp, MendelCommon, MendelAjaxObservableBuilder  */
 
 var Rx = Rx || {};
 /*----------------------------------------------------Constansts----------------------------------------------------*/
@@ -715,7 +715,7 @@ var UserMgtWebService = {
     getIndexAJAXObservable: function (indexForm) {
         // Create
         let indexUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_INDEX_ACTION;
-        return this.getPostActionObservable(indexUrl, indexForm);
+        return MendelAjaxObservableBuilder.createPostActionObservable(indexUrl, indexForm);
     },
 
     /**
@@ -729,19 +729,19 @@ var UserMgtWebService = {
         let detailForm = {
             userId: currentUserSelectedId
         };
-        return this.getPostActionObservable(getDetailUrl, detailForm);
+        return MendelAjaxObservableBuilder.createPostActionObservable(getDetailUrl, detailForm);
     },
 
     getAllUserPrivsRetrieveAJAXObservable: function () {
         // Get all user privileges
         let getAllUserPrivs = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETALLUSERPRIVS_ACTION;
-        return this.getGetActionObservable(getAllUserPrivs);
+        return MendelAjaxObservableBuilder.createGetActionObservable(getAllUserPrivs);
     },
 
     getSaveAJAXObservable: function (saveForm) {
         // Create
         let saveUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_ADDUPDATE_ACTION;
-        return this.getPostActionObservable(saveUrl, saveForm);
+        return MendelAjaxObservableBuilder.createPostActionObservable(saveUrl, saveForm);
     },
 
     getDeleteAJAXObservable: function (userIdsToDelete) {
@@ -750,7 +750,7 @@ var UserMgtWebService = {
         };
         // Create
         let deleteUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_DELETE_ACTION;
-        return this.getPostActionObservable(deleteUrl, deleteForm);
+        return MendelAjaxObservableBuilder.createPostActionObservable(deleteUrl, deleteForm);
     },
 
     getForceLogoutAJAXObservable: function (userIdsToForceLogout) {
@@ -759,34 +759,7 @@ var UserMgtWebService = {
         };
         // Create
         let forLogoutUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_DELETE_FORCE_LOGOUT;
-        return this.getPostActionObservable(forLogoutUrl, forceLogoutForm);
-    },
-
-    /*--------------------Private methods--------------------*/
-    /**
-     * Shortcut for Post AJAX promise
-     * @param {String} url
-     * @param {Map} form
-     * @returns {Observable}
-     */
-    getPostActionObservable: function (url, form) {
-        let promise = (new MendelAjaxExecutor())
-                .url(url)
-                .formData(form)
-                .getPromise();
-        return Rx.Observable.fromPromise(promise);
-    },
-
-    /**
-     * Shortcut for Fet AJAX promise
-     * @param {String} url
-     * @returns {Observable}
-     */
-    getGetActionObservable: function (url) {
-        let promise = (new MendelAjaxExecutor())
-                .url(url)
-                .getPromise();
-        return Rx.Observable.fromPromise(promise);
+        return MendelAjaxObservableBuilder.createPostActionObservable(forLogoutUrl, forceLogoutForm);
     }
 };
 
