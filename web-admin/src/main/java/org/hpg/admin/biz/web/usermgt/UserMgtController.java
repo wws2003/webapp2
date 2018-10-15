@@ -17,7 +17,6 @@ import org.hpg.common.constant.MendelRole;
 import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,9 +38,6 @@ public class UserMgtController {
 
     @Autowired
     private IUserMgtScrnService userMgtScrnService;
-
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
 
     /**
      * Indexing
