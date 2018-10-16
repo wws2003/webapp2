@@ -5,7 +5,7 @@
  */
 
 /* Values is initialized by let and therefore can not be redeclared here */
-/* global MendelApp, Tagger, MendelDialog, Stomp, MendelCommon, MendelAjaxObservableBuilder  */
+/* global MendelApp, Tagger, MendelDialog, Stomp, MendelCommon, MendelAjaxObservableBuilder, MendelDefaultAjaxResponseObserverBuilder, MendelAjaxResponseObserverBuilder  */
 
 var Rx = Rx || {};
 /*----------------------------------------------------Constansts----------------------------------------------------*/
@@ -486,30 +486,31 @@ var UserActionSubjects = {
      */
     setupObservers: function (serverResponseOberservers) {
         let userMgtWebService = this._userMgtWebService;
+        let createAjaxResponseFunc = MendelAjaxResponseObserverBuilder.prototype.createAjaxResponseObserver.bind(MendelDefaultAjaxResponseObserverBuilder);
         // Get details
         this._getUserDetailsSubject
                 .switchMap(userId => userMgtWebService.getUserDetailsRetrieveAJAXObservable(userId))
-                .subscribe(serverResponseOberservers.getRetrieveUserDetailsResponseObserver());
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getRetrieveUserDetailsResponseObserver()));
 
         // Add
         this._addUserSubject
                 .switchMap(userId => userMgtWebService.getAllUserPrivsRetrieveAJAXObservable(userId))
-                .subscribe(serverResponseOberservers.getRetrieveAllUserPrivsResponseObserver());
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getRetrieveAllUserPrivsResponseObserver()));
 
         // Update
         this._updateUserSubject
                 .switchMap(saveForm => userMgtWebService.getSaveAJAXObservable(saveForm))
-                .subscribe(serverResponseOberservers.getSaveUserResponseObserver());
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getSaveUserResponseObserver()));
 
         // Delete
         this._deleteUsersSubject
                 .switchMap(userIdsToDelete => userMgtWebService.getDeleteAJAXObservable(userIdsToDelete))
-                .subscribe(serverResponseOberservers.getDeleteUserResponseObserver());
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getDeleteUserResponseObserver()));
 
         // Force logout
         this._forceLogoutUsersSubject
                 .switchMap(userIdsToForceLogout => userMgtWebService.getForceLogoutAJAXObservable(userIdsToForceLogout))
-                .subscribe(serverResponseOberservers.getForceLogoutUserResponseObserver());
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getForceLogoutUserResponseObserver()));
     }
 };
 
@@ -766,62 +767,61 @@ var UserMgtWebService = {
 /*--------------------------------------------------Main actions------------------------------------------------*/
 // Entry point
 $(document).ready(function () {
-    initViews();
     setupEvents();
     loadInitialData();
 });
-
-/**
- * Initialize user manager instance
- * @returns {undefined}
- */
-function initViews() {
-    // Page fragment
-    UserRecordsPageFragment.init($('#frgPaging'));
-
-    // Dialog
-    UserDetailDlg.init($('#mdlUserAddUpdate'));
-}
 
 /**
  * Setup interactions
  * @returns {undefined}
  */
 function setupEvents() {
-    // Initialize subjects
-    // Page request observables
-    PageRequestObservables.init();
-    // Page request subject
-    PageRequestSubject.init(UserMgtWebService);
+    // Try to apply traditional flow (old approach)
+    // 1. Server request observable
+    let webService = UserMgtWebService;
 
-    // Server response subjects
-    ServerResponseObservers.init(UserRecordsPageFragment,
-            UserDetailDlg,
-            PageRequestObservables._pageRequestAfterAddSuccess,
-            PageRequestObservables._pageRequestAfterDeleteSuccess,
-            PageRequestObservables._pageRequestAfterForceLogoutSuccess);
-    // User action subjects
-    UserActionSubjects.init(UserMgtWebService);
+    // 2. User action observable
+    let userActionSubjects = UserActionSubjects;
+    userActionSubjects.init(webService);
 
-    // Server message
-    ServerMessageObservers.init(UserRecordsPageFragment);
-    ServerMessageObservables.init(ServerMessageObservers.getRecentLoginStatusChangedObserver());
+    // 3. View internal observables (paging)
+    let pageRequestObservables = PageRequestObservables;
+    pageRequestObservables.init();
 
-    // Wire observable to observers
-    // User actions
-    // User detail dialog
-    UserDetailDlg.setUserActionSubject(UserActionSubjects._updateUserSubject);
-    UserRecordsPageFragment.setUserActionSubjects(UserActionSubjects._addUserSubject,
-            UserActionSubjects._getUserDetailsSubject,
-            UserActionSubjects._deleteUsersSubject,
-            UserActionSubjects._forceLogoutUsersSubject);
-    // Page-request related
-    UserRecordsPageFragment.setPageRequestSubject(PageRequestSubject._pageRequestSubject);
-    UserRecordsPageFragment.setObservablesForPageRequest(PageRequestObservables._pageRequestAfterScreenInitialized,
-            PageRequestObservables._pageRequestAfterAddSuccess,
-            PageRequestObservables._pageRequestAfterDeleteSuccess,
-            PageRequestObservables._pageRequestAfterForceLogoutSuccess);
-    UserActionSubjects.setupObservers(ServerResponseObservers);
+    // 4. View internal subject (paging)
+    let pageRequestSubject = PageRequestSubject;
+    pageRequestSubject.init(webService);
+
+    // 5. Views
+    let userRecordsPageFragment = UserRecordsPageFragment;
+    let userDetailDlg = UserDetailDlg;
+    userRecordsPageFragment.init($('#frgPaging'));
+    userDetailDlg.init($('#mdlUserAddUpdate'));
+    userRecordsPageFragment.setUserActionSubjects(userActionSubjects._addUserSubject,
+            userActionSubjects._getUserDetailsSubject,
+            userActionSubjects._deleteUsersSubject,
+            userActionSubjects._forceLogoutUsersSubject);
+    userRecordsPageFragment.setPageRequestSubject(pageRequestSubject._pageRequestSubject);
+    userRecordsPageFragment.setObservablesForPageRequest(pageRequestObservables._pageRequestAfterScreenInitialized,
+            pageRequestObservables._pageRequestAfterAddSuccess,
+            pageRequestObservables._pageRequestAfterDeleteSuccess,
+            pageRequestObservables._pageRequestAfterForceLogoutSuccess);
+    userDetailDlg.setUserActionSubject(userActionSubjects._updateUserSubject);
+
+    // 6. Server observers
+    let serverResponseObservers = ServerResponseObservers;
+    serverResponseObservers.init(userRecordsPageFragment,
+            userDetailDlg,
+            pageRequestObservables._pageRequestAfterAddSuccess,
+            pageRequestObservables._pageRequestAfterDeleteSuccess,
+            pageRequestObservables._pageRequestAfterForceLogoutSuccess);
+    userActionSubjects.setupObservers(serverResponseObservers);
+
+    // 7. WebSocket stuffs
+    let serverMessageObservers = ServerMessageObservers;
+    let serverMessageObservables = ServerMessageObservables;
+    serverMessageObservers.init(userRecordsPageFragment);
+    serverMessageObservables.init(serverMessageObservers.getRecentLoginStatusChangedObserver());
 }
 
 /**
