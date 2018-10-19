@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.config;
 
+import org.hpg.auth.biz.service.abstr.IForbiddenAccessHandler;
 import org.hpg.auth.biz.service.abstr.ILoginLogoutMessageService;
 import org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationFailureHandlerImpl;
@@ -13,6 +14,7 @@ import org.hpg.auth.biz.service.impl.DefaultLogoutHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultPasswordEncoderImpl;
 import org.hpg.auth.biz.service.impl.DefaultSessionExpiredStrategyImpl;
 import org.hpg.auth.biz.service.impl.DefaultUserDetailsServiceImpl;
+import org.hpg.auth.biz.service.impl.GeneralPurposeForbiddenAccessHandlerImpl;
 import org.hpg.auth.biz.service.impl.LoginLogoutJMSImpl;
 import org.hpg.auth.biz.service.impl.SessionRegistryLoginUserServiceImpl;
 import org.hpg.auth.constant.AuthBeanConstant;
@@ -154,20 +156,26 @@ public class AuthBeanConfig {
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_ADMINROLE)
     public SessionInformationExpiredStrategy getSessionAuthFailureHandlerForAdminRole() {
-        return new DefaultSessionExpiredStrategyImpl("/auth/adminSessionFailure");
+        return new DefaultSessionExpiredStrategyImpl(new GeneralPurposeForbiddenAccessHandlerImpl("/auth/adminSessionFailure"));
     }
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_USERROLE)
     public SessionInformationExpiredStrategy getSessionAuthFailureHandlerForUserRole() {
-        return new DefaultSessionExpiredStrategyImpl("/auth/userSessionFailure");
+        return new DefaultSessionExpiredStrategyImpl(new GeneralPurposeForbiddenAccessHandlerImpl("/auth/userSessionFailure"));
     }
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public ILoginUserService getLoginUserService() {
         return new SessionRegistryLoginUserServiceImpl();
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IForbiddenAccessHandler getForbiddenAccessHandler() {
+        return new GeneralPurposeForbiddenAccessHandlerImpl("/auth/forbidden");
     }
 
     @Bean

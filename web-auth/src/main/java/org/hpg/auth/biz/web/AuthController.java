@@ -5,13 +5,19 @@
  */
 package org.hpg.auth.biz.web;
 
+import java.io.IOException;
 import java.util.HashMap;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.hpg.auth.biz.service.abstr.IForbiddenAccessHandler;
 import org.hpg.auth.constant.AuthUrls;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.libcommon.MapBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -26,6 +32,9 @@ public class AuthController {
 
     @Autowired
     private IUserSession session;
+
+    @Autowired
+    private IForbiddenAccessHandler forbiddenAccessHandler;
 
     /**
      * Login page for user
@@ -52,13 +61,29 @@ public class AuthController {
     }
 
     /**
-     * 403-error page
+     * 403-error page for GET request
      *
-     * @return
+     * @param request
+     * @param response
+     * @throws java.io.IOException
+     * @throws javax.servlet.ServletException
      */
     @GetMapping(AuthUrls.FORBIDDEN)
-    public String forbiden() {
-        return "auth/forbidden";
+    public void forbidenGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        forbiddenAccessHandler.handleForbiddenAccess(request, response);
+    }
+
+    /**
+     * 403-error page for POST request
+     *
+     * @param request
+     * @param response
+     * @throws java.io.IOException
+     * @throws javax.servlet.ServletException
+     */
+    @PostMapping(AuthUrls.FORBIDDEN)
+    public void forbidenPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        forbiddenAccessHandler.handleForbiddenAccess(request, response);
     }
 
     /**
