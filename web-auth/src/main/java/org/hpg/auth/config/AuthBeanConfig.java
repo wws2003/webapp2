@@ -5,7 +5,6 @@
  */
 package org.hpg.auth.config;
 
-import org.hpg.auth.biz.service.abstr.IForbiddenAccessHandler;
 import org.hpg.auth.biz.service.abstr.ILoginLogoutMessageService;
 import org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationFailureHandlerImpl;
@@ -14,10 +13,12 @@ import org.hpg.auth.biz.service.impl.DefaultLogoutHandlerImpl;
 import org.hpg.auth.biz.service.impl.DefaultPasswordEncoderImpl;
 import org.hpg.auth.biz.service.impl.DefaultSessionExpiredStrategyImpl;
 import org.hpg.auth.biz.service.impl.DefaultUserDetailsServiceImpl;
-import org.hpg.auth.biz.service.impl.GeneralPurposeForbiddenAccessHandlerImpl;
+import org.hpg.auth.biz.service.impl.GeneralPurposeAccessErrorHandlerImpl;
 import org.hpg.auth.biz.service.impl.LoginLogoutJMSImpl;
 import org.hpg.auth.biz.service.impl.SessionRegistryLoginUserServiceImpl;
 import org.hpg.auth.constant.AuthBeanConstant;
+import org.hpg.auth.constant.AuthUrls;
+import org.hpg.auth.util.AuthUtil;
 import org.hpg.common.biz.service.abstr.ILoginUserService;
 import org.hpg.common.biz.service.abstr.IPasswordService;
 import org.hpg.common.biz.service.abstr.IUserSession;
@@ -37,6 +38,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 import org.springframework.web.context.WebApplicationContext;
+import org.hpg.auth.biz.service.abstr.IAccessErrorHandler;
 
 /**
  * Configuration (mostly in term of producer) for beans provided by auth module
@@ -142,28 +144,32 @@ public class AuthBeanConfig {
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_ADMINROLE)
     public LogoutSuccessHandler getLogoutSuccessHandlerForAdminRole() {
-        return new DefaultLogoutHandlerImpl("/auth/adminLogin");
+        return new DefaultLogoutHandlerImpl(AuthUtil.getUrlInAuthDomain(AuthUrls.ADMIN_LOGIN));
     }
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_LOGOUT_SUCCESS_HANDLER_FOR_USERROLE)
     public LogoutSuccessHandler getLogoutSuccessHandlerForUserRole() {
-        return new DefaultLogoutHandlerImpl("/auth/userLogin");
+        return new DefaultLogoutHandlerImpl(AuthUtil.getUrlInAuthDomain(AuthUrls.USER_LOGIN));
     }
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_ADMINROLE)
     public SessionInformationExpiredStrategy getSessionAuthFailureHandlerForAdminRole() {
-        return new DefaultSessionExpiredStrategyImpl(new GeneralPurposeForbiddenAccessHandlerImpl("/auth/adminSessionFailure"));
+        return new DefaultSessionExpiredStrategyImpl(
+                new GeneralPurposeAccessErrorHandlerImpl(AuthUtil.getUrlInAuthDomain(AuthUrls.ADMIN_SESSION_AUTH_FAILURE_URL))
+        );
     }
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_USERROLE)
     public SessionInformationExpiredStrategy getSessionAuthFailureHandlerForUserRole() {
-        return new DefaultSessionExpiredStrategyImpl(new GeneralPurposeForbiddenAccessHandlerImpl("/auth/userSessionFailure"));
+        return new DefaultSessionExpiredStrategyImpl(
+                new GeneralPurposeAccessErrorHandlerImpl(AuthUtil.getUrlInAuthDomain(AuthUrls.USER_SESSION_AUTH_FAILURE_URL))
+        );
     }
 
     @Bean
@@ -174,8 +180,8 @@ public class AuthBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public IForbiddenAccessHandler getForbiddenAccessHandler() {
-        return new GeneralPurposeForbiddenAccessHandlerImpl("/auth/forbidden");
+    public IAccessErrorHandler getForbiddenAccessHandler() {
+        return new GeneralPurposeAccessErrorHandlerImpl(AuthUtil.getUrlInAuthDomain(AuthUrls.FORBIDDEN_PAGE));
     }
 
     @Bean

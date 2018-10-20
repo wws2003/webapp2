@@ -14,18 +14,18 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.hpg.auth.biz.service.abstr.IForbiddenAccessHandler;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.util.AjaxResultBuilder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
+import org.hpg.auth.biz.service.abstr.IAccessErrorHandler;
 
 /**
  * Handler for both response body and forward/redirect
  *
  * @author trungpt
  */
-public class GeneralPurposeForbiddenAccessHandlerImpl implements IForbiddenAccessHandler {
+public class GeneralPurposeAccessErrorHandlerImpl implements IAccessErrorHandler {
 
     private final String redirectUrl;
 
@@ -34,7 +34,7 @@ public class GeneralPurposeForbiddenAccessHandlerImpl implements IForbiddenAcces
      *
      * @param redirectUrl
      */
-    public GeneralPurposeForbiddenAccessHandlerImpl(String redirectUrl) {
+    public GeneralPurposeAccessErrorHandlerImpl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
     }
 

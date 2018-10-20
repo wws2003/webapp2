@@ -6,6 +6,7 @@
 package org.hpg.auth.config;
 
 import org.hpg.auth.constant.AuthBeanConstant;
+import org.hpg.auth.constant.AuthUrls;
 import org.hpg.auth.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -76,16 +77,16 @@ public class SecurityConfig {
                     .buildInterceptUrlRegistry()
                     .and()
                     .formLogin()
-                    .loginPage("/auth/userLogin")
-                    .loginProcessingUrl("/user/login") // Prefix 'must' be /user
+                    .loginPage(AuthUtil.getUrlInAuthDomain(AuthUrls.USER_LOGIN))
+                    .loginProcessingUrl(AuthUtil.getUrlInUserDomain(AuthUrls.UserRole.LOGIN_PROCESS)) // Prefix 'must' be /user
                     .failureHandler(authenticationFailureHandler)
                     .successHandler(authenticationSuccessHandler)
                     .and()
                     .exceptionHandling()
-                    .accessDeniedPage("/auth/forbidden")
+                    .accessDeniedPage(AuthUtil.getUrlInAuthDomain(AuthUrls.FORBIDDEN_ACTION))
                     .and()
                     .logout()
-                    .logoutUrl("/user/logout") // Prefix 'must' be /user (?), default is clearing authentication and httpsession
+                    .logoutUrl(AuthUtil.getUrlInUserDomain(AuthUrls.UserRole.LOGOUT_PROCESS)) // Prefix 'must' be /user (?), default is clearing authentication and httpsession
                     .logoutSuccessHandler(logoutSuccessHandlerForUserRole)
                     .permitAll();
         }
@@ -136,16 +137,16 @@ public class SecurityConfig {
                     .buildInterceptUrlRegistry()
                     .and()
                     .formLogin()
-                    .loginPage("/auth/adminLogin")
-                    .loginProcessingUrl("/admin/login") // Prefix 'must' be /admin
+                    .loginPage(AuthUtil.getUrlInAuthDomain(AuthUrls.ADMIN_LOGIN))
+                    .loginProcessingUrl(AuthUtil.getUrlInAdminDomain(AuthUrls.AdminRole.LOGIN_PROCESS)) // Prefix 'must' be /admin
                     .failureHandler(authenticationFailureHandler)
                     .successHandler(authenticationSuccessHandler)//.defaultSuccessUrl("/admin/home") // Call this cause specified authenticationSuccessHandler ignored
                     .and()
                     .exceptionHandling()
-                    .accessDeniedPage("/auth/forbidden")
+                    .accessDeniedPage(AuthUtil.getUrlInAuthDomain(AuthUrls.FORBIDDEN_ACTION))
                     .and()
                     .logout()
-                    .logoutUrl("/admin/logout") // Prefix 'must' be /admin (?), default is clearing authentication and httpsession
+                    .logoutUrl(AuthUtil.getUrlInAdminDomain(AuthUrls.AdminRole.LOGOUT_PROCESS)) // Prefix 'must' be /admin (?), default is clearing authentication and httpsession
                     .logoutSuccessHandler(logoutSuccessHandlerForAdminRole)
                     .permitAll();
         }

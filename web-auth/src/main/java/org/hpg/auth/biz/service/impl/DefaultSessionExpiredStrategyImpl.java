@@ -9,9 +9,9 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.hpg.auth.biz.service.abstr.IForbiddenAccessHandler;
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+import org.hpg.auth.biz.service.abstr.IAccessErrorHandler;
 
 /**
  * Handler for session authentication failure
@@ -23,9 +23,9 @@ public class DefaultSessionExpiredStrategyImpl implements SessionInformationExpi
     /**
      * URL to redirect
      */
-    private final IForbiddenAccessHandler forbiddenAccessHandler;
+    private final IAccessErrorHandler forbiddenAccessHandler;
 
-    public DefaultSessionExpiredStrategyImpl(IForbiddenAccessHandler forbiddenAccessHandler) {
+    public DefaultSessionExpiredStrategyImpl(IAccessErrorHandler forbiddenAccessHandler) {
         this.forbiddenAccessHandler = forbiddenAccessHandler;
     }
 

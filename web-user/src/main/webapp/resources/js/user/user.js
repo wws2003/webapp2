@@ -1,4 +1,4 @@
-/* global MendelApp, Rx, MendelDefaultAjaxResponseObserverBuilder, MendelDialog */
+/* global MendelApp, Rx, MendelDialog, MendelWebs */
 
 /**
  * Based urls
@@ -31,7 +31,7 @@ $(document).ready(function () {
 
             }
         };
-
-        observable.subscribe(MendelDefaultAjaxResponseObserverBuilder.createAjaxResponseObserver(defaultObserver));
+        let observerBuilder = MendelWebs.getDefaultAjaxResponseObserverBuilder();
+        observable.subscribe(observerBuilder.createAjaxResponseObserver(defaultObserver));
     });
 });

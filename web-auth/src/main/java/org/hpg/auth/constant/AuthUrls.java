@@ -40,17 +40,65 @@ public class AuthUrls {
     public static final String USER_LOGIN_ERROR = "/userLogin";
 
     /**
-     * 403 error
+     * 403 error action URL
      */
-    public static final String FORBIDDEN = "/forbidden";
+    public static final String FORBIDDEN_ACTION = "/forbiddenAction";
 
     /**
-     * Session error for admin
+     * 403 error redirect user page
      */
-    public static final String ADMIN_SESSION_AUTH_FAILURE_URL = "adminSessionFailure";
+    public static final String FORBIDDEN_PAGE = "/forbiddenPage";
+
+    /**
+     * Session error for ADMIN
+     */
+    public static final String ADMIN_SESSION_AUTH_FAILURE_URL = "/adminSessionFailure";
 
     /**
      * Session error for user
      */
-    public static final String USER_SESSION_AUTH_FAILURE_URL = "userSessionFailure";
+    public static final String USER_SESSION_AUTH_FAILURE_URL = "/userSessionFailure";
+
+    /**
+     * URLs for the role ADMIN
+     */
+    public static final class AdminRole {
+
+        /**
+         * Prefix
+         */
+        public static final String PREFIX = "/admin";
+
+        /**
+         * Login process
+         */
+        public static final String LOGIN_PROCESS = "/login";
+
+        /**
+         * Logout process
+         */
+        public static final String LOGOUT_PROCESS = "/logout";
+
+    }
+
+    /**
+     * URLs for the role USEr
+     */
+    public static final class UserRole {
+
+        /**
+         * Prefix
+         */
+        public static final String PREFIX = "/user";
+
+        /**
+         * Login process
+         */
+        public static final String LOGIN_PROCESS = "/login";
+
+        /**
+         * Logout process
+         */
+        public static final String LOGOUT_PROCESS = "/logout";
+    }
 }

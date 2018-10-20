@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.hpg.auth.constant.AuthUrls;
 import org.hpg.common.biz.annotation.MendelAction;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
@@ -72,5 +73,35 @@ public class AuthUtil {
         authorities.add(new SimpleGrantedAuthority(("ROLE_" + role.getName())));
 
         return authorities;
+    }
+
+    /**
+     * Get URL of action in Auth module (starting with Auth module root URL)
+     *
+     * @param functionUrl
+     * @return
+     */
+    public static String getUrlInAuthDomain(String functionUrl) {
+        return AuthUrls.AUTH_ROOT_URL + functionUrl;
+    }
+
+    /**
+     * Get URL of action for ADMIN actions (starting with ADMIN module root URL)
+     *
+     * @param functionUrl
+     * @return
+     */
+    public static String getUrlInAdminDomain(String functionUrl) {
+        return AuthUrls.AdminRole.PREFIX + functionUrl;
+    }
+
+    /**
+     * Get URL of action for USER actions (starting with ADMIN module root URL)
+     *
+     * @param functionUrl
+     * @return
+     */
+    public static String getUrlInUserDomain(String functionUrl) {
+        return AuthUrls.UserRole.PREFIX + functionUrl;
     }
 }

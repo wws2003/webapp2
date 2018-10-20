@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-/* global MendelDialog */
+/* global MendelDialog, MendelWebs */
 
 var Rx = Rx || {};
 
@@ -182,8 +182,10 @@ CommonPagingFragmentRender.prototype.buildRecordsCtrlArea = function (frgPagingE
 CommonPagingFragmentRender.prototype.applyPageRequestSubject = function (frgPagingEle) {
     // Page request subject
     // Observer for response inside common paging fragment area
+    let observerBuilder = MendelWebs.getDefaultAjaxResponseObserverBuilder();
+
     this._pageResponseSubscription && this._pageResponseSubscription.unsubscribe();
-    this._pageResponseSubscription = this._pageRequestSubject.subscribe(this.createObserverForPageResponse(frgPagingEle));
+    this._pageResponseSubscription = this._pageRequestSubject.subscribe(observerBuilder.createAjaxResponseObserver(this.createObserverForPageResponse(frgPagingEle)));
 
     return this;
 };

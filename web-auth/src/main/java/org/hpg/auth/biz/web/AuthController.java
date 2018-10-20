@@ -10,16 +10,15 @@ import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.hpg.auth.biz.service.abstr.IForbiddenAccessHandler;
 import org.hpg.auth.constant.AuthUrls;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.libcommon.MapBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.hpg.auth.biz.service.abstr.IAccessErrorHandler;
 
 /**
  * Authentication controller
@@ -34,7 +33,7 @@ public class AuthController {
     private IUserSession session;
 
     @Autowired
-    private IForbiddenAccessHandler forbiddenAccessHandler;
+    private IAccessErrorHandler forbiddenAccessHandler;
 
     /**
      * Login page for user
@@ -61,29 +60,22 @@ public class AuthController {
     }
 
     /**
-     * 403-error page for GET request
+     * 403-error page for POST/GET request
      *
      * @param request
      * @param response
      * @throws java.io.IOException
      * @throws javax.servlet.ServletException
      */
-    @GetMapping(AuthUrls.FORBIDDEN)
-    public void forbidenGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    @RequestMapping(AuthUrls.FORBIDDEN_ACTION)
+    public void forbidenAction(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         forbiddenAccessHandler.handleForbiddenAccess(request, response);
     }
 
-    /**
-     * 403-error page for POST request
-     *
-     * @param request
-     * @param response
-     * @throws java.io.IOException
-     * @throws javax.servlet.ServletException
-     */
-    @PostMapping(AuthUrls.FORBIDDEN)
-    public void forbidenPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        forbiddenAccessHandler.handleForbiddenAccess(request, response);
+    @RequestMapping(AuthUrls.FORBIDDEN_PAGE)
+    public String forbiddenPage() {
+        // Return HTML page
+        return "auth/forbidden";
     }
 
     /**

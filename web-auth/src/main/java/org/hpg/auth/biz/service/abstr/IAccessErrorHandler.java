@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author trungpt
  */
-public interface IForbiddenAccessHandler {
+public interface IAccessErrorHandler {
 
     /**
      * Handle request to forbidden resource. Default do nothing

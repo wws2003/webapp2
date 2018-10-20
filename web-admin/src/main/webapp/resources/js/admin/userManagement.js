@@ -5,7 +5,7 @@
  */
 
 /* Values is initialized by let and therefore can not be redeclared here */
-/* global MendelApp, Tagger, MendelDialog, Stomp, MendelCommon, MendelAjaxObservableBuilder, MendelDefaultAjaxResponseObserverBuilder, MendelAjaxResponseObserverBuilder  */
+/* global MendelApp, Tagger, MendelDialog, Stomp, MendelCommon, MendelAjaxObservableBuilder, MendelAjaxResponseObserverBuilder, MendelWebs  */
 
 var Rx = Rx || {};
 /*----------------------------------------------------Constansts----------------------------------------------------*/
@@ -486,7 +486,8 @@ var UserActionSubjects = {
      */
     setupObservers: function (serverResponseOberservers) {
         let userMgtWebService = this._userMgtWebService;
-        let createAjaxResponseFunc = MendelAjaxResponseObserverBuilder.prototype.createAjaxResponseObserver.bind(MendelDefaultAjaxResponseObserverBuilder);
+        let observerBuilder = MendelWebs.getDefaultAjaxResponseObserverBuilder();
+        let createAjaxResponseFunc = MendelAjaxResponseObserverBuilder.prototype.createAjaxResponseObserver.bind(observerBuilder);
         // Get details
         this._getUserDetailsSubject
                 .switchMap(userId => userMgtWebService.getUserDetailsRetrieveAJAXObservable(userId))

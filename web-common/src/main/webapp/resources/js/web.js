@@ -3,7 +3,48 @@
  */
 /*-----------------------------Const------------------------------------*/
 let MendelAjaxCommonErrorCode = {
+    ACCESS_FORBIDDEN: '[MDL0098]',
     SESSION_AUTH_FAILURE: '[MDL0099]'
+};
+
+let MendelAjaxCommonError = {
+    ACCESS_FORBIDDEN: 'Action is no longer permitted'
+};
+
+let MendelUrls = {
+    ACCESS_FORBIDDEN_REDIRECT: 'auth/forbiddenPage'
+};
+
+/*-----------------------------Common functions------------------------------------*/
+/**
+ * Provider of Web-related functions
+ * @type Map
+ */
+let MendelWebs = {
+    /**
+     * Attach anti-CSRF stuffs to XMLHTTPREQUEST header
+     * @returns {undefined}
+     */
+    enableCSRFPreventForAjax: function () {
+        // CSRF action for AJAX POST
+        $(document).ajaxSend(function (e, xhr, options) {
+            // Get token from meta tag (called before ajax action)
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            xhr.setRequestHeader(header, token);
+        });
+    },
+
+    /**
+     * Get the builder instance for AjaxResponseObserverBuilder
+     * @returns {MendelAjaxResponseObserverBuilder}
+     */
+    getDefaultAjaxResponseObserverBuilder: function () {
+        return new MendelAjaxResponseObserverBuilder()
+                .addHttpErrorFilter(new AjaxAccessForbiddenResponseErrorFilter())
+                .addErrorFilter(new AjaxResponseSessionErrorFilter())
+                .addErrorFilter(new AjaxRedirectResponseErrorFilter());
+    }
 };
 
 /*-----------------------------AJAX executor------------------------------------*/
@@ -131,7 +172,10 @@ let MendelAjaxObservableBuilder = {
  * @returns {MendelAjaxResponseObserverBuilder}
  */
 function MendelAjaxResponseObserverBuilder() {
+    // Error filters for HTTP 200 status (OK)
     this._errorFilters = [];
+    // Error filters for HTTP error codes
+    this._httpErrorFilters = [];
 }
 
 /**
@@ -145,6 +189,16 @@ MendelAjaxResponseObserverBuilder.prototype.addErrorFilter = function (errorFilt
 };
 
 /**
+ * Add new HTTP error filter for ajax result
+ * @param {AjaxResponseFilter} errorFilter
+ * @returns {MendelAjaxResponseObserverBuilder}
+ */
+MendelAjaxResponseObserverBuilder.prototype.addHttpErrorFilter = function (errorFilter) {
+    this._httpErrorFilters.push(errorFilter);
+    return this;
+};
+
+/**
  * Create observer for ajax response, considering internal error filters
  * @param {Observer} defaultObserver Final observer to be applied after all internal error filter passed through
  * @returns {undefined}
@@ -154,6 +208,8 @@ MendelAjaxResponseObserverBuilder.prototype.createAjaxResponseObserver = functio
     let errorFunc = defaultObserver.error;
     let completeFunc = defaultObserver.complete;
     let errorFilters = this._errorFilters;
+    let httpFilters = this._httpErrorFilters;
+
     return {
         next: (response) => {
             if (response.success) {
@@ -166,20 +222,26 @@ MendelAjaxResponseObserverBuilder.prototype.createAjaxResponseObserver = functio
                     return false;
                 }
             }
-            nextFunc(response);
+            if (nextFunc) {
+                nextFunc(response);
+            }
             return true;
         },
-        error: errorFunc,
+        error: (response) => {
+            for (var i = 0; i < httpFilters.length; i++) {
+                if (httpFilters[i].doFilter(response)) {
+                    // Return immediately if one filter triggered
+                    return false;
+                }
+            }
+            if (errorFunc) {
+                errorFunc(response);
+            }
+            return true;
+        },
         complete: completeFunc
     };
 };
-
-/**
- * Default builder: Only check session failure error
- * @type MendelAjaxResponseObserverBuilder
- */
-let MendelDefaultAjaxResponseObserverBuilder = new MendelAjaxResponseObserverBuilder()
-        .addErrorFilter(new AjaxResponseSessionErrorFilter());
 
 /*-----------------------------AJAX response error filter------------------------------------*/
 
@@ -192,8 +254,38 @@ AjaxResponseSessionErrorFilter.prototype.doFilter = function (ajaxResponse) {
             ajaxResponse.errorMessages[0].substring(0, 9) === MendelAjaxCommonErrorCode.SESSION_AUTH_FAILURE) {
 
         let errorMsg = ajaxResponse.errorMessages[0];
-        let redirectUrl = MendelApp.BASE_URL + '/' + MendelApp.APP_NAME + ajaxResponse.resultObject;
-        MendelDialog.error('Fatal error', errorMsg, MendelCommon.goToUrl.bind(null, redirectUrl));
+        // Do reload action
+        MendelDialog.error('Fatal error', errorMsg, MendelCommon.goToUrl.bind(null, location.href));
+        return true;
+    }
+    return false;
+};
+
+/*-----------------------------Access forbidden response error filter------------------------------------*/
+
+function AjaxAccessForbiddenResponseErrorFilter() {
+}
+
+AjaxAccessForbiddenResponseErrorFilter.prototype.doFilter = function (ajaxResponse) {
+    if (ajaxResponse.status === 403) {
+        let errorMsg = MendelAjaxCommonErrorCode.ACCESS_FORBIDDEN + ' ' + MendelAjaxCommonError.ACCESS_FORBIDDEN;
+        // Do reload action
+        MendelDialog.error('Fatal error', errorMsg, MendelCommon.goToUrl.bind(null, location.href));
+        return true;
+    }
+    return false;
+};
+
+/*-----------------------------Access forbidden response error filter------------------------------------*/
+
+function AjaxRedirectResponseErrorFilter() {
+}
+
+AjaxRedirectResponseErrorFilter.prototype.doFilter = function (ajaxResponse) {
+    if (ajaxResponse.status === 302) {
+        let errorMsg = MendelAjaxCommonErrorCode.ACCESS_FORBIDDEN + ' ' + MendelAjaxCommonError.ACCESS_FORBIDDEN;
+        // TODO Do redirect properly rather than reload
+        MendelDialog.error('Fatal error', errorMsg, MendelCommon.goToUrl.bind(null, location.href));
         return true;
     }
     return false;

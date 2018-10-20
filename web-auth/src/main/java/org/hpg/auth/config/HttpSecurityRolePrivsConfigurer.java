@@ -8,6 +8,7 @@ package org.hpg.auth.config;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import org.hpg.auth.constant.AuthUrls;
 import org.hpg.common.constant.MendelPrivilege;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.sec.MendelActionSecurity;
@@ -64,7 +65,7 @@ public class HttpSecurityRolePrivsConfigurer {
 
     public HttpSecurityRolePrivsConfigurer forUserRole() throws Exception {
         // TODO Implement
-        mAuthorizeReg = mHttpSecurity.antMatcher("/user/**").authorizeRequests();
+        mAuthorizeReg = mHttpSecurity.antMatcher(AuthUrls.UserRole.PREFIX + "/**").authorizeRequests();
         mRole = MendelRole.USER;
         return this;
     }
@@ -80,10 +81,10 @@ public class HttpSecurityRolePrivsConfigurer {
         mAuthorizeReg = this.getUrlInterceptRegistryForPrivilges(mAuthorizeReg, urlPrivilegesMap);
         // Finallize with role-dependent setting
         if (mRole == MendelRole.USER) {
-            mAuthorizeReg.antMatchers("/user/**").hasRole(MendelRole.USER.getName());
+            mAuthorizeReg.antMatchers(AuthUrls.UserRole.PREFIX + "/**").hasRole(MendelRole.USER.getName());
         }
         if (mRole == MendelRole.ADMIN) {
-            mAuthorizeReg.antMatchers("/admin/**").hasRole(MendelRole.ADMIN.getName());
+            mAuthorizeReg.antMatchers(AuthUrls.AdminRole.PREFIX + "/**").hasRole(MendelRole.ADMIN.getName());
         }
         return this;
     }

@@ -3,13 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-/* global Tagger */
+/* global Tagger, MendelWebs */
 
 $(document).ready(function () {
     // TODO Implement
     MendelApp.initialize();
 });
 
+/**
+ * Application instance
+ * @type Map
+ */
 let MendelApp = {
 
     /**
@@ -29,16 +33,15 @@ let MendelApp = {
      * @returns {undefined}
      */
     initialize: function () {
-        // CSRF action for AJAX POST. TODO Think of moving to ajax stuffs
-        $(document).ajaxSend(function (e, xhr, options) {
-            // Get token from meta tag (called before ajax action)
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
-            xhr.setRequestHeader(header, token);
-        });
+        // Prevent CSRF
+        MendelWebs.enableCSRFPreventForAjax();
     }
 };
 
+/**
+ * Common function providers
+ * @type Map
+ */
 let MendelCommon = {
 
     /**
@@ -124,6 +127,10 @@ let MendelCommon = {
     }
 };
 
+/**
+ * Dialog-related function providers
+ * @type Map
+ */
 let MendelDialog = {
     /**
      * Show info dialog with callback called after user closes the dialog
