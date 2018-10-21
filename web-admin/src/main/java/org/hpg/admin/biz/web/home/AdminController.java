@@ -51,14 +51,27 @@ public class AdminController {
      */
     @GetMapping(AdminUrls.ADMIN_USER_MANAGEMENT)
     public ModelAndView userManagement() {
-        // First attempt to use ModelAndView as result, without using any meaningful form
-        // One page used for both normal view and error
         String userMgtPage = "admin/userManagement";
         // Execute for result
         return screenService.executeSyncForModelAndView((Long) 0L,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 fm -> new ModelAndView(userMgtPage),
                 userMgtPage);
+    }
+
+    /**
+     * System management page
+     *
+     * @return
+     */
+    @GetMapping(AdminUrls.ADMIN_PROJECT_MANAGEMENT)
+    public ModelAndView projectManagement() {
+        String projectMgtPage = "admin/projectManagement";
+        // Execute for result
+        return screenService.executeSyncForModelAndView((Long) 0L,
+                MendelTransactionalLevel.DEFAULT_READONLY,
+                fm -> new ModelAndView(projectMgtPage),
+                projectMgtPage);
     }
 
     /**

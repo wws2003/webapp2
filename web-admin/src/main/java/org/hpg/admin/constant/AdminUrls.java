@@ -70,5 +70,11 @@ public class AdminUrls {
     /**
      * Project manager root URL
      */
+    public static final String ADMIN_PROJECT_MANAGEMENT = "/projectMgt";
+
+    /**
+     * Project manager root URL
+     */
     public static final String ADMIN_PROJECT_MANAGEMENT_ROOT_URL = ADMIN_ROOT_URL + "/projectMgt";
+
 }

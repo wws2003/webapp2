@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout/main}">
+    <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
+        <title>Project management</title>
+        <link href="../../../resources/css/commonModal.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/commonModal.css?'+ ${timeToken}}" />
+        <link href="../../../../resources/css/admin/projectManagement.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/admin/projectManagement.css?' + ${timeToken}}"/>
+        <script src="../../../../resources/js/admin/projectManagement.js" th:src="@{'/resources/js/admin/projectManagement.js?' +  ${timeToken}}"></script>
+    </head>
+    <body>
+        <!-- /* Content of this page will be decorated by the elements of layout.html (task/layout) */ -->
+        <div layout:fragment="frgContent">
+            <h4>Project management</h4>
+            <!-- Projects list area (paging)  -->
+            <div th:replace="common/fragments/commonPagingFragment::frgPaging">
+            </div>
+        </div>
+        <th:block layout:fragment="frgCustomContent">
+            <!-- Project add/update modal -->
+        </th:block>
+    </body>
+</html>

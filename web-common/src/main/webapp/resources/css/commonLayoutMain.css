@@ -21,6 +21,17 @@ body>header {
     padding-left: 10px
 }
 
+body>header nav {
+    margin-bottom: 0px !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+body>header a {
+    color: white;
+    text-decoration: none
+}
+
 body>footer {
     position: fixed;
     font-size: 13px;
