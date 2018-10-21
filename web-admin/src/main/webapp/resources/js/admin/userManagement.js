@@ -735,9 +735,10 @@ var UserMgtWebService = {
     },
 
     getAllUserPrivsRetrieveAJAXObservable: function () {
-        // Get all user privileges
+        // Get all user privileges (Temporary still have to use POST request to avoid the problem with redirect !!)
         let getAllUserPrivs = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETALLUSERPRIVS_ACTION;
-        return MendelAjaxObservableBuilder.createGetActionObservable(getAllUserPrivs);
+        let form = {};
+        return MendelAjaxObservableBuilder.createPostActionObservable(getAllUserPrivs, form);
     },
 
     getSaveAJAXObservable: function (saveForm) {

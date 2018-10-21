@@ -11,10 +11,6 @@ let MendelAjaxCommonError = {
     ACCESS_FORBIDDEN: 'Action is no longer permitted'
 };
 
-let MendelUrls = {
-    ACCESS_FORBIDDEN_REDIRECT: 'auth/forbiddenPage'
-};
-
 /*-----------------------------Common functions------------------------------------*/
 /**
  * Provider of Web-related functions
@@ -282,6 +278,7 @@ function AjaxRedirectResponseErrorFilter() {
 }
 
 AjaxRedirectResponseErrorFilter.prototype.doFilter = function (ajaxResponse) {
+    // CURRENTLY DOES NOT WORK. A NEW REDIRECT CALL ALWAYS HAPPEN IN THE BACKGROUND
     if (ajaxResponse.status === 302) {
         let errorMsg = MendelAjaxCommonErrorCode.ACCESS_FORBIDDEN + ' ' + MendelAjaxCommonError.ACCESS_FORBIDDEN;
         // TODO Do redirect properly rather than reload
