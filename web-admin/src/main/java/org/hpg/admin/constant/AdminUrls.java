@@ -77,4 +77,23 @@ public class AdminUrls {
      */
     public static final String ADMIN_PROJECT_MANAGEMENT_ROOT_URL = ADMIN_ROOT_URL + "/projectMgt";
 
+    /**
+     * Project manager: Index (including paging)
+     */
+    public static final String ADMIN_PROJECT_MANAGEMENT_INDEX = "/index";
+
+    /**
+     * Project manager: URL to search users to assign to project
+     */
+    public static final String ADMIN_PROJECT_MANAGEMENT_SEARCH_USER = "/searchUser";
+
+    /**
+     * Project manager: Add/update
+     */
+    public static final String ADMIN_PROJECT_MANAGEMENT_ADD_UPDATE = "/addUpdate";
+
+    /**
+     * Project manager: Delete
+     */
+    public static final String ADMIN_PROJECT_MANAGEMENT_DELETE = "/delete";
 }

@@ -4,11 +4,24 @@
  * and open the template in the editor.
  */
 
-/* global Tagger */
+/* global Tagger, MendelApp */
 
 var Rx = Rx || {};
 
 /*----------------------------------------------------Constants----------------------------------------------------*/
+/**
+ * Based urls
+ * @type Map
+ */
+let Urls = {
+    PROJECT_MGT_BASE_URL: MendelApp.BASE_URL + location.pathname,
+    PROJECT_MGT_INDEX_ACTION: 'index',
+    PROJECT_MGT_ADDUPDATE_ACTION: 'addUpdate',
+    PROJECT_MGT_GETDETAIL_ACTION: 'detail',
+    PROJECT_MGT_SEARCH_USER_ACTION: 'searchUser',
+    PROJECT_MGT_DELETE_ACTION: 'delete'
+};
+
 let RecordsCtrlArea = {
     BTN_RELOAD: {
         id: 'btnReload',

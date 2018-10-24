@@ -8,10 +8,10 @@ package org.hpg.admin.biz.web.projectmgt.form;
 import java.io.Serializable;
 
 /**
- * Form to retrieve detail information for one project
+ * Project add/update form
  *
- * @author trungpt
+ * @author wws2003
  */
-public class ProjectDetailForm implements Serializable {
-
+public class ProjectAddUpdateForm implements Serializable {
+    // TODO Implement
 }

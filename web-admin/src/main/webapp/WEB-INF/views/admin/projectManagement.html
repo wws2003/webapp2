@@ -24,7 +24,57 @@ and open the template in the editor.
             </div>
         </div>
         <th:block layout:fragment="frgCustomContent">
-            <!-- Project add/update modal -->
+            <!-- /*Project add/update modal */-->
+            <div id="mdlProjectAddUpdate" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <!-- Modal header -->
+                        <div class="modal-header">
+                            <label id="lblProjectDialogTitle" class="modal-title mo_modal_title">Input project info</label>
+                            <button type="button" class="btn btn-default pull-right mo_btn_close" data-dismiss="modal">Cancel</button>
+                            <button id="btnProjectAddUpdateDone" class="btn btn-primary pull-right" type="button">Save</button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <div>
+                                <!-- Project code -->
+                                <div class="form-group">
+                                    <label>Project code</label>
+                                    <input id="txtProjectCode" type="text" class="form-control"/>
+                                </div>
+                                <!-- Project name -->
+                                <div class="form-group">
+                                    <label>Project name</label>
+                                    <input id="txtProjectName" type="text" class="form-control"/>
+                                </div>
+                                <!-- Project description -->
+                                <div class="form-group">
+                                    <label>Project description</label>
+                                    <textarea id="txtProjectDesc" class="form-control"/>
+                                </div>
+                                <!-- Project scope -->
+                                <div class="form-group">
+                                    <input type="radio"/> Public
+                                    <input type="radio"/> Private
+                                </div>
+                                <!-- Project status -->
+                                <div class="form-group">
+                                    <input type="radio"/> Open
+                                    <input type="radio"/> Close
+                                </div>
+                                <!-- Project members -->
+                                <div class="form-group">
+                                    <label>Find members</label>
+                                    <input id="txtFindMember" type="text" class="form-control"/>
+                                </div>
+                                <div id="dvMembersArea">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </th:block>
     </body>
 </html>
