@@ -5,26 +5,22 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout/main}">
-    <head th:replace="common/fragments/commonHeader :: frg_common_header(~{::title},~{},~{})">
+    <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
         <title>Admin home page</title>
+        <link href="../../../../resources/css/admin/modulecommon/adminCommon.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/admin/modulecommon/adminCommon.css?' + ${timeToken}}"/>
+        <script src="#"></script>
     </head>
     <body>
+        <!-- /* Header */ -->
+        <header layout:fragment="frgHeader" th:insert="admin/fragments/adminHeaderMenu::frgNavBar">
+        </header>
         <!-- /* Content of this page will be decorated by the elements of layout.html (task/layout) */ -->
         <div layout:fragment="frgContent">
             <div>
                 <label th:text="'Welcome ' + ${userName}">Username</label>
             </div>
             <div>
-                <h3>Choose admin action</h3>
-                <div>
-                    <a href="#" th:href="@{/admin/userMgt}">User management</a>
-                </div>
-                <div>
-                    <a href="#" th:href="@{/admin/projectMgt}">Project management</a>
-                </div>
-                <div>
-                    <a href="#" th:href="@{/admin/systemMgt}">System management</a>
-                </div>
+                Homepage content coming soon. Use the header menu for the moment
             </div>
         </div>
     </body>

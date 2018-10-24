@@ -8,10 +8,14 @@ and open the template in the editor.
     <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
         <title>Project management</title>
         <link href="../../../resources/css/commonModal.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/commonModal.css?'+ ${timeToken}}" />
+        <link href="../../../../resources/css/admin/modulecommon/adminCommon.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/admin/modulecommon/adminCommon.css?' + ${timeToken}}"/>
         <link href="../../../../resources/css/admin/projectManagement.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/admin/projectManagement.css?' + ${timeToken}}"/>
         <script src="../../../../resources/js/admin/projectManagement.js" th:src="@{'/resources/js/admin/projectManagement.js?' +  ${timeToken}}"></script>
     </head>
     <body>
+        <!-- /* Header */ -->
+        <header layout:fragment="frgHeader" th:insert="admin/fragments/adminHeaderMenu::frgNavBar">
+        </header>
         <!-- /* Content of this page will be decorated by the elements of layout.html (task/layout) */ -->
         <div layout:fragment="frgContent">
             <h4>Project management</h4>

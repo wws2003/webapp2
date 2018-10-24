@@ -13,7 +13,7 @@ body {
 }
 
 body>header {
-    background-color: #04B431;
+    background-color: rgba(4, 180, 49, 0.65);
     width: 100%;
     color: white;
     font-size: 38px;
