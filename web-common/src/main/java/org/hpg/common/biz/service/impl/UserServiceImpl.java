@@ -101,4 +101,13 @@ public class UserServiceImpl implements IUserService {
         List<UserEntity> deletedRecords = userRepository.deleteByIdIn(userIds);
         return deletedRecords.size();
     }
+
+    @Override
+    public List<MendelUser> findUsers(String text) throws MendelRuntimeException {
+        // Only get users with normal role
+        return userRepository.findByUserNameOrDisplayName(text, MendelRole.USER.getCode())
+                .stream()
+                .map(entityDtoMapper::getDtoFromEntity)
+                .collect(Collectors.toList());
+    }
 }

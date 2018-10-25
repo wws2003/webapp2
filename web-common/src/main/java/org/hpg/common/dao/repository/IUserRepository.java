@@ -53,4 +53,15 @@ public interface IUserRepository extends IPagingAndSortingRepository<UserEntity,
     @Modifying
     @Query("delete from UserEntity u where u.id in ?1")
     List<UserEntity> deleteBatchByIdIn(List<Long> userIds) throws MendelRuntimeException;
+
+    /**
+     * Find users having name or display name containg given text (ignore case)
+     *
+     * @param text
+     * @param roleId
+     * @return
+     * @throws MendelRuntimeException
+     */
+    @Query("select u from UserEntity u where (UPPER(u.name) like UPPER(:text) or UPPER(u.displayedName) like UPPER(:text)) and (u.role.id = :roleId) order by u.id")
+    List<UserEntity> findByUserNameOrDisplayName(@Param("text") String text, @Param("roleId") int roleId) throws MendelRuntimeException;
 }

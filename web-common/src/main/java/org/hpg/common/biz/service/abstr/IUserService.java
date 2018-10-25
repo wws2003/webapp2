@@ -82,4 +82,14 @@ public interface IUserService {
      * @throws MendelRuntimeException When delete operation failed
      */
     int deleteUsers(List<Long> userIds) throws MendelRuntimeException;
+
+    /**
+     * Find users with name or displayed name contains the given text (results
+     * are ordered by ID)
+     *
+     * @param text
+     * @return
+     * @throws MendelRuntimeException When retrieval operation failed
+     */
+    List<MendelUser> findUsers(String text) throws MendelRuntimeException;
 }

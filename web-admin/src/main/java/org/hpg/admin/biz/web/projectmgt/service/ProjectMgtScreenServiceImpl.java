@@ -6,13 +6,16 @@
 package org.hpg.admin.biz.web.projectmgt.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.hpg.admin.biz.web.projectmgt.form.ProjectDetailForm;
 import org.hpg.admin.biz.web.projectmgt.form.ProjectsIndexForm;
 import org.hpg.admin.biz.web.projectmgt.form.UserSearchForm;
 import org.hpg.admin.biz.web.projectmgt.scrnmodel.ScrnUserTag;
+import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.util.AjaxResultBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,6 +26,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectMgtScreenServiceImpl implements IProjectMgtScrnService {
 
+    @Autowired
+    private IUserService userService;
+
     @Override
     public AjaxResult index(ProjectsIndexForm form) throws MendelRuntimeException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -30,9 +36,17 @@ public class ProjectMgtScreenServiceImpl implements IProjectMgtScrnService {
 
     @Override
     public AjaxResult searchForUsers(UserSearchForm form) throws MendelRuntimeException {
-        // TODO Implement
         String text = form.getUserText();
-        List<ScrnUserTag> resultTags = null;
+        List<ScrnUserTag> resultTags = userService.findUsers(text)
+                .stream()
+                .map(mendelUser -> {
+                    ScrnUserTag tag = new ScrnUserTag();
+                    tag.setId(mendelUser.getId());
+                    tag.setName(mendelUser.getName());
+                    tag.setDispName(mendelUser.getDispName());
+                    return tag;
+                })
+                .collect(Collectors.toList());
         return AjaxResultBuilder.successInstance()
                 .resultObject(resultTags)
                 .build();
