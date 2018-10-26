@@ -7,34 +7,25 @@ package org.hpg.common.model.entity;
 
 import java.io.Serializable;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
- * Entity for login user
+ * Entity for project record
  *
  * @author trungpt
  */
-@Entity
-@Table(name = "TBL_LOGIN_USER")
-public class LoginUserEntity implements Serializable {
+public class ProjectEntity implements Serializable {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "code")
+    private String code;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    @Column(name = "displayed_name")
+    private String displayedName;
 }

@@ -9,13 +9,23 @@ and open the template in the editor.
         <title>Just a faked title to deceive IDE</title>
     </head>
     <body>
-        <!-- TODO Implement properly -->
         <div id="frgSearchBox" th:fragment="frgSearchBox">
-            <div class="dropdown">
-                <button onclick="myFunction()" class="dropbtn">Dropdown</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+            <!-- Area for search box and search button -->
+            <div>
+                <div id="dvSearchInputArea">
+                    <input type="text" id="txtSearchBoxQuery" placeholder="Search.."/>
+                    <button type="button" id="btnSearch" class="btn btn-info">
+                        <span class="glyphicon glyphicon-search"></span>Search
+                    </button>
                 </div>
+            </div>
+            <!-- Area for search result dropdown list -->
+            <div>
+                <ul id="ulSearchResultList">
+                </ul>
+            </div>
+            <!-- Area for selected search results (optional) -->
+            <div id="dvSelectedSearchResultsArea">
             </div>
         </div>
     </body>

@@ -63,12 +63,8 @@ and open the template in the editor.
                                     <input type="radio"/> Open
                                     <input type="radio"/> Close
                                 </div>
-                                <!-- Project members -->
-                                <div class="form-group">
-                                    <label>Find members</label>
-                                    <input id="txtFindMember" type="text" class="form-control"/>
-                                </div>
-                                <div id="dvMembersArea">
+                                <!-- Project members search area -->
+                                <div th:replace="common/fragments/commonSearchBox::frgSearchBox">
                                 </div>
                             </div>
                         </div>
