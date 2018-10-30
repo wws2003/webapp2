@@ -66,13 +66,53 @@ var ProjectRecordsPageFragment = {
         this._pageRender.buildRecordsCtrlArea(projectRecordsPagingFragment);
 
         // Assign view components
-        this._userRecordsPagingFragment = projectRecordsPagingFragment;
+        this._projectRecordsPagingFragment = projectRecordsPagingFragment;
         this._btnReload = projectRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_RELOAD.id);
         this._btnAdd = projectRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_ADD.id);
         this._btnDelete = projectRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_DELETE.id);
 
         // Subjects (for events fired in this view)
-        this._userUpdateSubject = undefined;
+        this._projectUpdateSubject = undefined;
+    },
+
+    /**
+     * Set subjects for user-interactions
+     * @param {Subject} addObserver
+     * @param {Subject} updateObserver
+     * @param {Subject} deleteObserver
+     * @returns {undefined}
+     */
+    setUserActionSubject: function (addObserver, updateObserver, deleteObserver) {
+        // Add
+        Rx.Observable.fromEvent(this._btnAdd, 'click')
+                .subscribe(addObserver);
+
+        // Delete
+        this.subscribeOneActionForCheckedProjects(Rx.Observable.fromEvent(this._btnDelete, 'click'),
+                '.mo_chkDelete:checked',
+                deleteObserver);
+
+        // TODO Implement other actions
+    },
+
+    /**
+     * Set page request subject. TODO Better implementation
+     * @param {Subject} pageRequestSubject
+     * @returns {undefined}
+     */
+    setPageRequestSubject: function (pageRequestSubject) {
+
+    },
+
+    /**
+     * Setup observables for page request
+     * @param {Observable} screenIntializedObservable
+     * @param {Observable} addSuccessObservable
+     * @param {Observable} deleteSuccessObservable
+     * @returns {undefined}
+     */
+    setObservablesForPageRequest: function (screenIntializedObservable, addSuccessObservable, deleteSuccessObservable) {
+
     },
 
     /*--------------------Private methods-------------------*/
@@ -135,6 +175,22 @@ var ProjectRecordsPageFragment = {
                 .map(e => $(e.target).attr('id').split('_')[1])
                 .map(idStr => parseInt(idStr))
                 .subscribe(this._projectUpdateSubject);
+    },
+
+    /**
+     * Subscribe to the subject with params as checked user ids
+     * @param {Observable} actionObservable
+     * @param {String} checkedSelector
+     * ¥@param {Subject} subject
+     * @returns {undefined}
+     */
+    subscribeOneActionForCheckedProjects: function (actionObservable, checkedSelector, subject) {
+        let pageFragment = this._projectRecordsPagingFragment;
+        actionObservable.switchMap(e => Rx.Observable.from(pageFragment.find(checkedSelector).get()))
+                .map(e => $(e).attr('id').split('_')[1])
+                .map(idStr => parseInt(idStr))
+                .scan((acc, one) => acc.concat(one), []) // Re-collect to array again. Do NOT use toArray since the stream has not been completed
+                .subscribe(subject);
     }
 };
 
@@ -143,14 +199,100 @@ var ProjectRecordsPageFragment = {
  * @type Map
  */
 var ProjectDetailDlg = {
+    /**
+     * Initialize
+     * @param {JQuery} mdlProjectAddUpdate
+     * @returns {undefined}
+     */
+    init: function (mdlProjectAddUpdate) {
+        this._mdlProjectAddUpdate = mdlProjectAddUpdate;
+    },
 
+    /**
+     * Set subjects for user-interactions
+     * @param {Subject} saveSubject
+     * @param {Subject} searchSubject
+     * @returns {undefined}
+     */
+    setUserActionSubject: function (saveSubject, searchSubject) {
+
+    },
+
+    /**
+     * Show modal for adding new project
+     * @returns {undefined}
+     */
+    showForAdd: function () {
+        let dlg = this._mdlProjectAddUpdate;
+        // TODO Implement
+        dlg.modal('show');
+    },
+
+    /**
+     * Show modal with project detail
+     * @param {Map} projectDetail
+     * @returns {undefined}
+     */
+    showForUpdate: function (projectDetail) {
+        let dlg = this._mdlProjectAddUpdate;
+        // TODO Implement
+        dlg.modal('show');
+    },
+
+    /**
+     * Hide
+     * @returns {undefined}
+     */
+    hide: function () {
+        let dlg = this._mdlProjectAddUpdate;
+        // TODO Implement
+        dlg.modal('hide');
+    },
+
+    /**
+     * Render error (including disabling elements)
+     * @param {Array} errorMessages
+     * @returns {undefined}
+     */
+    renderErrors: function (errorMessages) {
+        // TODO Implement
+    }
 };
 
 /*----------------------------------------------------Observable, Subjects, Observers----------------------------------------------------*/
+var UserActionSubjects = {
+    /**
+     * Initialize with web service
+     * @param {Map} projectMgtWebService
+     * @returns {undefined}
+     */
+    init: function (projectMgtWebService) {
+        // Service wiring
+        this._projectMgtWebService = projectMgtWebService;
+        // Subjects
+        this._addProjectSubject = new Rx.Subject();
+        this._updateProjectSubject = new Rx.Subject();
+        this._deleteProjectsSubject = new Rx.Subject();
+        this._getProjectDetailsSubject = new Rx.Subject();
+    }
+};
 
+/**
+ * Observers for server response
+ * @type Map
+ */
+var ServerResponseObservers = {
+    // TODO Implement
+};
 
 /*--------------------------------------------------Service------------------------------------------------*/
+/**
+ * Instance to handle WEB requests
+ * @type
+ */
+var ProjectMgtWebService = {
 
+};
 
 /*--------------------------------------------------Main actions------------------------------------------------*/
 // Entry point
@@ -165,9 +307,20 @@ $(document).ready(function () {
  */
 function setupEvents() {
     // TODO Implement
-    // Views
+    let webService = ProjectMgtWebService;
+
+    // 2. User action observable
+    let userActionSubjects = UserActionSubjects;
+    userActionSubjects.init(webService);
+
+    // 3. View internal observables (paging)
+    // 4. View internal subject (paging)
+    // 5. Views
     let projectRecordsPageFragment = ProjectRecordsPageFragment;
+    let projectDetailDialog = ProjectDetailDlg;
     projectRecordsPageFragment.init($('#frgPaging'));
+    projectDetailDialog.init($('#mdlProjectAddUpdate'));
+    projectRecordsPageFragment.setUserActionSubject(userActionSubjects._addProjectSubject, userActionSubjects._updateProjectSubject, userActionSubjects._deleteProjectsSubject);
 }
 
 /**

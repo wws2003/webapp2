@@ -465,7 +465,7 @@ var UserDetailDlg = {
 var UserActionSubjects = {
 
     /**
-     * Initialize subjects from user interacting events
+     * Initialize subjects for user interacting events
      * @param {Map} userMgtWebService
      */
     init: function (userMgtWebService) {

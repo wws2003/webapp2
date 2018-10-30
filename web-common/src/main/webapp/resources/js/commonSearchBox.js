@@ -5,6 +5,14 @@
  */
 var Rx = Rx || {};
 
+// Imagination
+// render.searchInputPlaceHolder('User')
+//      .searchOnTyping()
+//      .searchSubject(new Subject().switchMap('SearchUrl'))
+//      .searchResultOptionEleGenerator((e) => return '<option>e</option>')
+//      .selectedSearchResultEleGenerator((e) => return '<tag>e</tag>')
+//
+
 function CommonSearchBoxFragmentRender() {
     this._searchTextBoxPlaceHolder = 'Search..';
     this._searchOnTyping = false;
