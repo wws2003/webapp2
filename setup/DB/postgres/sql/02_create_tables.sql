@@ -56,19 +56,21 @@ CREATE TABLE TBL_USER_PRIV(
 
 -- Project
 --  ID (8-bytes auto incremental, PK)
---  Name
+--  Code
+--  Display name
 --  Description
 --  Status (1: Open, 2: Close)
---  Scope (1: Public, 2: Private)
+--  Refer scope (1: Public, 2: Private)
 --  CDate
 --  MDate
 DROP TABLE IF EXISTS TBL_PROJECT;
 CREATE TABLE TBL_PROJECT(
 	id bigserial PRIMARY KEY NOT NULL,
-	name varchar(20) NOT NULL,
+	code varchar(8) NOT NULL,
+	displayed_name varchar(32) NOT NULL,
 	description varchar(4000) NOT NULL,
 	status smallint NOT NULL,
-	scope smallint NOT NULL,
+	refer_scope smallint NOT NULL,
 	cdate timestamp(3) with time zone NOT NULL,
 	mdate timestamp(3) with time zone NOT NULL,
 );
@@ -103,11 +105,13 @@ CREATE TABLE TBL_DOCUMENT(
 	name varchar(20) NOT NULL,
 	type smallint NOT NULL,
 	author_id bigint NOT NULL,
+	project_id bigint NOT NULL,
 	content text NOT NULL,
 	public boolean NOT NULL,
 	cdate timestamp(3) with time zone NOT NULL,
 	mdate timestamp(3) with time zone NOT NULL,
 	FOREIGN KEY (author_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE
+	FOREIGN KEY (project_id) REFERENCES TBL_PROJECT(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- References across documents

@@ -15,7 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repository for user (do not create instance at runtime)
+ * Repository for user (do create instance at runtime)
  *
  * @author trungpt
  */
