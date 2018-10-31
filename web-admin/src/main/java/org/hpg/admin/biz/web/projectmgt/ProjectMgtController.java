@@ -45,7 +45,7 @@ public class ProjectMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_PROJECT_MANAGEMENT_INDEX)
     @ResponseBody
-    public AjaxResult indexUsers(@RequestBody PageRequestForm form) {
+    public AjaxResult indexProjects(@RequestBody PageRequestForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 projectMgtScrnService::index);

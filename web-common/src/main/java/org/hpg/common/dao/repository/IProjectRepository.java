@@ -5,7 +5,9 @@
  */
 package org.hpg.common.dao.repository;
 
+import java.util.List;
 import org.hpg.common.model.entity.ProjectEntity;
+import org.hpg.common.model.exception.MendelRuntimeException;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -16,4 +18,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IProjectRepository extends IPagingAndSortingRepository<ProjectEntity, Long> {
 
+    /**
+     * Delete users by ID and return deleted records
+     *
+     * @param projectIds
+     * @return
+     * @throws MendelRuntimeException When delete operation failed
+     */
+    List<ProjectEntity> deleteByIdIn(List<Long> projectIds) throws MendelRuntimeException;
 }

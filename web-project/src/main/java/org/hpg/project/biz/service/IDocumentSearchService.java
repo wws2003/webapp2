@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.search.biz.service;
+package org.hpg.project.biz.service;
 
 import org.hpg.common.model.exception.MendelRuntimeException;
-import org.hpg.search.model.dto.DocumentSearchRequest;
-import org.hpg.search.model.dto.DocumentSearchResult;
+import org.hpg.project.model.dto.DocumentSearchRequest;
+import org.hpg.project.model.dto.DocumentSearchResult;
 
 /**
  * Service for searching documents

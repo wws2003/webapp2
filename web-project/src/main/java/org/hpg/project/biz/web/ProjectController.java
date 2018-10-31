@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.search.biz.web;
+package org.hpg.project.biz.web;
 
-import org.hpg.search.constant.SearchUrls;
+import org.hpg.project.constant.ProjectUrls;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author trungpt
  */
 @Controller
-@RequestMapping(SearchUrls.SEARCH_ROOT_URL)
-public class SearchController {
+@RequestMapping(ProjectUrls.PROJECT_ROOT_URL)
+public class ProjectController {
 
 }

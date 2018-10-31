@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.search.model.dto;
+package org.hpg.project.model.dto;
 
 import java.io.Serializable;
 
