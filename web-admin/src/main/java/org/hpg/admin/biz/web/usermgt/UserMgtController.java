@@ -6,9 +6,9 @@
 package org.hpg.admin.biz.web.usermgt;
 
 import org.hpg.admin.biz.web.common.form.PageRequestForm;
+import org.hpg.admin.biz.web.common.form.SimpleDeleteByIDForm;
+import org.hpg.admin.biz.web.common.form.SimpleRequestByIDForm;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
-import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
-import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UserForceLogoutForm;
 import org.hpg.admin.biz.web.usermgt.scrnservice.IUserMgtScrnService;
 import org.hpg.admin.constant.AdminUrls;
@@ -60,7 +60,7 @@ public class UserMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_USER_DETAILS)
     @ResponseBody
-    public AjaxResult getUserDetailInfo(@RequestBody UserDetailForm form) {
+    public AjaxResult getUserDetailInfo(@RequestBody SimpleRequestByIDForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 userMgtScrnService::getUserDetailInfo);
@@ -102,7 +102,7 @@ public class UserMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_DELETE)
     @ResponseBody
-    public AjaxResult deleteUser(@RequestBody UserDeleteForm form) {
+    public AjaxResult deleteUser(@RequestBody SimpleDeleteByIDForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT,
                 userMgtScrnService::deleteUsers,

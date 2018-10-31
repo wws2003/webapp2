@@ -8,9 +8,9 @@ package org.hpg.admin.biz.web.projectmgt.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.hpg.admin.biz.web.common.form.PageRequestForm;
+import org.hpg.admin.biz.web.common.form.SimpleDeleteByIDForm;
+import org.hpg.admin.biz.web.common.form.SimpleRequestByIDForm;
 import org.hpg.admin.biz.web.projectmgt.form.ProjectAddUpdateForm;
-import org.hpg.admin.biz.web.projectmgt.form.ProjectDeleteForm;
-import org.hpg.admin.biz.web.projectmgt.form.ProjectDetailForm;
 import org.hpg.admin.biz.web.projectmgt.form.UserSearchForm;
 import org.hpg.admin.biz.web.projectmgt.scrnmodel.ScrnUserTag;
 import org.hpg.common.biz.service.abstr.IUserService;
@@ -37,7 +37,7 @@ public class ProjectMgtScreenServiceImpl implements IProjectMgtScrnService {
     }
 
     @Override
-    public AjaxResult getProjectDetail(ProjectDetailForm form) throws MendelRuntimeException {
+    public AjaxResult getProjectDetail(SimpleRequestByIDForm form) throws MendelRuntimeException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -47,7 +47,7 @@ public class ProjectMgtScreenServiceImpl implements IProjectMgtScrnService {
     }
 
     @Override
-    public AjaxResult deleteProjects(ProjectDeleteForm form) throws MendelRuntimeException {
+    public AjaxResult deleteProjects(SimpleDeleteByIDForm form) throws MendelRuntimeException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -6,9 +6,9 @@
 package org.hpg.admin.biz.web.projectmgt;
 
 import org.hpg.admin.biz.web.common.form.PageRequestForm;
+import org.hpg.admin.biz.web.common.form.SimpleDeleteByIDForm;
+import org.hpg.admin.biz.web.common.form.SimpleRequestByIDForm;
 import org.hpg.admin.biz.web.projectmgt.form.ProjectAddUpdateForm;
-import org.hpg.admin.biz.web.projectmgt.form.ProjectDeleteForm;
-import org.hpg.admin.biz.web.projectmgt.form.ProjectDetailForm;
 import org.hpg.admin.biz.web.projectmgt.form.UserSearchForm;
 import org.hpg.admin.biz.web.projectmgt.service.IProjectMgtScrnService;
 import org.hpg.admin.constant.AdminUrls;
@@ -59,7 +59,7 @@ public class ProjectMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_PROJECT_MANAGEMENT_PROJECT_DETAIL)
     @ResponseBody
-    public AjaxResult getProjectDetailInfo(@RequestBody ProjectDetailForm form) {
+    public AjaxResult getProjectDetailInfo(@RequestBody SimpleRequestByIDForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 projectMgtScrnService::getProjectDetail);
@@ -87,7 +87,7 @@ public class ProjectMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_PROJECT_MANAGEMENT_DELETE)
     @ResponseBody
-    public AjaxResult deleteProject(@RequestBody ProjectDeleteForm form) {
+    public AjaxResult deleteProject(@RequestBody SimpleDeleteByIDForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 projectMgtScrnService::deleteProjects);

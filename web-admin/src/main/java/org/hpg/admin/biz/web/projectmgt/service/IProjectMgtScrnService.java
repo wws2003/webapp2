@@ -6,9 +6,9 @@
 package org.hpg.admin.biz.web.projectmgt.service;
 
 import org.hpg.admin.biz.web.common.form.PageRequestForm;
+import org.hpg.admin.biz.web.common.form.SimpleDeleteByIDForm;
+import org.hpg.admin.biz.web.common.form.SimpleRequestByIDForm;
 import org.hpg.admin.biz.web.projectmgt.form.ProjectAddUpdateForm;
-import org.hpg.admin.biz.web.projectmgt.form.ProjectDeleteForm;
-import org.hpg.admin.biz.web.projectmgt.form.ProjectDetailForm;
 import org.hpg.admin.biz.web.projectmgt.form.UserSearchForm;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.exception.MendelRuntimeException;
@@ -36,7 +36,7 @@ public interface IProjectMgtScrnService {
      * @return
      * @throws MendelRuntimeException When retrieval failed
      */
-    public AjaxResult getProjectDetail(ProjectDetailForm form) throws MendelRuntimeException;
+    public AjaxResult getProjectDetail(SimpleRequestByIDForm form) throws MendelRuntimeException;
 
     /**
      * Add/update
@@ -54,7 +54,7 @@ public interface IProjectMgtScrnService {
      * @return
      * @throws MendelRuntimeException When add/update failed
      */
-    public AjaxResult deleteProjects(ProjectDeleteForm form) throws MendelRuntimeException;
+    public AjaxResult deleteProjects(SimpleDeleteByIDForm form) throws MendelRuntimeException;
 
     /**
      * Search for users to assign to project

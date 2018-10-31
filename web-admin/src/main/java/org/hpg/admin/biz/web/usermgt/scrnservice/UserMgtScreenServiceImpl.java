@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.hpg.admin.biz.web.common.form.PageRequestForm;
+import org.hpg.admin.biz.web.common.form.SimpleDeleteByIDForm;
+import org.hpg.admin.biz.web.common.form.SimpleRequestByIDForm;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
-import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
-import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UserForceLogoutForm;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserDetail;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserRecord;
@@ -91,12 +91,12 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     }
 
     @Override
-    public AjaxResult getUserDetailInfo(UserDetailForm form) throws MendelRuntimeException {
+    public AjaxResult getUserDetailInfo(SimpleRequestByIDForm form) throws MendelRuntimeException {
         List<MendelPrivilege> allGrantablePrivs = privilegeService.findPrivilegesForRole(MendelRole.USER);
         ScrnUserDetail model = new ScrnUserDetail();
 
         // Get user by id
-        MendelUser user = userService.findUserById(form.getUserId()).orElseThrow(() -> new MendelRuntimeException("Can not find user to update with id " + form.getUserId()));
+        MendelUser user = userService.findUserById(form.getElementId()).orElseThrow(() -> new MendelRuntimeException("Can not find user to update with id " + form.getElementId()));
         // Set attributes to model
         model.setId(user.getId());
         model.setName(user.getName());
@@ -141,8 +141,8 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     }
 
     @Override
-    public AjaxResult deleteUsers(UserDeleteForm form) throws MendelRuntimeException {
-        userService.deleteUsers(form.getUserIdsToDelete());
+    public AjaxResult deleteUsers(SimpleDeleteByIDForm form) throws MendelRuntimeException {
+        userService.deleteUsers(form.getElementIds());
         // Return sucess result. TODO Set message properly
         return AjaxResultBuilder.successInstance()
                 .oneSuccessMessage("Users have been successfully deleted")

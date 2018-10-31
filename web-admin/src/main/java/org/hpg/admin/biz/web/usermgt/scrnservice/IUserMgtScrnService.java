@@ -6,9 +6,9 @@
 package org.hpg.admin.biz.web.usermgt.scrnservice;
 
 import org.hpg.admin.biz.web.common.form.PageRequestForm;
+import org.hpg.admin.biz.web.common.form.SimpleDeleteByIDForm;
+import org.hpg.admin.biz.web.common.form.SimpleRequestByIDForm;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
-import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
-import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UserForceLogoutForm;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.web.AjaxResult;
@@ -37,7 +37,7 @@ public interface IUserMgtScrnService {
      * @return
      * @throws MendelRuntimeException When retrieval failed
      */
-    public AjaxResult getUserDetailInfo(UserDetailForm form) throws MendelRuntimeException;
+    public AjaxResult getUserDetailInfo(SimpleRequestByIDForm form) throws MendelRuntimeException;
 
     /**
      * Get all user privileges
@@ -63,7 +63,7 @@ public interface IUserMgtScrnService {
      * @return
      * @throws MendelRuntimeException When delete failed
      */
-    public AjaxResult deleteUsers(UserDeleteForm form) throws MendelRuntimeException;
+    public AjaxResult deleteUsers(SimpleDeleteByIDForm form) throws MendelRuntimeException;
 
     /**
      * Start forcing logout. Just return OK status if staring logout has been
