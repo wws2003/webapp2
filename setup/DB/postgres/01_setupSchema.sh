@@ -37,3 +37,6 @@ psql -h $PSQL_HOST -p $PSQL_PORT -U $PSQL_SETUP_USER -w -f sql/03_insert_fixed_d
 
 # Delete handy PostgreSQL password file
 rm $pg_pass_file
+
+# Finish
+echo "Finish schema setup"

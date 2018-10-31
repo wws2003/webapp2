@@ -40,11 +40,8 @@ public class DocumentEntity implements Serializable {
     @JoinColumn(name = "author_id")
     private UserEntity role;
 
-    @Column(name = "content")
-    private String content;
-
-    @Column(name = "public")
-    private Boolean publishedDoc;
+    @Column(name = "description")
+    private String description;
 
     public Integer getId() {
         return id;
@@ -78,19 +75,11 @@ public class DocumentEntity implements Serializable {
         this.role = role;
     }
 
-    public String getContent() {
-        return content;
+    public String getDescription() {
+        return description;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Boolean getPublishedDoc() {
-        return publishedDoc;
-    }
-
-    public void setPublishedDoc(Boolean publishedDoc) {
-        this.publishedDoc = publishedDoc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

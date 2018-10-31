@@ -1,3 +1,14 @@
 Currently only this command works properly:
 mvn clean package war:war
 
+Setup
+1. DB stuff
+- For dev
+	1. cd setup/DB/postgres
+	2. ./01_setupSchema.sh
+	
+- For test
+	1. cd setup/DB/postgres
+	2. ./01_setupSchema.sh -t
+	
+# In Windows 7~, the location folder for tablespace must be set permissions for Network Service.

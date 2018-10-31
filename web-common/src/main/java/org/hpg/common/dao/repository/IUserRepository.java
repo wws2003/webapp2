@@ -64,4 +64,14 @@ public interface IUserRepository extends IPagingAndSortingRepository<UserEntity,
      */
     @Query("select u from UserEntity u where (UPPER(u.name) like UPPER(:text) or UPPER(u.displayedName) like UPPER(:text)) and (u.role.id = :roleId) order by u.id")
     List<UserEntity> findByUserNameOrDisplayName(@Param("text") String text, @Param("roleId") int roleId) throws MendelRuntimeException;
+
+    /**
+     * Find users assigned to the project
+     *
+     * @param projectId
+     * @return
+     * @throws MendelRuntimeException
+     */
+    @Query("select u from UserEntity where u.id in (select usr from ProjectUserEntity pu where pu.projectId = :projectId)")
+    List<UserEntity> findUsersInProject(long projectId) throws MendelRuntimeException;
 }

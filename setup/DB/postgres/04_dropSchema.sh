@@ -32,3 +32,6 @@ fi
 
 # Delete handy PostgreSQL password file
 rm $pg_pass_file
+
+# Finish
+echo "Finish dropping schema"

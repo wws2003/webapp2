@@ -72,7 +72,7 @@ CREATE TABLE TBL_PROJECT(
 	status smallint NOT NULL,
 	refer_scope smallint NOT NULL,
 	cdate timestamp(3) with time zone NOT NULL,
-	mdate timestamp(3) with time zone NOT NULL,
+	mdate timestamp(3) with time zone NOT NULL
 );
 
 -- User-Project mapping
@@ -95,7 +95,7 @@ CREATE TABLE TBL_USER_PROJECT(
 --  Name
 --  Type (1: Text origin, 2: Image origin)
 --  Author_ID (foreign key -> user)
---  Content
+--  Description
 --  Public document flag
 --  CDate
 --  MDate
@@ -106,11 +106,10 @@ CREATE TABLE TBL_DOCUMENT(
 	type smallint NOT NULL,
 	author_id bigint NOT NULL,
 	project_id bigint NOT NULL,
-	content text NOT NULL,
-	public boolean NOT NULL,
+	description varchar(1000) NOT NULL,
 	cdate timestamp(3) with time zone NOT NULL,
 	mdate timestamp(3) with time zone NOT NULL,
-	FOREIGN KEY (author_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE
+	FOREIGN KEY (author_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (project_id) REFERENCES TBL_PROJECT(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -127,6 +126,20 @@ CREATE TABLE TBL_DOCUMENT_REFERENCE(
 	FOREIGN KEY (doc2_id) REFERENCES TBL_DOCUMENT(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+-- References across documents
+--  ID (8-bytes auto incremental, PK)
+--  PageNo
+--  DocID (foreign key -> document)
+--  Content
+DROP TABLE IF EXISTS TBL_PAGE;
+CREATE TABLE TBL_PAGE(
+	id bigserial PRIMARY KEY NOT NULL,
+	page_no bigint NOT NULL,
+	doc_id bigint NOT NULL,
+	content text NOT NULL,
+	FOREIGN KEY (doc_id) REFERENCES TBL_DOCUMENT(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 -- POSTIT
 --  ID (8-bytes auto incremental, PK)
 --  Document ID (foreign key -> document)
@@ -140,14 +153,14 @@ CREATE TABLE TBL_DOCUMENT_REFERENCE(
 DROP TABLE IF EXISTS TBL_POSTIT;
 CREATE TABLE TBL_POSTIT(
 	id bigserial PRIMARY KEY NOT NULL,
-	document_id bigint NOT NULL,
+	page_id bigint NOT NULL,
 	creator_id bigint NOT NULL,
 	content varchar(256) NOT NULL,
 	comment text NOT NULL,
 	color integer NOT NULL,
 	border_color integer NOT NULL,
 	coord box NOT NULL,
-	FOREIGN KEY (document_id) REFERENCES TBL_DOCUMENT(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (page_id) REFERENCES TBL_POSTIT(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (creator_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
