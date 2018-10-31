@@ -14,4 +14,21 @@ import java.io.Serializable;
  */
 public class ProjectDetailForm implements Serializable {
 
+    /**
+     * ID of the project to request
+     */
+    private long projectId;
+
+    public long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(long projectId) {
+        this.projectId = projectId;
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectDetailForm{" + "projectId=" + projectId + '}';
+    }
 }

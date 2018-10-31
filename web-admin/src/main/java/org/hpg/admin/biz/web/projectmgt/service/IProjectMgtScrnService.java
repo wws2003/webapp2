@@ -5,8 +5,10 @@
  */
 package org.hpg.admin.biz.web.projectmgt.service;
 
+import org.hpg.admin.biz.web.common.form.PageRequestForm;
+import org.hpg.admin.biz.web.projectmgt.form.ProjectAddUpdateForm;
+import org.hpg.admin.biz.web.projectmgt.form.ProjectDeleteForm;
 import org.hpg.admin.biz.web.projectmgt.form.ProjectDetailForm;
-import org.hpg.admin.biz.web.projectmgt.form.ProjectsIndexForm;
 import org.hpg.admin.biz.web.projectmgt.form.UserSearchForm;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.exception.MendelRuntimeException;
@@ -25,7 +27,34 @@ public interface IProjectMgtScrnService {
      * @return
      * @throws MendelRuntimeException When retrieval failed
      */
-    public AjaxResult index(ProjectsIndexForm form) throws MendelRuntimeException;
+    public AjaxResult index(PageRequestForm form) throws MendelRuntimeException;
+
+    /**
+     * Get project detail info
+     *
+     * @param form
+     * @return
+     * @throws MendelRuntimeException When retrieval failed
+     */
+    public AjaxResult getProjectDetail(ProjectDetailForm form) throws MendelRuntimeException;
+
+    /**
+     * Add/update
+     *
+     * @param form
+     * @return
+     * @throws MendelRuntimeException When add/update failed
+     */
+    public AjaxResult addUpdateProject(ProjectAddUpdateForm form) throws MendelRuntimeException;
+
+    /**
+     * Delete
+     *
+     * @param form
+     * @return
+     * @throws MendelRuntimeException When add/update failed
+     */
+    public AjaxResult deleteProjects(ProjectDeleteForm form) throws MendelRuntimeException;
 
     /**
      * Search for users to assign to project
@@ -35,13 +64,4 @@ public interface IProjectMgtScrnService {
      * @throws MendelRuntimeException When retrieval failed
      */
     public AjaxResult searchForUsers(UserSearchForm form) throws MendelRuntimeException;
-
-    /**
-     * Get project detail info
-     *
-     * @param form
-     * @return
-     * @throws MendelRuntimeException
-     */
-    public AjaxResult getProjectDetail(ProjectDetailForm form) throws MendelRuntimeException;
 }

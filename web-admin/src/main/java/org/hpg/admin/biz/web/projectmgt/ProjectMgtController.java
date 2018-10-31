@@ -5,7 +5,10 @@
  */
 package org.hpg.admin.biz.web.projectmgt;
 
-import org.hpg.admin.biz.web.projectmgt.form.ProjectsIndexForm;
+import org.hpg.admin.biz.web.common.form.PageRequestForm;
+import org.hpg.admin.biz.web.projectmgt.form.ProjectAddUpdateForm;
+import org.hpg.admin.biz.web.projectmgt.form.ProjectDeleteForm;
+import org.hpg.admin.biz.web.projectmgt.form.ProjectDetailForm;
 import org.hpg.admin.biz.web.projectmgt.form.UserSearchForm;
 import org.hpg.admin.biz.web.projectmgt.service.IProjectMgtScrnService;
 import org.hpg.admin.constant.AdminUrls;
@@ -42,10 +45,52 @@ public class ProjectMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_PROJECT_MANAGEMENT_INDEX)
     @ResponseBody
-    public AjaxResult indexUsers(@RequestBody ProjectsIndexForm form) {
+    public AjaxResult indexUsers(@RequestBody PageRequestForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 projectMgtScrnService::index);
+    }
+
+    /**
+     * Get project detail
+     *
+     * @param form
+     * @return
+     */
+    @PostMapping(AdminUrls.ADMIN_PROJECT_MANAGEMENT_PROJECT_DETAIL)
+    @ResponseBody
+    public AjaxResult getProjectDetailInfo(@RequestBody ProjectDetailForm form) {
+        return actionFlowService.executeSyncForAjaxResult(form,
+                MendelTransactionalLevel.DEFAULT_READONLY,
+                projectMgtScrnService::getProjectDetail);
+    }
+
+    /**
+     * Add/update project
+     *
+     * @param form
+     * @return
+     */
+    @PostMapping(AdminUrls.ADMIN_PROJECT_MANAGEMENT_ADD_UPDATE)
+    @ResponseBody
+    public AjaxResult addUpdateProject(@RequestBody ProjectAddUpdateForm form) {
+        return actionFlowService.executeSyncForAjaxResult(form,
+                MendelTransactionalLevel.DEFAULT_READONLY,
+                projectMgtScrnService::addUpdateProject);
+    }
+
+    /**
+     * Delete project
+     *
+     * @param form
+     * @return
+     */
+    @PostMapping(AdminUrls.ADMIN_PROJECT_MANAGEMENT_DELETE)
+    @ResponseBody
+    public AjaxResult deleteProject(@RequestBody ProjectDeleteForm form) {
+        return actionFlowService.executeSyncForAjaxResult(form,
+                MendelTransactionalLevel.DEFAULT_READONLY,
+                projectMgtScrnService::deleteProjects);
     }
 
     /**

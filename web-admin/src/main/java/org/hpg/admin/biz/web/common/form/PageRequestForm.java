@@ -3,17 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.admin.biz.web.usermgt.form;
+package org.hpg.admin.biz.web.common.form;
 
 import java.io.Serializable;
 
 /**
- * Form for indexing users
+ * Common form for page request
  *
  * @author trungpt
  */
-public class UsersIndexForm implements Serializable {
-    // TODO Add atttributes
+public class PageRequestForm implements Serializable {
 
     /**
      * Number of current page (one-based)
@@ -45,6 +44,6 @@ public class UsersIndexForm implements Serializable {
 
     @Override
     public String toString() {
-        return "UsersIndexForm{" + "pageNumber=" + pageNumber + ", recordCountPerPage=" + recordCountPerPage + '}';
+        return "PageRequestForm{" + "pageNumber=" + pageNumber + ", recordCountPerPage=" + recordCountPerPage + '}';
     }
 }

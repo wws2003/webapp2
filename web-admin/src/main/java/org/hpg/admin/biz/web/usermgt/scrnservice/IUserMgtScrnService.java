@@ -5,11 +5,11 @@
  */
 package org.hpg.admin.biz.web.usermgt.scrnservice;
 
+import org.hpg.admin.biz.web.common.form.PageRequestForm;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UserForceLogoutForm;
-import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
 import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.exception.MendelRuntimeException;
@@ -28,7 +28,7 @@ public interface IUserMgtScrnService {
      * @return
      * @throws MendelRuntimeException When retrieval failed
      */
-    public AjaxResult indexUsers(UsersIndexForm form) throws MendelRuntimeException;
+    public AjaxResult indexUsers(PageRequestForm form) throws MendelRuntimeException;
 
     /**
      * Get detail info

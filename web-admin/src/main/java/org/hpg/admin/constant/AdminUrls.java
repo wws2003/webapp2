@@ -83,6 +83,11 @@ public class AdminUrls {
     public static final String ADMIN_PROJECT_MANAGEMENT_INDEX = "/index";
 
     /**
+     * Project manager: detail info of one project
+     */
+    public static final String ADMIN_PROJECT_MANAGEMENT_PROJECT_DETAIL = "/detail";
+
+    /**
      * Project manager: URL to search users to assign to project
      */
     public static final String ADMIN_PROJECT_MANAGEMENT_SEARCH_USER = "/searchUser";

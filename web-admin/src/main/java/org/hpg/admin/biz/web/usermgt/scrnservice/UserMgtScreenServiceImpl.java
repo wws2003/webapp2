@@ -10,11 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.hpg.admin.biz.web.common.form.PageRequestForm;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UserForceLogoutForm;
-import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserDetail;
 import org.hpg.admin.biz.web.usermgt.scrnmodel.ScrnUserRecord;
 import org.hpg.common.biz.service.abstr.ILoginUserService;
@@ -67,7 +67,7 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     private ILoginUserService loginUserService;
 
     @Override
-    public AjaxResult indexUsers(UsersIndexForm form) throws MendelRuntimeException {
+    public AjaxResult indexUsers(PageRequestForm form) throws MendelRuntimeException {
         List<Order> orders = Arrays.asList(Order.asc("role.id"), Order.asc("name").ignoreCase());
         Sort sort = Sort.by(orders);
         Pageable pageRequest = PageRequest.of(form.getPageNumber() - 1,

@@ -5,11 +5,11 @@
  */
 package org.hpg.admin.biz.web.usermgt;
 
+import org.hpg.admin.biz.web.common.form.PageRequestForm;
 import org.hpg.admin.biz.web.usermgt.form.UserAddUpdateForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDeleteForm;
 import org.hpg.admin.biz.web.usermgt.form.UserDetailForm;
 import org.hpg.admin.biz.web.usermgt.form.UserForceLogoutForm;
-import org.hpg.admin.biz.web.usermgt.form.UsersIndexForm;
 import org.hpg.admin.biz.web.usermgt.scrnservice.IUserMgtScrnService;
 import org.hpg.admin.constant.AdminUrls;
 import org.hpg.common.biz.service.abstr.IScreenService;
@@ -46,7 +46,7 @@ public class UserMgtController {
      */
     @PostMapping(AdminUrls.ADMIN_USER_MANAGEMENT_INDEX)
     @ResponseBody
-    public AjaxResult indexUsers(@RequestBody UsersIndexForm form) {
+    public AjaxResult indexUsers(@RequestBody PageRequestForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
                 MendelTransactionalLevel.DEFAULT_READONLY,
                 userMgtScrnService::indexUsers);
