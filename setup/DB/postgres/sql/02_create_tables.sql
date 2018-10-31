@@ -59,7 +59,7 @@ CREATE TABLE TBL_USER_PRIV(
 --  Code
 --  Display name
 --  Description
---  Status (1: Open, 2: Close)
+--  Status (1: Active, 2: Pending, 3: Close)
 --  Refer scope (1: Public, 2: Private)
 --  CDate
 --  MDate
@@ -160,6 +160,8 @@ CREATE TABLE TBL_POSTIT(
 	color integer NOT NULL,
 	border_color integer NOT NULL,
 	coord box NOT NULL,
+	cdate timestamp(3) with time zone NOT NULL,
+	mdate timestamp(3) with time zone NOT NULL,
 	FOREIGN KEY (page_id) REFERENCES TBL_POSTIT(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (creator_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE
 );

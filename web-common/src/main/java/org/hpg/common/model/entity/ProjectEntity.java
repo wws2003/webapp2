@@ -13,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Entity for project record
@@ -44,8 +46,74 @@ public class ProjectEntity implements Serializable {
     private short referScope;
 
     @Column(name = "cdate")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date cDate;
 
     @Column(name = "mdate")
-    private String mDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date mDate;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDisplayedName() {
+        return displayedName;
+    }
+
+    public void setDisplayedName(String displayedName) {
+        this.displayedName = displayedName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public short getStatus() {
+        return status;
+    }
+
+    public void setStatus(short status) {
+        this.status = status;
+    }
+
+    public short getReferScope() {
+        return referScope;
+    }
+
+    public void setReferScope(short referScope) {
+        this.referScope = referScope;
+    }
+
+    public Date getcDate() {
+        return cDate;
+    }
+
+    public void setcDate(Date cDate) {
+        this.cDate = cDate;
+    }
+
+    public Date getmDate() {
+        return mDate;
+    }
+
+    public void setmDate(Date mDate) {
+        this.mDate = mDate;
+    }
 }
