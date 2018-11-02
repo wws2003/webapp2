@@ -28,7 +28,7 @@ public class ProjectUserEntity implements Serializable {
     private Long id;
 
     @Column(name = "project_id")
-    private Integer projectId;
+    private Long projectId;
 
     @Column(name = "user_id")
     private Long userId;
@@ -41,11 +41,11 @@ public class ProjectUserEntity implements Serializable {
         this.id = id;
     }
 
-    public Integer getProjectId() {
+    public Long getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Integer projectId) {
+    public void setProjectId(Long projectId) {
         this.projectId = projectId;
     }
 

@@ -5,36 +5,52 @@
  */
 package org.hpg.common.constant;
 
+import java.util.Arrays;
+
 /**
  * Refer scope for one element (would be public/private)
  *
  * @author trungpt
  */
 public enum MendelReferScope {
-    INVALID(-1, "INVALID"),
-    PUBLIC(1, "PUBLIC"),
-    PRIVATE(2, "PRIVATE");
+    INVALID((short) -1, "INVALID"),
+    PUBLIC((short) 1, "PUBLIC"),
+    PRIVATE((short) 2, "PRIVATE");
 
     /**
      * Authority code
      */
-    private final int code;
+    private final short code;
 
     /**
      * Authority name
      */
     private final String name;
 
-    private MendelReferScope(int code, String name) {
+    private MendelReferScope(short code, String name) {
         this.code = code;
         this.name = name;
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get the enumeration value by specifying id
+     *
+     * @param codeId
+     * @return
+     */
+    public static MendelReferScope getProjectReferScopeByCode(short codeId) {
+        return Arrays.asList(MendelReferScope.values())
+                .stream()
+                .filter(role -> role.getCode() == codeId)
+                .findFirst()
+                .orElse(INVALID);
     }
 }

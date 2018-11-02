@@ -10,8 +10,10 @@ import java.util.Optional;
 import org.hpg.common.biz.service.abstr.IProjectService;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.dao.repository.IProjectRepository;
+import org.hpg.common.dao.repository.IProjectUserRepository;
 import org.hpg.common.model.dto.project.MendelProject;
 import org.hpg.common.model.entity.ProjectEntity;
+import org.hpg.common.model.entity.ProjectUserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
 
 /**
@@ -25,8 +27,11 @@ public class ProjectServiceImpl implements IProjectService {
 
     private final IEntityDtoMapper<ProjectEntity, MendelProject> entityDtoMapper;
 
-    public ProjectServiceImpl(IProjectRepository projectRepository, IEntityDtoMapper<ProjectEntity, MendelProject> entityDtoMapper) {
+    private final IProjectUserRepository projectUserRepository;
+
+    public ProjectServiceImpl(IProjectRepository projectRepository, IProjectUserRepository projectUserRepository, IEntityDtoMapper<ProjectEntity, MendelProject> entityDtoMapper) {
         this.projectRepository = projectRepository;
+        this.projectUserRepository = projectUserRepository;
         this.entityDtoMapper = entityDtoMapper;
     }
 
@@ -55,8 +60,16 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public int assignUsersToProject(MendelProject project, List<Long> userIds) throws MendelRuntimeException {
-        // TODO Implement
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void assignUsersToProject(MendelProject project, List<Long> userIds) throws MendelRuntimeException {
+        final long projectId = project.getId();
+        // 1. Delete all current assignment
+        projectUserRepository.deleteByProjectId(projectId);
+        // 2. Assign
+        userIds.stream().forEach(userId -> {
+            ProjectUserEntity entity = new ProjectUserEntity();
+            entity.setProjectId(projectId);
+            entity.setUserId(userId);
+            projectUserRepository.save(entity);
+        });
     }
 }

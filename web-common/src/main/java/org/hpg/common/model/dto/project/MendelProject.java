@@ -6,7 +6,7 @@
 package org.hpg.common.model.dto.project;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Date;
 import org.hpg.common.constant.MendelProjectStatus;
 import org.hpg.common.constant.MendelReferScope;
 
@@ -18,24 +18,24 @@ import org.hpg.common.constant.MendelReferScope;
 public class MendelProject implements Serializable {
 
     /**
+     * Project unique ID
+     */
+    private long id;
+
+    /**
      * Project code
      */
     private String code;
 
     /**
-     * Project name
+     * Project displayedName
      */
-    private String name;
+    private String displayedName;
 
     /**
      * Project description
      */
     private String description;
-
-    /**
-     * IDs of users to be assigned to the project
-     */
-    private List<Long> memberIDs;
 
     /**
      * Scope
@@ -47,6 +47,24 @@ public class MendelProject implements Serializable {
      */
     private MendelProjectStatus status;
 
+    /**
+     * Create date
+     */
+    private Date cDate;
+
+    /**
+     * Update date
+     */
+    private Date mDate;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getCode() {
         return code;
     }
@@ -55,12 +73,12 @@ public class MendelProject implements Serializable {
         this.code = code;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayedName() {
+        return displayedName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDisplayedName(String displayedName) {
+        this.displayedName = displayedName;
     }
 
     public String getDescription() {
@@ -69,14 +87,6 @@ public class MendelProject implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public List<Long> getMemberIDs() {
-        return memberIDs;
-    }
-
-    public void setMemberIDs(List<Long> memberIDs) {
-        this.memberIDs = memberIDs;
     }
 
     public MendelReferScope getReferScope() {
@@ -95,8 +105,24 @@ public class MendelProject implements Serializable {
         this.status = status;
     }
 
+    public Date getcDate() {
+        return cDate;
+    }
+
+    public void setcDate(Date cDate) {
+        this.cDate = cDate;
+    }
+
+    public Date getmDate() {
+        return mDate;
+    }
+
+    public void setmDate(Date mDate) {
+        this.mDate = mDate;
+    }
+
     @Override
     public String toString() {
-        return "MendelProject{" + "code=" + code + ", name=" + name + ", description=" + description + ", memberIDs=" + memberIDs + ", referScope=" + referScope + ", status=" + status + '}';
+        return "MendelProject{" + "id=" + id + ", code=" + code + ", displayedName=" + displayedName + ", description=" + description + ", referScope=" + referScope + ", status=" + status + ", cDate=" + cDate + ", mDate=" + mDate + '}';
     }
 }

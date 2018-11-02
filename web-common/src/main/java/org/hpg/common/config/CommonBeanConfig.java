@@ -11,17 +11,22 @@ import org.hpg.common.biz.service.abstr.IFormValidator;
 import org.hpg.common.biz.service.abstr.ILogger;
 import org.hpg.common.biz.service.abstr.IPagingService;
 import org.hpg.common.biz.service.abstr.IPrivilegeService;
+import org.hpg.common.biz.service.abstr.IProjectService;
 import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.impl.PagingServiceImpl;
 import org.hpg.common.biz.service.impl.PrivilegeServiceImpl;
+import org.hpg.common.biz.service.impl.ProjectServiceImpl;
 import org.hpg.common.biz.service.impl.ScreenServiceImpl;
 import org.hpg.common.biz.service.impl.SimpleLoggerImpl;
 import org.hpg.common.biz.service.impl.StdFormValidatorImpl;
 import org.hpg.common.biz.service.impl.UserServiceImpl;
 import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
+import org.hpg.common.dao.mapper.impl.ProjectEntityDtoMapperImpl;
 import org.hpg.common.dao.mapper.impl.UserEntityDtoMapperImpl;
+import org.hpg.common.dao.repository.IProjectRepository;
+import org.hpg.common.dao.repository.IProjectUserRepository;
 import org.hpg.common.dao.repository.IUserPrivRepository;
 import org.hpg.common.dao.repository.IUserRepository;
 import org.hpg.common.framework.transaction.CurrentReadOnlyTransactionalExecutorImpl;
@@ -31,7 +36,9 @@ import org.hpg.common.framework.transaction.DefaultTransactionalExecutorImpl;
 import org.hpg.common.framework.transaction.ITransactionExecutor;
 import org.hpg.common.framework.transaction.NewReadOnlyTransactionalExecutorImpl;
 import org.hpg.common.framework.transaction.NewTransactionalExecutorImpl;
+import org.hpg.common.model.dto.project.MendelProject;
 import org.hpg.common.model.dto.user.MendelUser;
+import org.hpg.common.model.entity.ProjectEntity;
 import org.hpg.common.model.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,7 +68,7 @@ public class CommonBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public IEntityDtoMapper<UserEntity, MendelUser> getEntityDtoMapper() {
+    public IEntityDtoMapper<UserEntity, MendelUser> getUserEntityDtoMapper() {
         return new UserEntityDtoMapperImpl();
     }
 
@@ -69,6 +76,18 @@ public class CommonBeanConfig {
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public IUserService getUserService(IUserRepository userRepository, IUserPrivRepository userPrivRepository, IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper) {
         return new UserServiceImpl(userRepository, userPrivRepository, entityDtoMapper);
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IEntityDtoMapper<ProjectEntity, MendelProject> getProjectEtityDtoMapper() {
+        return new ProjectEntityDtoMapperImpl();
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IProjectService getProjectService(IProjectRepository projectRepository, IProjectUserRepository projectUserRepository, IEntityDtoMapper<ProjectEntity, MendelProject> entityDtoMapper) {
+        return new ProjectServiceImpl(projectRepository, projectUserRepository, entityDtoMapper);
     }
 
     @Bean

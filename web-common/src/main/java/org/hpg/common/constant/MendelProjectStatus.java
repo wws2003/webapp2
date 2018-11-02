@@ -5,37 +5,53 @@
  */
 package org.hpg.common.constant;
 
+import java.util.Arrays;
+
 /**
  * Project status
  *
  * @author trungpt
  */
 public enum MendelProjectStatus {
-    INVALID(-1, "INVALID"),
-    ACTIVE(1, "ACTIVE"),
-    PENDING(2, "PENDING"),
-    CLOSE(3, "CLOSE");
+    INVALID((short) -1, "INVALID"),
+    ACTIVE((short) 1, "ACTIVE"),
+    PENDING((short) 2, "PENDING"),
+    CLOSE((short) 3, "CLOSE");
 
     /**
      * Authority code
      */
-    private final int code;
+    private final short code;
 
     /**
      * Authority name
      */
     private final String name;
 
-    private MendelProjectStatus(int code, String name) {
+    private MendelProjectStatus(short code, String name) {
         this.code = code;
         this.name = name;
     }
 
-    public int getCode() {
+    public short getCode() {
         return code;
     }
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get the enumeration value by specifying id
+     *
+     * @param codeId
+     * @return
+     */
+    public static MendelProjectStatus getProjectStatusByCode(short codeId) {
+        return Arrays.asList(MendelProjectStatus.values())
+                .stream()
+                .filter(role -> role.getCode() == codeId)
+                .findFirst()
+                .orElse(INVALID);
     }
 }

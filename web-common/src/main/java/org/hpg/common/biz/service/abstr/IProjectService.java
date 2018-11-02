@@ -61,6 +61,5 @@ public interface IProjectService {
      * @return
      * @throws MendelRuntimeException When assign operation failed
      */
-    int assignUsersToProject(MendelProject project, List<Long> userIds) throws MendelRuntimeException;
-
+    void assignUsersToProject(MendelProject project, List<Long> userIds) throws MendelRuntimeException;
 }
