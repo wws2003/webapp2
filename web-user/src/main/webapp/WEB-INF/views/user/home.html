@@ -4,30 +4,24 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout/main}">
     <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
-        <title>Home</title>
-        <link href="../../../../resources/css/user/user.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/user/user.css?' + ${timeToken}}"/>
+        <title>User home</title>
+        <link href="../../../../resources/css/user/modulecommon/userCommon.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/user/modulecommon/userCommon.css?' + ${timeToken}}"/>
         <script src="../../../../resources/js/user/user.js" th:src="@{'/resources/js/user/user.js?' +  ${timeToken}}"></script>
     </head>
     <body>
-        <div>
-            <label th:text="'Welcome ' + ${userName}">Username</label>
-        </div>
-        <div>
-            <h3>Choose action</h3>
+        <!-- /* Header */ -->
+        <header layout:fragment="frgHeader" th:insert="user/fragments/userHeaderMenu::frgNavBar">
+        </header>
+        <!-- /* Content of this page will be decorated by the elements of layout.html (task/layout) */ -->
+        <div layout:fragment="frgContent">
             <div>
-                <a href="#" th:href="@{/user/profileManagement}">Profile management</a>
+                <label th:text="'Welcome ' + ${userName}">Username</label>
             </div>
             <div>
-                <a href="#" th:href="@{/user/activityLog}">Activity log</a>
-            </div>
-            <div>
-                <a href="#" th:href="@{/project/index}">My projects</a>
+                Home content coming soon. For working with projects, go to <a href="#" th:href="@{/project/index}">My projects</a>
             </div>
         </div>
-        <form action="#" th:action="@{/user/logout}" method="post">
-            <button type="submit">Logout</button>
-        </form>
     </body>
 </html>

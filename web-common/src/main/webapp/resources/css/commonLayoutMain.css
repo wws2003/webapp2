@@ -78,3 +78,7 @@ main>section:first-child>article>.breadcrumb:first-child {
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
 }
+
+main .lo_main_content {
+    padding-top: 12px
+}
