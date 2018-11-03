@@ -36,30 +36,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.2.2</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
-            </plugin>
-            <!-- Copying plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.8</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>
-                                ${basedir}/target/${project.artifactId}/WEB-INF/lib
-                            </outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -73,20 +53,12 @@
             <version>1.0</version>
             <type>jar</type>
         </dependency>
-        <!-- Dependency on web-common module (war) -->
-        <dependency>
-            <groupId>org.hpg.multi</groupId>
-            <artifactId>web-common</artifactId>
-            <version>1.0</version>
-            <type>war</type>
-        </dependency>
         <!-- Dependency on web-common module (jar) -->
         <dependency>
             <groupId>org.hpg.multi</groupId>
             <artifactId>web-common-lib</artifactId>
             <version>1.0</version>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -7,7 +7,7 @@
 # 2: web-auth
 # 3: web-admin
 # 4: web-user
-# 5: web-search
+# 5: web-project
 
 # Check arguments
 if [ $# -lt 1 -o $# -gt 2 ]
@@ -42,6 +42,8 @@ case $module_code in
 	"3" ) module="web-admin"
 		;;
 	"4" ) module="web-user"
+		;;
+	"5" ) module="web-project"
 		;;
 esac
 
