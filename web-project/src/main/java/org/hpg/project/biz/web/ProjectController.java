@@ -7,6 +7,7 @@ package org.hpg.project.biz.web;
 
 import org.hpg.project.constant.ProjectUrls;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -18,4 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(ProjectUrls.PROJECT_ROOT_URL)
 public class ProjectController {
 
+    @GetMapping(ProjectUrls.PROJECT_INDEX_URL)
+    public String home() {
+        return "project/home";
+    }
 }

@@ -17,13 +17,13 @@ and open the template in the editor.
         <div>
             <h3>Choose action</h3>
             <div>
-                <a href="#" th:href="@{/user/profileMgt}">Profile management</a>
+                <a href="#" th:href="@{/user/profileManagement}">Profile management</a>
             </div>
             <div>
                 <a href="#" th:href="@{/user/activityLog}">Activity log</a>
             </div>
             <div>
-                <button id="btnTest" class="btn btn-primary" type="button">Test Ajax</button>
+                <a href="#" th:href="@{/project/index}">My projects</a>
             </div>
         </div>
         <form action="#" th:action="@{/user/logout}" method="post">

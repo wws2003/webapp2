@@ -23,12 +23,12 @@ public class UserUrls {
     public static final String USER_HOME = "/home";
 
     /**
-     * Change password screen URL
+     * Profile management root URL
      */
-    public static final String USER_CHANGE_PASSWORD_INDEX = "/changePassword";
+    public static final String USER_PROFILE_MANAGEMENT = "/profileManagement";
 
     /**
      * Change password action URL
      */
-    public static final String USER_CHANGE_PASSWORD = "/save";
+    public static final String USER_SAVE_PASSWORD = "/save";
 }

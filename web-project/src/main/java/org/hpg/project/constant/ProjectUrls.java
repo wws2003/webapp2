@@ -21,26 +21,26 @@ public class ProjectUrls {
     /**
      * URL for indexing working projects
      */
-    public static final String PROJECT_INDEX_URL = "index";
+    public static final String PROJECT_INDEX_URL = "/index";
 
     /**
      * URL for single working project
      */
-    public static final String PROJECT_DETAIL_URL = "detail";
+    public static final String PROJECT_DETAIL_URL = "/detail";
 
     /**
      * URL for retrieval all documents to working project
      */
-    public static final String PROJECT_INDEX_DOCUMENT = "indexDoc";
+    public static final String PROJECT_INDEX_DOCUMENT = "/indexDoc";
 
     /**
      * URL for adding document to working project
      */
-    public static final String PROJECT_ADD_DOCUMENT = "addDoc";
+    public static final String PROJECT_ADD_DOCUMENT = "/addDoc";
 
-    public static final String SEARCH_START = "start";
+    public static final String SEARCH_START = "/start";
 
-    public static final String SEARCH_CANCEL = "cancel";
+    public static final String SEARCH_CANCEL = "/cancel";
 
-    public static final String SEARCH_SAVE_REQUEST = "saveRequest";
+    public static final String SEARCH_SAVE_REQUEST = "/saveRequest";
 }
