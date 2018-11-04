@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(ProjectUrls.PROJECT_ROOT_URL)
 public class ProjectController {
 
-    @GetMapping(ProjectUrls.PROJECT_INDEX_URL)
+    @GetMapping(ProjectUrls.PROJECT_HOME_URL)
     public String home() {
         return "project/home";
     }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Just a faked title to deceive IDE</title>
+    </head>
+    <body>
+        <header>
+            <!-- /* Common head menu (navigation bar for admin pages) */ -->
+            <nav th:fragment="frgNavBar" id="projectNavMenu" class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#" th:href="@{'/project/home'}">Mendel book</a>
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">File
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" th:href="@{/project/index}">Browse projects</a></li>
+                                <li><a href="#" th:href="@{/project/documentSearch}">Search for document</a></li>
+                                <li><a href="#" th:href="@{/project/pageSearch}">Search for page</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Helps
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">About</a></li>
+                                <li><a href="#" th:href="@{/user/home}">My page</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+    </body>
+</html>
+

@@ -4,13 +4,24 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-<html>
-    <head>
-        <title>My projects</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout/main}">
+    <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
+        <title>Project home page</title>
+        <link href="../../../../resources/css/project/modulecommon/projectCommon.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/project/modulecommon/projectCommon.css?' + ${timeToken}}"/>
+        <script src="#"></script>
     </head>
     <body>
-        <div>Page for my projects</div>
+        <!-- /* Header */ -->
+        <header layout:fragment="frgHeader" th:insert="project/fragments/projectHeaderMenu::frgNavBar">
+        </header>
+        <!-- /* Content of this page will be decorated by the elements of layout.html (task/layout) */ -->
+        <div layout:fragment="frgContent">
+            <div>
+                <label th:text="'Welcome ' + ${userName}">Username</label>
+            </div>
+            <div>
+                Projects home page content coming soon. Use the header menu for the moment
+            </div>
+        </div>
     </body>
 </html>

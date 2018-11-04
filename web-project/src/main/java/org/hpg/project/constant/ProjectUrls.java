@@ -21,7 +21,7 @@ public class ProjectUrls {
     /**
      * URL for indexing working projects
      */
-    public static final String PROJECT_INDEX_URL = "/index";
+    public static final String PROJECT_HOME_URL = "/home";
 
     /**
      * URL for single working project
