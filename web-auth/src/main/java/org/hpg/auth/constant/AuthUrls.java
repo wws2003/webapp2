@@ -87,9 +87,14 @@ public class AuthUrls {
     public static final class UserRole {
 
         /**
-         * Prefix
+         * Prefix for management pages (setting, profile management...)
          */
-        public static final String PREFIX = "/user";
+        public static final String MGT_PREFIX = "/user";
+
+        /**
+         * Prefix for project pages
+         */
+        public static final String PRJ_PREFIX = "/project";
 
         /**
          * Login process

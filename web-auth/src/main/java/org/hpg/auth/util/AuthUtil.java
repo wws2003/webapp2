@@ -30,7 +30,7 @@ public class AuthUtil {
     /**
      * Parse UrlPrivilegeConfig for mapping from URL string to privileges
      *
-     * @param urlPrivilegeConfigClass Class ofwhich static fields declare URL
+     * @param urlPrivilegeConfigClass Class of which static fields declare URL
      * and privileges setting
      * @return
      */
@@ -102,6 +102,6 @@ public class AuthUtil {
      * @return
      */
     public static String getUrlInUserDomain(String functionUrl) {
-        return AuthUrls.UserRole.PREFIX + functionUrl;
+        return AuthUrls.UserRole.MGT_PREFIX + functionUrl;
     }
 }

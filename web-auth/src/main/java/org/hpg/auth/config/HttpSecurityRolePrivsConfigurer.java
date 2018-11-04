@@ -63,9 +63,20 @@ public class HttpSecurityRolePrivsConfigurer {
         return this;
     }
 
-    public HttpSecurityRolePrivsConfigurer forUserRole() throws Exception {
+    public HttpSecurityRolePrivsConfigurer forUserRoleToWorkWithProfile() throws Exception {
         // TODO Implement
-        mAuthorizeReg = mHttpSecurity.antMatcher(AuthUrls.UserRole.PREFIX + "/**").authorizeRequests();
+        mAuthorizeReg = mHttpSecurity.antMatcher(AuthUrls.UserRole.MGT_PREFIX + "/**").authorizeRequests();
+        // EXPERIMENTAL -> Does not work
+        //mAuthorizeReg = mHttpSecurity.authorizeRequests();
+        mRole = MendelRole.USER;
+        return this;
+    }
+
+    public HttpSecurityRolePrivsConfigurer forUserRoleToWorkWithProject() throws Exception {
+        // TODO Implement
+        mAuthorizeReg = mHttpSecurity.antMatcher(AuthUrls.UserRole.PRJ_PREFIX + "/**").authorizeRequests();
+        // EXPERIMENTAL -> Does not work
+        //mAuthorizeReg = mHttpSecurity.authorizeRequests();
         mRole = MendelRole.USER;
         return this;
     }
@@ -77,11 +88,12 @@ public class HttpSecurityRolePrivsConfigurer {
     }
 
     public HttpSecurityRolePrivsConfigurer forUrlPrivileges(Map<String, MendelActionSecurity> urlPrivilegesMap) throws Exception {
-        // TODO Implement
+        // Finalize the authorization request
         mAuthorizeReg = this.getUrlInterceptRegistryForPrivilges(mAuthorizeReg, urlPrivilegesMap);
         // Finallize with role-dependent setting
         if (mRole == MendelRole.USER) {
-            mAuthorizeReg.antMatchers(AuthUrls.UserRole.PREFIX + "/**").hasRole(MendelRole.USER.getName());
+            mAuthorizeReg.antMatchers(AuthUrls.UserRole.MGT_PREFIX + "/**", AuthUrls.UserRole.PRJ_PREFIX + "/**")
+                    .hasRole(MendelRole.USER.getName());
         }
         if (mRole == MendelRole.ADMIN) {
             mAuthorizeReg.antMatchers(AuthUrls.AdminRole.PREFIX + "/**").hasRole(MendelRole.ADMIN.getName());

@@ -32,9 +32,7 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Configuration
-    @Order(1)
-    public static class SecurityUserRoleConfig extends WebSecurityConfigurerAdapter {
+    public static abstract class AbstractSecurityUserRoleConfig extends WebSecurityConfigurerAdapter {
 
         @Autowired
         @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_USER_DETAILS_SERVICE_FOR_USERROLE)
@@ -53,14 +51,7 @@ public class SecurityConfig {
         private LogoutSuccessHandler logoutSuccessHandlerForUserRole;
 
         @Autowired
-        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_USERROLE)
-        private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
-
-        @Autowired
         private PasswordEncoder mPasswordEncoder;
-
-        @Autowired
-        private SessionRegistry sessionRegistry;
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -70,9 +61,7 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            HttpSecurityRolePrivsConfigurer.instance(http)
-                    .sessionManagement(1, sessionRegistry, sessionInformationExpiredStrategy) // No more one session for one user
-                    .forUserRole()
+            this.getHttpSecurityRolePrivsConfigurer(http)
                     .forUrlPrivileges(AuthUtil.getUrlPrivilesMap(UrlPrivilegeConfig.UserRole.class))
                     .buildInterceptUrlRegistry()
                     .and()
@@ -90,10 +79,50 @@ public class SecurityConfig {
                     .logoutSuccessHandler(logoutSuccessHandlerForUserRole)
                     .permitAll();
         }
+
+        protected abstract HttpSecurityRolePrivsConfigurer getHttpSecurityRolePrivsConfigurer(HttpSecurity httpSecurity) throws Exception;
+    }
+
+    @Configuration
+    @Order(1)
+    public static class SecurityUserRoleConfig extends AbstractSecurityUserRoleConfig {
+
+        @Autowired
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_USERROLE)
+        private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
+
+        @Autowired
+        private SessionRegistry sessionRegistry;
+
+        @Override
+        protected HttpSecurityRolePrivsConfigurer getHttpSecurityRolePrivsConfigurer(HttpSecurity httpSecurity) throws Exception {
+            return HttpSecurityRolePrivsConfigurer.instance(httpSecurity)
+                    .sessionManagement(1, sessionRegistry, sessionInformationExpiredStrategy) // No more one session for one user
+                    .forUserRoleToWorkWithProfile();
+        }
     }
 
     @Configuration
     @Order(2)
+    public static class SecurityUserRoleForProjectConfig extends AbstractSecurityUserRoleConfig {
+
+        @Autowired
+        @Qualifier(AuthBeanConstant.Qualifier.DEFAULT_SESSION_EXPIRED_STRATRGY_FOR_USERROLE)
+        private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
+
+        @Autowired
+        private SessionRegistry sessionRegistry;
+
+        @Override
+        protected HttpSecurityRolePrivsConfigurer getHttpSecurityRolePrivsConfigurer(HttpSecurity httpSecurity) throws Exception {
+            return HttpSecurityRolePrivsConfigurer.instance(httpSecurity)
+                    .sessionManagement(1, sessionRegistry, sessionInformationExpiredStrategy) // No more one session for one user
+                    .forUserRoleToWorkWithProject();
+        }
+    }
+
+    @Configuration
+    @Order(3)
     public static class SecurityAdminRoleConfig extends WebSecurityConfigurerAdapter {
 
         @Autowired
