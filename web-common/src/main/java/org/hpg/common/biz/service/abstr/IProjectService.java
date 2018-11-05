@@ -51,14 +51,13 @@ public interface IProjectService {
      * @return Number of deleted projects
      * @throws MendelRuntimeException When delete operation failed
      */
-    int deleteUsers(List<Long> projectIds) throws MendelRuntimeException;
+    int deleteProjects(List<Long> projectIds) throws MendelRuntimeException;
 
     /**
      * Assign users to project (un-assign all other users)
      *
      * @param project
      * @param userIds
-     * @return
      * @throws MendelRuntimeException When assign operation failed
      */
     void assignUsersToProject(MendelProject project, List<Long> userIds) throws MendelRuntimeException;

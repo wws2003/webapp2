@@ -54,7 +54,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public int deleteUsers(List<Long> projectIds) throws MendelRuntimeException {
+    public int deleteProjects(List<Long> projectIds) throws MendelRuntimeException {
         List<ProjectEntity> deletedRecords = projectRepository.deleteByIdIn(projectIds);
         return deletedRecords.size();
     }

@@ -6,6 +6,9 @@
 package org.hpg.admin.biz.web.projectmgt.scrnmodel;
 
 import java.io.Serializable;
+import org.hpg.common.model.dto.project.MendelProject;
+import org.hpg.libcommon.DateFormatConst;
+import org.hpg.libcommon.DateUtil;
 
 /**
  * Record for one project in the project management screen
@@ -14,58 +17,48 @@ import java.io.Serializable;
  */
 public class ScrnProjectRecord implements Serializable {
 
-    private long id;
+    private final long id;
 
-    private String code;
+    private final String code;
 
-    private String displayedName;
+    private final String displayedName;
 
-    private int userCount;
+    /**
+     * Login timestamp in YYYY/MM/DD format
+     */
+    private final String cDateTimeStamp;
 
-    private int documentCount;
+    /**
+     * Constructor. Almost info retrieved from the base model
+     *
+     * @param project
+     */
+    public ScrnProjectRecord(MendelProject project) {
+        this.id = project.getId();
+        this.code = project.getCode();
+        this.displayedName = project.getDisplayedName();
+        this.cDateTimeStamp = DateUtil.dateTime2String(project.getcDate(), DateFormatConst.DATE_A_YYMMDD);
+    }
 
     public long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getCode() {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
     public String getDisplayedName() {
         return displayedName;
     }
 
-    public void setDisplayedName(String displayedName) {
-        this.displayedName = displayedName;
-    }
-
-    public int getUserCount() {
-        return userCount;
-    }
-
-    public void setUserCount(int userCount) {
-        this.userCount = userCount;
-    }
-
-    public int getDocumentCount() {
-        return documentCount;
-    }
-
-    public void setDocumentCount(int documentCount) {
-        this.documentCount = documentCount;
+    public String getcDateTimeStamp() {
+        return cDateTimeStamp;
     }
 
     @Override
     public String toString() {
-        return "ScrnProjectRecord{" + "id=" + id + ", code=" + code + ", displayedName=" + displayedName + ", userCount=" + userCount + ", documentCount=" + documentCount + '}';
+        return "ScrnProjectRecord{" + "id=" + id + ", code=" + code + ", displayedName=" + displayedName + ", cDateTimeStamp=" + cDateTimeStamp + '}';
     }
+
 }

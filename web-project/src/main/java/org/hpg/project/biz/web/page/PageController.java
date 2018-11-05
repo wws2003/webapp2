@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.project.biz.web;
+package org.hpg.project.biz.web.page;
 
 /**
  *
  * @author wws2003
  */
-public class DocumentController {
+public class PageController {
 
 }
