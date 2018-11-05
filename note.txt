@@ -1,5 +1,7 @@
 Currently only this command works properly:
 mvn clean package war:war
+- mvn clean package -ff -DskipTests=true -pl web-all -am -> Do not see web-common module in web-all target
+- mvn war:war -ff -DskipTests=true -pl web-common,web-all -> Must have modules to be in the central repository (need not to be latest version !?)
 
 Setup
 1. DB stuff
