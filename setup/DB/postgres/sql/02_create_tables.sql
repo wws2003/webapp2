@@ -56,7 +56,7 @@ CREATE TABLE TBL_USER_PRIV(
 
 -- Project
 --  ID (8-bytes auto incremental, PK)
---  Code
+--  Code (unique)
 --  Display name
 --  Description
 --  Status (1: Active, 2: Pending, 3: Close)
@@ -71,8 +71,9 @@ CREATE TABLE TBL_PROJECT(
 	description varchar(4000) NOT NULL,
 	status smallint NOT NULL,
 	refer_scope smallint NOT NULL,
-	cdate timestamp(3) with time zone NOT NULL,
-	mdate timestamp(3) with time zone NOT NULL
+	cdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP,
+	mdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP,
+	UNIQUE(code)
 );
 
 -- User-Project mapping
@@ -107,8 +108,8 @@ CREATE TABLE TBL_DOCUMENT(
 	author_id bigint NOT NULL,
 	project_id bigint NOT NULL,
 	description varchar(1000) NOT NULL,
-	cdate timestamp(3) with time zone NOT NULL,
-	mdate timestamp(3) with time zone NOT NULL,
+	cdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP,
+	mdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (author_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (project_id) REFERENCES TBL_PROJECT(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -160,8 +161,8 @@ CREATE TABLE TBL_POSTIT(
 	color integer NOT NULL,
 	border_color integer NOT NULL,
 	coord box NOT NULL,
-	cdate timestamp(3) with time zone NOT NULL,
-	mdate timestamp(3) with time zone NOT NULL,
+	cdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP,
+	mdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (page_id) REFERENCES TBL_POSTIT(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (creator_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
