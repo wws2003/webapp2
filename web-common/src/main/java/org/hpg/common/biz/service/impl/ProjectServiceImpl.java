@@ -5,6 +5,7 @@
  */
 package org.hpg.common.biz.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.hpg.common.biz.service.abstr.IProjectService;
@@ -12,6 +13,7 @@ import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.dao.repository.IProjectRepository;
 import org.hpg.common.dao.repository.IProjectUserRepository;
 import org.hpg.common.model.dto.project.MendelProject;
+import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.entity.ProjectEntity;
 import org.hpg.common.model.entity.ProjectUserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
@@ -71,5 +73,11 @@ public class ProjectServiceImpl implements IProjectService {
             entity.setUserId(userId);
             projectUserRepository.save(entity);
         });
+    }
+
+    @Override
+    public List<MendelUser> findUsersAssignedToProject(MendelProject project) throws MendelRuntimeException {
+        // TODO Implement
+        return new ArrayList();
     }
 }

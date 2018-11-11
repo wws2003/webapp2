@@ -13,6 +13,7 @@ import org.hpg.admin.biz.web.common.form.SimpleDeleteByIDForm;
 import org.hpg.admin.biz.web.common.form.SimpleRequestByIDForm;
 import org.hpg.admin.biz.web.projectmgt.form.ProjectAddUpdateForm;
 import org.hpg.admin.biz.web.projectmgt.form.UserSearchForm;
+import org.hpg.admin.biz.web.projectmgt.scrnmodel.ScrnProjectDetail;
 import org.hpg.admin.biz.web.projectmgt.scrnmodel.ScrnProjectRecord;
 import org.hpg.admin.biz.web.projectmgt.scrnmodel.ScrnUserTag;
 import org.hpg.common.biz.service.abstr.IPagingService;
@@ -21,9 +22,14 @@ import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.constant.MendelProjectStatus;
 import org.hpg.common.constant.MendelReferScope;
 import org.hpg.common.model.dto.project.MendelProject;
+import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.util.AjaxResultBuilder;
+import org.hpg.libcommon.DateFormatConst;
+import org.hpg.libcommon.DateUtil;
+import org.hpg.libcommon.Tuple;
+import org.hpg.libcommon.Tuple2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -67,16 +73,29 @@ public class ProjectMgtScreenServiceImpl implements IProjectMgtScrnService {
 
     @Override
     public AjaxResult getProjectDetail(SimpleRequestByIDForm form) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        MendelProject project = projectService.findProjectById(form.getElementId())
+                .orElseThrow(() -> new MendelRuntimeException("Could not find project by id " + form.getElementId()));
+
+        List<MendelUser> users = projectService.findUsersAssignedToProject(project);
+
+        ScrnProjectDetail projectDetail = createProjectDetail(project, users);
+
+        return AjaxResultBuilder.successInstance()
+                .resultObject(projectDetail)
+                .build();
     }
 
     @Override
     public AjaxResult addUpdateProject(ProjectAddUpdateForm form) throws MendelRuntimeException {
         MendelProject project = parseProjectDtoFromForm(form);
-        // 1. Create new
-
+        // 1. Create new / Update
+        MendelProject savedProject = (form.isToCreateProject()) ? projectService.createProject(project) : projectService.updateProject(project);
         // 2. Assign users
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        projectService.assignUsersToProject(savedProject, form.getUserIds());
+        // Return sucess result. TODO Set message properly
+        return AjaxResultBuilder.successInstance()
+                .oneSuccessMessage("Project has been successfully saved")
+                .build();
     }
 
     @Override
@@ -122,5 +141,31 @@ public class ProjectMgtScreenServiceImpl implements IProjectMgtScrnService {
         project.setReferScope(MendelReferScope.getProjectReferScopeByCode(form.getReferScopeCode()));
         project.setStatus(MendelProjectStatus.getProjectStatusByCode(form.getStatusCode()));
         return project;
+    }
+
+    /**
+     * Create instance of project with detailed info
+     *
+     * @param project
+     * @param users
+     * @return
+     */
+    private ScrnProjectDetail createProjectDetail(MendelProject project, List<MendelUser> users) {
+        List<Tuple2<Long, String>> members = users.stream()
+                .map(user -> Tuple.newTuple(user.getId(), user.getDispName()))
+                .collect(Collectors.toList());
+
+        ScrnProjectDetail projectDetail = new ScrnProjectDetail();
+        projectDetail.setId(project.getId());
+        projectDetail.setCode(project.getCode());
+        projectDetail.setDisplayedName(project.getDisplayedName());
+        projectDetail.setDescription(project.getDescription());
+        projectDetail.setMembers(members);
+        projectDetail.setReferScope(project.getReferScope().getCode());
+        projectDetail.setStatus(project.getStatus().getCode());
+        projectDetail.setcDateTimeStamp(DateUtil.dateTime2String(project.getcDate(), DateFormatConst.DATE_A_YYMMDD));
+        projectDetail.setmDateTimeStamp(DateUtil.dateTime2String(project.getmDate(), DateFormatConst.DATE_A_YYMMDD));
+
+        return projectDetail;
     }
 }

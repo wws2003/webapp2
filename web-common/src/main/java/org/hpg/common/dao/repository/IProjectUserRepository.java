@@ -5,6 +5,7 @@
  */
 package org.hpg.common.dao.repository;
 
+import java.util.List;
 import org.hpg.common.model.entity.ProjectUserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.springframework.data.jpa.repository.Modifying;
@@ -28,4 +29,13 @@ public interface IProjectUserRepository extends ICRUDRepository<ProjectUserEntit
     @Modifying
     @Query("delete from ProjectUserEntity u where u.projectId = ?1")
     int deleteByProjectId(long projectId) throws MendelRuntimeException;
+
+    /**
+     * Find relationships by project id
+     *
+     * @param projectId
+     * @return
+     * @throws MendelRuntimeException When finding failed
+     */
+    List<ProjectUserEntity> findByProjectId(long projectId) throws MendelRuntimeException;
 }

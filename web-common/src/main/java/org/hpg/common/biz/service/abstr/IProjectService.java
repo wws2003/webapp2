@@ -8,6 +8,7 @@ package org.hpg.common.biz.service.abstr;
 import java.util.List;
 import java.util.Optional;
 import org.hpg.common.model.dto.project.MendelProject;
+import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.exception.MendelRuntimeException;
 
 /**
@@ -61,4 +62,13 @@ public interface IProjectService {
      * @throws MendelRuntimeException When assign operation failed
      */
     void assignUsersToProject(MendelProject project, List<Long> userIds) throws MendelRuntimeException;
+
+    /**
+     * Find user assigned
+     *
+     * @param project
+     * @return
+     * @throws MendelRuntimeException when retrieval failed
+     */
+    List<MendelUser> findUsersAssignedToProject(MendelProject project) throws MendelRuntimeException;
 }
