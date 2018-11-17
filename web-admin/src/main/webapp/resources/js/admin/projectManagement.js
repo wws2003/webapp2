@@ -275,7 +275,7 @@ var UserActionSubjects = {
         // 1. Add subject
         this._addProjectSubject = {
             // TODO Handle error
-            next: () => ProjectDetailDlg.showForAdd.bind(this._projectDetailDlg)
+            next: ProjectDetailDlg.showForAdd.bind(projectDetailDlg)
         };
 
         // 2. Other subjects depends on server response

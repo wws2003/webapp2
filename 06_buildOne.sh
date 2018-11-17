@@ -48,11 +48,11 @@ case $module_code in
 esac
 
 echo "======================================To build "$module"======================================"
-mvn clean package -ff -DskipTests=true -pl $module -am
 if [ "$module" == "web-common" ]
 then
 	mvn war:war -ff -DskipTests=true -pl web-common,web-all
 else
+	mvn clean package -ff -DskipTests=true -pl $module
 	mvn war:war -ff -DskipTests=true -pl web-common,$module,web-all
 fi
 
@@ -63,7 +63,7 @@ fi
 read -p "To deploy ? Press y: " RESP
 if [ "$RESP" = "y" ]
 then
-	mvn cargo:deploy -ff -DskipTests=true -pl web-all
+	mvn cargo:redeploy -ff -DskipTests=true -pl web-all
 else
  	echo "Quit without deployment"
 fi
