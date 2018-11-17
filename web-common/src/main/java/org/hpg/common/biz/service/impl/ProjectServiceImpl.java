@@ -5,9 +5,9 @@
  */
 package org.hpg.common.biz.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.hpg.common.biz.service.abstr.IProjectService;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.dao.repository.IProjectRepository;
@@ -16,6 +16,7 @@ import org.hpg.common.model.dto.project.MendelProject;
 import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.entity.ProjectEntity;
 import org.hpg.common.model.entity.ProjectUserEntity;
+import org.hpg.common.model.entity.UserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
 
 /**
@@ -27,31 +28,42 @@ public class ProjectServiceImpl implements IProjectService {
 
     private final IProjectRepository projectRepository;
 
-    private final IEntityDtoMapper<ProjectEntity, MendelProject> entityDtoMapper;
-
     private final IProjectUserRepository projectUserRepository;
 
-    public ProjectServiceImpl(IProjectRepository projectRepository, IProjectUserRepository projectUserRepository, IEntityDtoMapper<ProjectEntity, MendelProject> entityDtoMapper) {
+    private final IEntityDtoMapper<ProjectEntity, MendelProject> projectEntityDtoMapper;
+
+    private final IEntityDtoMapper<UserEntity, MendelUser> userEntityDtoMapper;
+
+    /**
+     * Constructor
+     *
+     * @param projectRepository
+     * @param projectUserRepository
+     * @param projectEntityDtoMapper
+     * @param userEntityDtoMapper
+     */
+    public ProjectServiceImpl(IProjectRepository projectRepository, IProjectUserRepository projectUserRepository, IEntityDtoMapper<ProjectEntity, MendelProject> projectEntityDtoMapper, IEntityDtoMapper<UserEntity, MendelUser> userEntityDtoMapper) {
         this.projectRepository = projectRepository;
         this.projectUserRepository = projectUserRepository;
-        this.entityDtoMapper = entityDtoMapper;
+        this.projectEntityDtoMapper = projectEntityDtoMapper;
+        this.userEntityDtoMapper = userEntityDtoMapper;
     }
 
     @Override
     public Optional<MendelProject> findProjectById(long projectId) throws MendelRuntimeException {
         return projectRepository.findById(projectId)
-                .map(entityDtoMapper::getDtoFromEntity);
+                .map(projectEntityDtoMapper::getDtoFromEntity);
     }
 
     @Override
     public MendelProject createProject(MendelProject project) throws MendelRuntimeException {
-        ProjectEntity savedEntity = projectRepository.save(entityDtoMapper.getEntityFromDto(project));
-        return Optional.ofNullable(savedEntity).map(entityDtoMapper::getDtoFromEntity).orElse(null);
+        ProjectEntity savedEntity = projectRepository.save(projectEntityDtoMapper.getEntityFromDto(project));
+        return Optional.ofNullable(savedEntity).map(projectEntityDtoMapper::getDtoFromEntity).orElse(null);
     }
 
     @Override
     public MendelProject updateProject(MendelProject project) throws MendelRuntimeException {
-        if (projectRepository.update(entityDtoMapper.getEntityFromDto(project)) != 1) {
+        if (projectRepository.update(projectEntityDtoMapper.getEntityFromDto(project)) != 1) {
             return null;
         }
         // Currently must execute one SELECT after update to retrieve back mDate !!!
@@ -80,7 +92,9 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Override
     public List<MendelUser> findUsersAssignedToProject(MendelProject project) throws MendelRuntimeException {
-        // TODO Implement
-        return new ArrayList();
+        return projectUserRepository.findByProjectId(project.getId())
+                .stream()
+                .map(userEntityDtoMapper::getDtoFromEntity)
+                .collect(Collectors.toList());
     }
 }

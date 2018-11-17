@@ -86,8 +86,11 @@ public class CommonBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public IProjectService getProjectService(IProjectRepository projectRepository, IProjectUserRepository projectUserRepository, IEntityDtoMapper<ProjectEntity, MendelProject> entityDtoMapper) {
-        return new ProjectServiceImpl(projectRepository, projectUserRepository, entityDtoMapper);
+    public IProjectService getProjectService(IProjectRepository projectRepository,
+            IProjectUserRepository projectUserRepository,
+            IEntityDtoMapper<ProjectEntity, MendelProject> projectEntityDtoMapper,
+            IEntityDtoMapper<UserEntity, MendelUser> userEntityDtoMapper) {
+        return new ProjectServiceImpl(projectRepository, projectUserRepository, projectEntityDtoMapper, userEntityDtoMapper);
     }
 
     @Bean

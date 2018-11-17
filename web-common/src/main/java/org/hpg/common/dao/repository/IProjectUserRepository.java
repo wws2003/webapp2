@@ -7,6 +7,7 @@ package org.hpg.common.dao.repository;
 
 import java.util.List;
 import org.hpg.common.model.entity.ProjectUserEntity;
+import org.hpg.common.model.entity.UserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -37,5 +38,6 @@ public interface IProjectUserRepository extends ICRUDRepository<ProjectUserEntit
      * @return
      * @throws MendelRuntimeException When finding failed
      */
-    List<ProjectUserEntity> findByProjectId(long projectId) throws MendelRuntimeException;
+    @Query("select u from UserEntity u, ProjectUserEntity pu where u.id = pu.userId and pu.projectId = ?1")
+    List<UserEntity> findByProjectId(long projectId) throws MendelRuntimeException;
 }
