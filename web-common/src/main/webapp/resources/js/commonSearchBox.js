@@ -87,6 +87,7 @@ CommonSearchBoxFragmentRender.prototype.build = function (frgSearchBox) {
         let searchResultEle = frgSearchBox.find('#ulSearchResultList li');
         let _selectedSearchResultEleGenerator = this._selectedSearchResultEleGenerator;
         let searchResultEleClickObservable = Rx.Observable.fromEvent(searchResultEle, 'click')
-                .map(() => txtSearchBox.val());
+                .map(() => txtSearchBox.val())
+                .subscribe((e) => console.log(e));
     }
 };

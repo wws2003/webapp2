@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* global Tagger, MendelApp */
+/* global Tagger, MendelApp, MendelDialog */
 
 var Rx = Rx || {};
 
@@ -264,16 +264,33 @@ var UserActionSubjects = {
     /**
      * Initialize with web service
      * @param {Map} projectMgtWebService
+     * @param {Map} projectDetailDlg
      * @returns {undefined}
      */
-    init: function (projectMgtWebService) {
+    init: function (projectMgtWebService, projectDetailDlg) {
         // Service wiring
         this._projectMgtWebService = projectMgtWebService;
+        this._projectDetailDlg = projectDetailDlg;
         // Subjects
-        this._addProjectSubject = new Rx.Subject();
+        // 1. Add subject
+        this._addProjectSubject = {
+            // TODO Handle error
+            next: () => ProjectDetailDlg.showForAdd.bind(this._projectDetailDlg)
+        };
+
+        // 2. Other subjects depends on server response
         this._updateProjectSubject = new Rx.Subject();
         this._deleteProjectsSubject = new Rx.Subject();
         this._getProjectDetailsSubject = new Rx.Subject();
+    },
+
+    /**
+     * Init by providing controller instance
+     * @param {Map} serverResponseOberservers
+     * @returns {undefined}
+     */
+    setupObserversForServerResponses: function (serverResponseOberservers) {
+        // TODO Implement
     }
 };
 
@@ -282,7 +299,73 @@ var UserActionSubjects = {
  * @type Map
  */
 var ServerResponseObservers = {
-    // TODO Implement
+    /**
+     * Initialize by views and one user interaction subject (for index action)
+     * @param {Map} projectRecordsPageFragment
+     * @param {Map} projectDetailDlg
+     * @param {Subject} addSuccessSubject
+     * @param {Subject} deleteSuccessSubject
+     * @returns {undefined}
+     */
+    init: function (projectRecordsPageFragment, projectDetailDlg, addSuccessSubject, deleteSuccessSubject) {
+        this._projectRecordsPageFragment = projectRecordsPageFragment;
+        this._projectDetailDlg = projectDetailDlg;
+        this._addSuccessSubject = addSuccessSubject;
+        this._deleteSuccessSubject = deleteSuccessSubject;
+    },
+
+    /**
+     * Subject for get details action
+     * @type Map
+     */
+    getRetrieveProjectDetailsResponseObserver: function () {
+        let successResponseFunc = ProjectDetailDlg.showForUpdate.bind(this._projectDetailDlg);
+        return {
+            // TODO Handle error
+            next: (response) => successResponseFunc(response.resultObject)
+        };
+    },
+
+    // TODO Method for user search response ?
+
+    /**
+     * Subject for user save action
+     * @type Map
+     */
+    getSaveProjectResponseObserver: function () {
+        // TODO Implement properly, handle messages and error
+        let addSuccessSubject = this._addSuccessSubject;
+        let projectDetailDlg = this._projectDetailDlg;
+        return  {
+            next: (response) => {
+                projectDetailDlg.hide();
+                if (response.success) {
+                    // Show dialog after hide dialog, then reload
+                    MendelDialog.info('Message', response.successMessages[0], () => addSuccessSubject.next());
+                } else {
+                    // Show error message
+                    MendelDialog.error('Message', response.errorMessages[0]);
+                }
+            }
+        };
+    },
+
+    /**
+     * Subject for user delete action
+     * @type Map
+     */
+    getDeleteProjectResponseObserver: function () {
+        // TODO Implement properly, handle messages and error
+        let deleteSuccessSubject = this._deleteSuccessSubject;
+        let projectDetailDlg = this._projectDetailDlg;
+        return  {
+            next: (response) => {
+                projectDetailDlg.hide();
+                // Show dialog after hide dialog
+                MendelDialog.info('Message', response.successMessages[0], () => deleteSuccessSubject.next());
+            }
+        };
+    }
 };
 
 /*--------------------------------------------------Service------------------------------------------------*/
@@ -311,7 +394,7 @@ function setupEvents() {
 
     // 2. User action observable
     let userActionSubjects = UserActionSubjects;
-    userActionSubjects.init(webService);
+    userActionSubjects.init(webService, ProjectDetailDlg);
 
     // 3. View internal observables (paging)
     // 4. View internal subject (paging)

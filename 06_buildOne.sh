@@ -63,7 +63,7 @@ fi
 read -p "To deploy ? Press y: " RESP
 if [ "$RESP" = "y" ]
 then
-	mvn integration-test -ff -DskipTests=true -pl web-all
+	mvn cargo:deploy -ff -DskipTests=true -pl web-all
 else
  	echo "Quit without deployment"
 fi

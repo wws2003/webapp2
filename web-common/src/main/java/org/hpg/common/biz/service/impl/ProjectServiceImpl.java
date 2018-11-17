@@ -63,11 +63,9 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Override
     public MendelProject updateProject(MendelProject project) throws MendelRuntimeException {
-        if (projectRepository.update(projectEntityDtoMapper.getEntityFromDto(project)) != 1) {
-            return null;
-        }
-        // Currently must execute one SELECT after update to retrieve back mDate !!!
-        return findProjectById(project.getId()).orElse(null);
+        // Updating mDate is delegated to trigger, so there is no difference in code to the createProject method !
+        ProjectEntity savedEntity = projectRepository.save(projectEntityDtoMapper.getEntityFromDto(project));
+        return Optional.ofNullable(savedEntity).map(projectEntityDtoMapper::getDtoFromEntity).orElse(null);
     }
 
     @Override

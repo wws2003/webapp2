@@ -175,4 +175,9 @@ public class CommonBeanConfig {
     public IPagingService<MendelUser> getUserPagingService(IUserRepository userRepository, IEntityDtoMapper<UserEntity, MendelUser> entityDtoMapper) {
         return new PagingServiceImpl(entityDtoMapper, userRepository);
     }
+
+    @Bean
+    public IPagingService<MendelProject> getProjectPagingService(IUserRepository userRepository, IEntityDtoMapper<ProjectEntity, MendelProject> entityDtoMapper) {
+        return new PagingServiceImpl(entityDtoMapper, userRepository);
+    }
 }
