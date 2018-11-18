@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* global Tagger, MendelApp, MendelDialog */
+/* global Tagger, MendelApp, MendelDialog, MendelAjaxObservableBuilder, MendelWebs, MendelAjaxResponseObserverBuilder */
 
 var Rx = Rx || {};
 
@@ -206,6 +206,23 @@ var ProjectDetailDlg = {
      */
     init: function (mdlProjectAddUpdate) {
         this._mdlProjectAddUpdate = mdlProjectAddUpdate;
+        // Observers and subscriptions
+        this._projectInfoFormObservable = Rx.Observable
+                .fromEvent(mdlProjectAddUpdate.find('#btnProjectAddUpdateDone'), 'click')
+                .map(ev => {
+                    return {
+                        code: mdlProjectAddUpdate.find('#txtProjectCode').val(),
+                        displayedName: mdlProjectAddUpdate.find('#txtProjectDisplayedName').val(),
+                        description: mdlProjectAddUpdate.find('#txtProjectDesc').val(),
+                        referScopeCode: mdlProjectAddUpdate.find('#rd_scope_public').prop('checked') ? 1 : 2,
+                        statusCode: mdlProjectAddUpdate.find('#rd_status_open').prop('checked') ? 1 : (mdlProjectAddUpdate.find('#rd_status_pending').prop('checked') ? 2 : 3),
+                        userIds: []
+                    };
+                });
+        this._projectInfoFormSubscription = undefined;
+        // Subjects
+        this._saveSubject = undefined;
+        this._searchSubject = undefined;
     },
 
     /**
@@ -215,7 +232,8 @@ var ProjectDetailDlg = {
      * @returns {undefined}
      */
     setUserActionSubject: function (saveSubject, searchSubject) {
-
+        this._saveSubject = saveSubject;
+        this._searchSubject = searchSubject;
     },
 
     /**
@@ -225,6 +243,11 @@ var ProjectDetailDlg = {
     showForAdd: function () {
         let dlg = this._mdlProjectAddUpdate;
         // TODO Implement
+        // Re-construct subsription
+        this.modifySubscription({
+            toCreateProject: true,
+            projectId: 0
+        });
         dlg.modal('show');
     },
 
@@ -235,7 +258,12 @@ var ProjectDetailDlg = {
      */
     showForUpdate: function (projectDetail) {
         let dlg = this._mdlProjectAddUpdate;
-        // TODO Implement
+        // TODO Render info
+        // Re-construct subsription
+        this.modifySubscription({
+            toCreateProject: false,
+            projectId: projectDetail.id
+        });
         dlg.modal('show');
     },
 
@@ -256,6 +284,20 @@ var ProjectDetailDlg = {
      */
     renderErrors: function (errorMessages) {
         // TODO Implement
+    },
+
+    /**
+     * Modify subscription of button Save 's click event
+     * @param {Map} extInfo
+     * @returns {undefined}
+     */
+    modifySubscription: function (extInfo) {
+        this._projectInfoFormSubscription && this._projectInfoFormSubscription.unsubscribe();
+        this._projectInfoFormSubscription = this._userInfoFormObservable
+                .map((projectInfoForm) => {
+                    return $.extend({}, projectInfoForm, extInfo);
+                })
+                .subscribe(this._saveSubject);
     }
 };
 
@@ -263,13 +305,11 @@ var ProjectDetailDlg = {
 var UserActionSubjects = {
     /**
      * Initialize with web service
-     * @param {Map} projectMgtWebService
      * @param {Map} projectDetailDlg
      * @returns {undefined}
      */
-    init: function (projectMgtWebService, projectDetailDlg) {
-        // Service wiring
-        this._projectMgtWebService = projectMgtWebService;
+    init: function (projectDetailDlg) {
+        // Components wiring
         this._projectDetailDlg = projectDetailDlg;
         // Subjects
         // 1. Add subject
@@ -279,7 +319,7 @@ var UserActionSubjects = {
         };
 
         // 2. Other subjects depends on server response
-        this._updateProjectSubject = new Rx.Subject();
+        this._saveProjectSubject = new Rx.Subject();
         this._deleteProjectsSubject = new Rx.Subject();
         this._getProjectDetailsSubject = new Rx.Subject();
     },
@@ -291,6 +331,20 @@ var UserActionSubjects = {
      */
     setupObserversForServerResponses: function (serverResponseOberservers) {
         // TODO Implement
+        let ajaxObservableBuilder = MendelAjaxObservableBuilder.baseCRUDUrl(Urls.PROJECT_MGT_BASE_URL)
+                .indexActionUrl(Urls.PROJECT_MGT_INDEX_ACTION)
+                .saveActionUrl(Urls.PROJECT_MGT_ADDUPDATE_ACTION)
+                .detailActionUrl(Urls.PROJECT_MGT_GETDETAIL_ACTION)
+                .deleteActionUrl(Urls.PROJECT_MGT_DELETE_ACTION);
+        let observerBuilder = MendelWebs.getDefaultAjaxResponseObserverBuilder();
+        let createAjaxResponseFunc = MendelAjaxResponseObserverBuilder.prototype.createAjaxResponseObserver.bind(observerBuilder);
+
+        // Save (for both create and update)
+        this._saveProjectSubject
+                .switchMap(saveForm => ajaxObservableBuilder.getSaveAJAXObservable(saveForm))
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getSaveProjectResponseObserver()));
+
+        // TODO: Other actions
     }
 };
 
@@ -368,15 +422,6 @@ var ServerResponseObservers = {
     }
 };
 
-/*--------------------------------------------------Service------------------------------------------------*/
-/**
- * Instance to handle WEB requests
- * @type
- */
-var ProjectMgtWebService = {
-
-};
-
 /*--------------------------------------------------Main actions------------------------------------------------*/
 // Entry point
 $(document).ready(function () {
@@ -389,21 +434,26 @@ $(document).ready(function () {
  * @returns {undefined}
  */
 function setupEvents() {
-    // TODO Implement
-    let webService = ProjectMgtWebService;
-
-    // 2. User action observable
+    // 1. User action observable
     let userActionSubjects = UserActionSubjects;
-    userActionSubjects.init(webService, ProjectDetailDlg);
+    userActionSubjects.init(ProjectDetailDlg);
 
-    // 3. View internal observables (paging)
-    // 4. View internal subject (paging)
-    // 5. Views
+    // 2. View internal observables (paging)
+    // 3. View internal subject (paging)
+    // 4. Views
     let projectRecordsPageFragment = ProjectRecordsPageFragment;
     let projectDetailDialog = ProjectDetailDlg;
     projectRecordsPageFragment.init($('#frgPaging'));
     projectDetailDialog.init($('#mdlProjectAddUpdate'));
     projectRecordsPageFragment.setUserActionSubject(userActionSubjects._addProjectSubject, userActionSubjects._updateProjectSubject, userActionSubjects._deleteProjectsSubject);
+    projectDetailDialog.setUserActionSubject(userActionSubjects._saveProjectSubject);
+
+    // 5. Server observers
+    // TODO Variable for add, update, delete success subject
+    let serverResponseObservers = ServerResponseObservers;
+    serverResponseObservers.init(projectRecordsPageFragment,
+            projectDetailDialog);
+    userActionSubjects.setupObserversForServerResponses(serverResponseObservers);
 }
 
 /**

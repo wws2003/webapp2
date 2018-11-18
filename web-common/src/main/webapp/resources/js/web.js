@@ -119,11 +119,22 @@ MendelAjaxExecutor.prototype.getObservable = function () {
     Rx.Observable.fromPromise(this.getPromise());
 };
 
+/*-----------------------------AJAX observable builder------------------------------------*/
+
 /**
  * Namespace for util functions
  * @type Map (namespace)
  */
 let MendelAjaxObservableBuilder = {
+    /**
+     * Get CRUD observable builder
+     * @param {MendelCRUDAjaxObservableBuilder} baseUrl
+     * @returns {undefined}
+     */
+    baseCRUDUrl: function (baseUrl) {
+        return new MendelCRUDAjaxObservableBuilder(baseUrl);
+    },
+
     /**
      * Create AJAX observable for POST request
      * @param {String} url
@@ -137,10 +148,10 @@ let MendelAjaxObservableBuilder = {
                 .getPromise();
         return Rx.Observable.fromPromise(promise);
         // Below code does not work as .ajax call immediately executed !?
-//        return (new MendelAjaxExecutor())
-//                .url(url)
-//                .formData(form)
-//                .getObservable();
+        //        return (new MendelAjaxExecutor())
+        //                .url(url)
+        //                .formData(form)
+        //                .getObservable();
     },
 
     /**
@@ -155,10 +166,133 @@ let MendelAjaxObservableBuilder = {
         return Rx.Observable.fromPromise(promise);
 
         // Below code does not work as .ajax call immediately executed !?
-//        return (new MendelAjaxExecutor())
-//                .url(url)
-//                .getObservable();
+        //        return (new MendelAjaxExecutor())
+        //                .url(url)
+        //                .getObservable();
     }
+};
+
+/**
+ * Initialize by base URL
+ * @param {String} baseUrl
+ * @returns {MendelCRUDAjaxObservableBuilder}
+ */
+function MendelCRUDAjaxObservableBuilder(baseUrl) {
+    // Base URL
+    this._baseUrl = baseUrl;
+    // Index URL
+    this._indexActionUrl = '';
+    // Get detail URL
+    this._getDetailActionUrl = '';
+    // Save URL
+    this._saveActionUrl = '';
+    // Delete URL
+    this._deleteActionUrl = '';
+}
+
+/**
+ * Assign index url
+ * @param {String} indexActionUrl
+ * @returns {undefined}
+ */
+MendelCRUDAjaxObservableBuilder.prototype.indexActionUrl = function (indexActionUrl) {
+    this._indexActionUrl = indexActionUrl;
+    return this;
+};
+
+/**
+ * Assign delete url
+ * @param {String} deleteActionUrl
+ * @returns {undefined}
+ */
+MendelCRUDAjaxObservableBuilder.prototype.deleteActionUrl = function (deleteActionUrl) {
+    this._deleteActionUrl = deleteActionUrl;
+    return this;
+};
+
+/**
+ * Assign detail url
+ * @param {String} detailActionUrl
+ * @returns {undefined}
+ */
+MendelCRUDAjaxObservableBuilder.prototype.detailActionUrl = function (detailActionUrl) {
+    this._getDetailActionUrl = detailActionUrl;
+    return this;
+};
+
+/**
+ * Assign save url
+ * @param {String} saveActionUrl
+ * @returns {undefined}
+ */
+MendelCRUDAjaxObservableBuilder.prototype.saveActionUrl = function (saveActionUrl) {
+    this._saveActionUrl = saveActionUrl;
+    return this;
+};
+
+
+/**
+ * Get observable for the index action
+ * @param {Map} indexForm
+ * @param {String} indexActionUrl
+ * @returns {undefined}
+ */
+MendelCRUDAjaxObservableBuilder.prototype.getIndexAJAXObservable = function (indexForm, indexActionUrl) {
+    // Create
+    let indexUrl = this._baseUrl + '/' + this.definedOrElse(indexActionUrl, this._indexActionUrl);
+    return MendelAjaxObservableBuilder.createPostActionObservable(indexUrl, indexForm);
+};
+
+/**
+ * Get observable for save action
+ * @param {Map} saveForm
+ * @param {String} saveActionUrl
+ * @returns {Observable}
+ */
+MendelCRUDAjaxObservableBuilder.prototype.getSaveAJAXObservable = function (saveForm, saveActionUrl) {
+    // Create
+    let saveUrl = this._baseUrl + '/' + this.definedOrElse(saveActionUrl, this._saveActionUrl);
+    return MendelAjaxObservableBuilder.createPostActionObservable(saveUrl, saveForm);
+};
+
+/**
+ * Get observable for delete action
+ * @param {Array} idsToDelete
+ * @param {String} deleteActionUrl
+ * @returns {Observable}
+ */
+MendelCRUDAjaxObservableBuilder.prototype.getDeleteAJAXObservable = function (idsToDelete, deleteActionUrl) {
+    let deleteForm = {
+        elementIds: idsToDelete
+    };
+    // Create
+    let deleteUrl = this._baseUrl + '/' + this.definedOrElse(deleteActionUrl, this._deleteActionUrl);
+    return MendelAjaxObservableBuilder.createPostActionObservable(deleteUrl, deleteForm);
+};
+
+/**
+ * Get observable for the action retrieving detail
+ * @param {Number} elementId
+ * @param {String} getDetailActionUrl
+ * @returns {unresolved}
+ */
+MendelCRUDAjaxObservableBuilder.prototype.getDetailsRetrieveAJAXObservable = function (elementId, getDetailActionUrl) {
+    // Get user details
+    let getDetailUrl = this._baseUrl + '/' + this.definedOrElse(getDetailActionUrl, this._getDetailActionUrl);
+    let detailForm = {
+        elementId: elementId
+    };
+    return MendelAjaxObservableBuilder.createPostActionObservable(getDetailUrl, detailForm);
+};
+
+/**
+ * Return the value if it is not empty, or default value otherwise
+ * @param {String} actionUrl
+ * @param {String} defaultActionUrl
+ * @returns {undefined}
+ */
+MendelCRUDAjaxObservableBuilder.prototype.definedOrElse = function (actionUrl, defaultActionUrl) {
+    return actionUrl ? actionUrl : defaultActionUrl;
 };
 
 /*-----------------------------AJAX response observer builder------------------------------------*/

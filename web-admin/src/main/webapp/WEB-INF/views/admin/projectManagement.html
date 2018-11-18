@@ -45,8 +45,8 @@ and open the template in the editor.
                                 </div>
                                 <!-- Project name -->
                                 <div class="form-group">
-                                    <label>Project name</label>
-                                    <input id="txtProjectName" type="text" class="form-control"/>
+                                    <label>Project displayed name</label>
+                                    <input id="txtProjectDisplayedName" type="text" class="form-control"/>
                                 </div>
                                 <!-- Project description -->
                                 <div class="form-group">
@@ -55,13 +55,16 @@ and open the template in the editor.
                                 </div>
                                 <!-- Project scope -->
                                 <div class="form-group">
-                                    <input type="radio"/> Public
-                                    <input type="radio"/> Private
+                                    <label>Scope</label>
+                                    <input type="radio" id="rd_scope_public" name="rd_scope" class="form-control" checked="checked"/> Public
+                                    <input type="radio" id="rd_scope_private" name="rd_scope" class="form-control"/> Private
                                 </div>
                                 <!-- Project status -->
                                 <div class="form-group">
-                                    <input type="radio"/> Open
-                                    <input type="radio"/> Close
+                                    <label>Status</label>
+                                    <input type="radio" id="rd_status_open" name="rd_status" class="form-control" checked="checked"/> Open
+                                    <input type="radio" id="rd_status_pending" name="rd_status" class="form-control"/> Close
+                                    <input type="radio" id="rd_status_close" name="rd_status" class="form-control"/> Close
                                 </div>
                                 <!-- Project members search area -->
                                 <div th:replace="common/fragments/commonSearchBox::frgSearchBox">

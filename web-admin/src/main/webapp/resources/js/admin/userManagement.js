@@ -486,11 +486,16 @@ var UserActionSubjects = {
      */
     setupObservers: function (serverResponseOberservers) {
         let userMgtWebService = this._userMgtWebService;
+        let ajaxObservableBuilder = MendelAjaxObservableBuilder.baseCRUDUrl(Urls.USER_MGT_BASE_URL)
+                .indexActionUrl(Urls.USER_MGT_INDEX_ACTION)
+                .saveActionUrl(Urls.USER_MGT_ADDUPDATE_ACTION)
+                .detailActionUrl(Urls.USER_MGT_GETDETAIL_ACTION)
+                .deleteActionUrl(Urls.USER_MGT_DELETE_ACTION);
         let observerBuilder = MendelWebs.getDefaultAjaxResponseObserverBuilder();
         let createAjaxResponseFunc = MendelAjaxResponseObserverBuilder.prototype.createAjaxResponseObserver.bind(observerBuilder);
         // Get details
         this._getUserDetailsSubject
-                .switchMap(userId => userMgtWebService.getUserDetailsRetrieveAJAXObservable(userId))
+                .switchMap(userId => ajaxObservableBuilder.getDetailsRetrieveAJAXObservable(userId))
                 .subscribe(createAjaxResponseFunc(serverResponseOberservers.getRetrieveUserDetailsResponseObserver()));
 
         // Add
@@ -500,12 +505,12 @@ var UserActionSubjects = {
 
         // Update
         this._updateUserSubject
-                .switchMap(saveForm => userMgtWebService.getSaveAJAXObservable(saveForm))
+                .switchMap(saveForm => ajaxObservableBuilder.getSaveAJAXObservable(saveForm))
                 .subscribe(createAjaxResponseFunc(serverResponseOberservers.getSaveUserResponseObserver()));
 
         // Delete
         this._deleteUsersSubject
-                .switchMap(userIdsToDelete => userMgtWebService.getDeleteAJAXObservable(userIdsToDelete))
+                .switchMap(userIdsToDelete => ajaxObservableBuilder.getDeleteAJAXObservable(userIdsToDelete))
                 .subscribe(createAjaxResponseFunc(serverResponseOberservers.getDeleteUserResponseObserver()));
 
         // Force logout
@@ -522,11 +527,12 @@ var UserActionSubjects = {
 var PageRequestSubject = {
     /**
      * Initialize subjects from user interacting events
-     * @param {Map} userMgtWebService
      */
-    init: function (userMgtWebService) {
+    init: function () {
         // Subjects
-        this._pageRequestSubject = (new Rx.Subject()).switchMap(indexForm => userMgtWebService.getIndexAJAXObservable(indexForm));
+        this._pageRequestSubject = (new Rx.Subject()).switchMap(indexForm => MendelAjaxObservableBuilder.baseCRUDUrl(Urls.USER_MGT_BASE_URL)
+                    .indexActionUrl(Urls.USER_MGT_INDEX_ACTION)
+                    .getIndexAJAXObservable(indexForm));
     }
 };
 
@@ -709,51 +715,11 @@ var ServerMessageObservers = {
  * @type
  */
 var UserMgtWebService = {
-    /**
-     * Get promise for the index action
-     * @param {Map} indexForm
-     * @returns {undefined}
-     */
-    getIndexAJAXObservable: function (indexForm) {
-        // Create
-        let indexUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_INDEX_ACTION;
-        return MendelAjaxObservableBuilder.createPostActionObservable(indexUrl, indexForm);
-    },
-
-    /**
-     * Get promise for the action retrieving user detail
-     * @param {Number} currentUserSelectedId
-     * @returns {unresolved}
-     */
-    getUserDetailsRetrieveAJAXObservable: function (currentUserSelectedId) {
-        // Get user details
-        let getDetailUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETDETAIL_ACTION;
-        let detailForm = {
-            userId: currentUserSelectedId
-        };
-        return MendelAjaxObservableBuilder.createPostActionObservable(getDetailUrl, detailForm);
-    },
-
     getAllUserPrivsRetrieveAJAXObservable: function () {
         // Get all user privileges (Temporary still have to use POST request to avoid the problem with redirect !!)
         let getAllUserPrivs = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_GETALLUSERPRIVS_ACTION;
         let form = {};
         return MendelAjaxObservableBuilder.createPostActionObservable(getAllUserPrivs, form);
-    },
-
-    getSaveAJAXObservable: function (saveForm) {
-        // Create
-        let saveUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_ADDUPDATE_ACTION;
-        return MendelAjaxObservableBuilder.createPostActionObservable(saveUrl, saveForm);
-    },
-
-    getDeleteAJAXObservable: function (userIdsToDelete) {
-        let deleteForm = {
-            userIdsToDelete: userIdsToDelete
-        };
-        // Create
-        let deleteUrl = Urls.USER_MGT_BASE_URL + '/' + Urls.USER_MGT_DELETE_ACTION;
-        return MendelAjaxObservableBuilder.createPostActionObservable(deleteUrl, deleteForm);
     },
 
     getForceLogoutAJAXObservable: function (userIdsToForceLogout) {
@@ -792,7 +758,7 @@ function setupEvents() {
 
     // 4. View internal subject (paging)
     let pageRequestSubject = PageRequestSubject;
-    pageRequestSubject.init(webService);
+    pageRequestSubject.init();
 
     // 5. Views
     let userRecordsPageFragment = UserRecordsPageFragment;
