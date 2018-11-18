@@ -56,15 +56,15 @@ and open the template in the editor.
                                 <!-- Project scope -->
                                 <div class="form-group">
                                     <label>Scope</label>
-                                    <input type="radio" id="rd_scope_public" name="rd_scope" class="form-control" checked="checked"/> Public
-                                    <input type="radio" id="rd_scope_private" name="rd_scope" class="form-control"/> Private
+                                    <input type="radio" id="rd_scope_public" name="rd_scope" checked="checked"/> Public
+                                    <input type="radio" id="rd_scope_private" name="rd_scope"/> Private
                                 </div>
                                 <!-- Project status -->
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <input type="radio" id="rd_status_open" name="rd_status" class="form-control" checked="checked"/> Open
-                                    <input type="radio" id="rd_status_pending" name="rd_status" class="form-control"/> Close
-                                    <input type="radio" id="rd_status_close" name="rd_status" class="form-control"/> Close
+                                    <input type="radio" id="rd_status_open" name="rd_status" checked="checked"/> Open
+                                    <input type="radio" id="rd_status_pending" name="rd_status"/> Close
+                                    <input type="radio" id="rd_status_close" name="rd_status"/> Close
                                 </div>
                                 <!-- Project members search area -->
                                 <div th:replace="common/fragments/commonSearchBox::frgSearchBox">

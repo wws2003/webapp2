@@ -293,7 +293,7 @@ var ProjectDetailDlg = {
      */
     modifySubscription: function (extInfo) {
         this._projectInfoFormSubscription && this._projectInfoFormSubscription.unsubscribe();
-        this._projectInfoFormSubscription = this._userInfoFormObservable
+        this._projectInfoFormSubscription = this._projectInfoFormObservable
                 .map((projectInfoForm) => {
                     return $.extend({}, projectInfoForm, extInfo);
                 })

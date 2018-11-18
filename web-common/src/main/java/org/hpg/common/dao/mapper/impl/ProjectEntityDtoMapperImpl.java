@@ -23,17 +23,13 @@ import org.hpg.common.model.mapping.EntityDtoMap;
             "id",
             "code",
             "displayedName",
-            "description",
-            "cDate",
-            "mDate"
+            "description"
         },
         dtoToEntityMappings = {
             "id",
             "code",
             "displayedName",
-            "description",
-            "cDate",
-            "mDate"
+            "description"
         }
 )
 public class ProjectEntityDtoMapperImpl extends BaseEntityDtoMapper<ProjectEntity, MendelProject> {
@@ -42,11 +38,17 @@ public class ProjectEntityDtoMapperImpl extends BaseEntityDtoMapper<ProjectEntit
     protected void finalizeEntityFromDto(MendelProject dto, ProjectEntity entity) {
         entity.setReferScope(dto.getReferScope().getCode());
         entity.setStatus(dto.getStatus().getCode());
+        // cDate and mDate must be add manually since they do not start with upper case character !
+        entity.setcDate(dto.getcDate());
+        entity.setmDate(dto.getmDate());
     }
 
     @Override
     protected void finalizeDtoFromEntity(ProjectEntity entity, MendelProject dto) {
         dto.setReferScope(MendelReferScope.getProjectReferScopeByCode(entity.getReferScope()));
         dto.setStatus(MendelProjectStatus.getProjectStatusByCode(entity.getStatus()));
+        // cDate and mDate must be add manually since they do not start with upper case character !
+        dto.setcDate(entity.getcDate());
+        dto.setmDate(entity.getmDate());
     }
 }
