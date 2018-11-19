@@ -318,7 +318,7 @@ UserDetailDlg.prototype.constructor = UserDetailDlg;
 function UserDetailDlg(dlg) {
     CommonDetailDlg.call(this, dlg, '#btnUserAddUpdateDone');
     // Observable of internal pure UI-stuffs
-    this.setupGrantRevokeInternalActions();
+    this.setupGrantRevokeInternalActions(dlg);
 }
 
 /**
@@ -368,7 +368,7 @@ UserDetailDlg.prototype.renderRecordDetailForUpdate = function (mdlUserAddUpdate
     mdlUserAddUpdate.find('#txtPassword').val('pass001');
     mdlUserAddUpdate.find('#txtPasswordConfirm').val('pass001');
     // Privileges
-    this.setPrivsGrantRevokeOptions(userDetails.remainingGrantablePrivileges, userDetails.grantedPrivileges);
+    this.setPrivsGrantRevokeOptions(mdlUserAddUpdate, userDetails.remainingGrantablePrivileges, userDetails.grantedPrivileges);
 };
 
 /**
@@ -395,12 +395,12 @@ UserDetailDlg.prototype.createExtInfo = function (userDetails) {
  * Action for privileges grant/revoke buttons
  * @returns {undefined}
  */
-UserDetailDlg.prototype.setupGrantRevokeInternalActions = function () {
+UserDetailDlg.prototype.setupGrantRevokeInternalActions = function (mdlUserAddUpdate) {
     // Observable of internal UI-stuffs
-    let btnGrant = this._mdlUserAddUpdate.find('#btnGrant');
-    let btnRevoke = this._mdlUserAddUpdate.find('#btnRevoke');
-    let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
-    let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
+    let btnGrant = mdlUserAddUpdate.find('#btnGrant');
+    let btnRevoke = mdlUserAddUpdate.find('#btnRevoke');
+    let sltNotGrantedPrivs = mdlUserAddUpdate.find('#sltNotGrantedPrivs');
+    let sltGrantedPrivs = mdlUserAddUpdate.find('#sltGrantedPrivs');
 
     // -Move selected options between 2 select elements
     Rx.Observable.fromEvent(btnGrant, 'click')
@@ -419,9 +419,9 @@ UserDetailDlg.prototype.setupGrantRevokeInternalActions = function () {
  * @param {Array} grantedPrivs
  * @returns {undefined}
  */
-UserDetailDlg.prototype.setPrivsGrantRevokeOptions = function (notGrantedPrivs, grantedPrivs) {
-    let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
-    let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
+UserDetailDlg.prototype.setPrivsGrantRevokeOptions = function (mdlUserAddUpdate, notGrantedPrivs, grantedPrivs) {
+    let sltNotGrantedPrivs = mdlUserAddUpdate.find('#sltNotGrantedPrivs');
+    let sltGrantedPrivs = mdlUserAddUpdate.find('#sltGrantedPrivs');
     // Set data
     Rx.Observable.from(
             [
@@ -739,7 +739,7 @@ function setupEvents() {
 
     // 5. Views
     let userRecordsPageFragment = UserRecordsPageFragment;
-    let userDetailDlg = new UserDetailDlg($('##mdlUserAddUpdate'));
+    let userDetailDlg = new UserDetailDlg($('#mdlUserAddUpdate'));
     userRecordsPageFragment.init($('#frgPaging'));
     userRecordsPageFragment.setUserActionSubjects(userActionSubjects._addUserSubject,
             userActionSubjects._getUserDetailsSubject,
