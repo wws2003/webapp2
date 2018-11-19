@@ -306,159 +306,136 @@ var UserRecordsPageFragment = {
     }
 };
 
+/*----------------Add/Update user dialog----------------------*/
+
+UserDetailDlg.prototype = Object.create(CommonDetailDlg.prototype);
+UserDetailDlg.prototype.constructor = UserDetailDlg;
+
 /**
- * Instance to handle UI stuffs for user detail modal
- * @type type
+ * Construct
+ * @type UserDetailDlg
  */
-var UserDetailDlg = {
-    init: function (mdlUserAddUpdate) {
-        // Dialog element
-        this._mdlUserAddUpdate = mdlUserAddUpdate;
-        // Observers and subscriptions
-        this._userInfoFormObservable = Rx.Observable.fromEvent(mdlUserAddUpdate.find('#btnUserAddUpdateDone'), 'click')
-                .map(ev => {
-                    return {
-                        userName: mdlUserAddUpdate.find('#txtUserName').val(),
-                        userDispName: mdlUserAddUpdate.find('#txtDispName').val(),
-                        rawPassword: mdlUserAddUpdate.find('#txtPassword').val(),
-                        confirmedRawPassword: mdlUserAddUpdate.find('#txtPasswordConfirm').val(),
-                        grantedPrivilegeIds: mdlUserAddUpdate.find('#sltGrantedPrivs option')
-                                .get()
-                                .map(optEle => parseInt(optEle.getAttribute('val')))
-                    };
-                });
-        this._userInfoFormSubscription = undefined;
-        this._saveSubject = undefined;
-        // Observable of internal pure UI-stuffs
-        this.setupGrantRevokeInternalActions();
-    },
+function UserDetailDlg(dlg) {
+    CommonDetailDlg.call(this, dlg, '#btnUserAddUpdateDone');
+    // Observable of internal pure UI-stuffs
+    this.setupGrantRevokeInternalActions();
+}
 
-    /**
-     * Set subjects for user-interactions
-     * @param {Subject} saveSubject
-     * @returns {undefined}
-     */
-    setUserActionSubject: function (saveSubject) {
-        this._saveSubject = saveSubject;
-    },
+/**
+ * Create data for save form. To be implemented by subclass
+ * @returns {Map}
+ */
+UserDetailDlg.prototype.createSaveData = function (mdlUserAddUpdate) {
+    return {
+        userName: mdlUserAddUpdate.find('#txtUserName').val(),
+        userDispName: mdlUserAddUpdate.find('#txtDispName').val(),
+        rawPassword: mdlUserAddUpdate.find('#txtPassword').val(),
+        confirmedRawPassword: mdlUserAddUpdate.find('#txtPasswordConfirm').val(),
+        grantedPrivilegeIds: mdlUserAddUpdate.find('#sltGrantedPrivs option')
+                .get()
+                .map(optEle => parseInt(optEle.getAttribute('val')))
+    };
+};
 
-    /**
-     * Show user detailed info for update
-     * @param {Map} userDetails
-     * @returns {undefined}
-     */
-    showForUpdate: function (userDetails) {
-        let mdlUserAddUpdate = this._mdlUserAddUpdate;
-        // Render
-        mdlUserAddUpdate.find('#lblUserDialogTitle').text('Update user info');
-        mdlUserAddUpdate.find('#txtUserName').val(userDetails.name);
-        mdlUserAddUpdate.find('#txtDispName').val(userDetails.dispName);
-        mdlUserAddUpdate.find('#txtPassword').val('pass001');
-        mdlUserAddUpdate.find('#txtPasswordConfirm').val('pass001');
-        // Re-construct subsription
-        this.modifySubscription({
+/**
+ * Render data for add action to the dialog
+ * @param {JQuery} mdlUserAddUpdate
+ * @param {Map} allUserPrivs
+ * @returns {undefined}
+ */
+UserDetailDlg.prototype.renderRecordDetailForAdd = function (mdlUserAddUpdate, allUserPrivs) {
+    // Basic info
+    mdlUserAddUpdate.find('#lblUserDialogTitle').text('Input new user info');
+    mdlUserAddUpdate.find('#txtUserName').val('');
+    mdlUserAddUpdate.find('#txtDispName').val('');
+    mdlUserAddUpdate.find('#txtPassword').val('');
+    mdlUserAddUpdate.find('#txtPasswordConfirm').val('');
+    // Privileges
+    this.setPrivsGrantRevokeOptions(allUserPrivs, []);
+};
+
+/**
+ * Render to view the record with detailed information. To be implemented by subclass
+ * @param {JQuery} mdlUserAddUpdate
+ * @param {Map} userDetails
+ * @returns {undefined}
+ */
+UserDetailDlg.prototype.renderRecordDetailForUpdate = function (mdlUserAddUpdate, userDetails) {
+    // Basic info
+    mdlUserAddUpdate.find('#lblUserDialogTitle').text('Update user info');
+    mdlUserAddUpdate.find('#txtUserName').val(userDetails.name);
+    mdlUserAddUpdate.find('#txtDispName').val(userDetails.dispName);
+    mdlUserAddUpdate.find('#txtPassword').val('pass001');
+    mdlUserAddUpdate.find('#txtPasswordConfirm').val('pass001');
+    // Privileges
+    this.setPrivsGrantRevokeOptions(userDetails.remainingGrantablePrivileges, userDetails.grantedPrivileges);
+};
+
+/**
+ * Create extention information rather than from input fields
+ * @param {Map} userDetails
+ * @returns {undefined}
+ */
+UserDetailDlg.prototype.createExtInfo = function (userDetails) {
+    // Default return empty map
+    if (userDetails) {
+        return {
             toCreateUser: false,
             userId: userDetails.id
-        });
-        // Privileges render
-        this.setPrivsGrantRevokeOptions(userDetails.remainingGrantablePrivileges, userDetails.grantedPrivileges);
-        // Show up
-        mdlUserAddUpdate.modal('show');
-    },
-
-    /**
-     * Show user detailed info for add
-     * @param {Array} allUserPrivs
-     * @returns {undefined}
-     */
-    showForAdd: function (allUserPrivs) {
-        let mdlUserAddUpdate = this._mdlUserAddUpdate;
-        // Render
-        mdlUserAddUpdate.find('#lblUserDialogTitle').text('Input new user info');
-        mdlUserAddUpdate.find('#txtUserName').val('');
-        mdlUserAddUpdate.find('#txtDispName').val('');
-        mdlUserAddUpdate.find('#txtPassword').val('');
-        mdlUserAddUpdate.find('#txtPasswordConfirm').val('');
-        // Re-construct subsription
-        this.modifySubscription({
+        }
+    } else {
+        return {
             toCreateUser: true,
             userId: 0
-        });
-        // Privileges
-        this.setPrivsGrantRevokeOptions(allUserPrivs, []);
-        // Show up
-        mdlUserAddUpdate.modal('show');
-    },
-
-    hide: function () {
-        this._mdlUserAddUpdate.modal('hide');
-    },
-
-    renderErrors: function (errorMessages) {
-        // TODO Implement
-    },
-
-    /**
-     * Modify subscription of button Save 's click event
-     * @param {Map} extInfo
-     * @returns {undefined}
-     */
-    modifySubscription: function (extInfo) {
-        this._userInfoFormSubscription && this._userInfoFormSubscription.unsubscribe();
-        this._userInfoFormSubscription = this._userInfoFormObservable
-                .map((userInfoForm) => {
-                    return $.extend({}, userInfoForm, extInfo);
-                })
-                .subscribe(this._saveSubject);
-    },
-
-    /**
-     * Action for privileges grant/revoke buttons
-     * @returns {undefined}
-     */
-    setupGrantRevokeInternalActions: function () {
-        // Observable of internal UI-stuffs
-        let btnGrant = this._mdlUserAddUpdate.find('#btnGrant');
-        let btnRevoke = this._mdlUserAddUpdate.find('#btnRevoke');
-        let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
-        let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
-
-        // -Move selected options between 2 select elements
-        Rx.Observable.fromEvent(btnGrant, 'click')
-                .map(() => [sltNotGrantedPrivs, sltGrantedPrivs])
-                .merge(Rx.Observable
-                        .fromEvent(btnRevoke, 'click')
-                        .map(() => [sltGrantedPrivs, sltNotGrantedPrivs])
-                        )
-                .subscribe(eles => {
-                    eles[0].find('option:selected').appendTo(eles[1]);
-                });
-    },
-
-    /**
-     * Set privileges into proper select elements
-     * @param {Array} notGrantedPrivs
-     * @param {Array} grantedPrivs
-     * @returns {undefined}
-     */
-    setPrivsGrantRevokeOptions: function (notGrantedPrivs, grantedPrivs) {
-        let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
-        let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
-        // Set data
-        Rx.Observable.from(
-                [
-                    [sltNotGrantedPrivs, notGrantedPrivs],
-                    [sltGrantedPrivs, grantedPrivs]
-                ]
-                ).map(e => [e[0], e[1].reduce(
-                        (acc, cur) => acc + Tagger.option()
-                            .innerText(cur.item3)
-                            .withAttr('val', cur.item1)
-                            .build(),
-                        ''
-                        )])
-                .subscribe(selOpts => selOpts[0].html(selOpts[1]));
+        };
     }
+};
+
+/**
+ * Action for privileges grant/revoke buttons
+ * @returns {undefined}
+ */
+UserDetailDlg.prototype.setupGrantRevokeInternalActions = function () {
+    // Observable of internal UI-stuffs
+    let btnGrant = this._mdlUserAddUpdate.find('#btnGrant');
+    let btnRevoke = this._mdlUserAddUpdate.find('#btnRevoke');
+    let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
+    let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
+
+    // -Move selected options between 2 select elements
+    Rx.Observable.fromEvent(btnGrant, 'click')
+            .map(() => [sltNotGrantedPrivs, sltGrantedPrivs])
+            .merge(Rx.Observable
+                    .fromEvent(btnRevoke, 'click')
+                    .map(() => [sltGrantedPrivs, sltNotGrantedPrivs])
+                    )
+            .subscribe(eles => {
+                eles[0].find('option:selected').appendTo(eles[1]);
+            });
+};
+/**
+ * Set privileges into proper select elements
+ * @param {Array} notGrantedPrivs
+ * @param {Array} grantedPrivs
+ * @returns {undefined}
+ */
+UserDetailDlg.prototype.setPrivsGrantRevokeOptions = function (notGrantedPrivs, grantedPrivs) {
+    let sltNotGrantedPrivs = this._mdlUserAddUpdate.find('#sltNotGrantedPrivs');
+    let sltGrantedPrivs = this._mdlUserAddUpdate.find('#sltGrantedPrivs');
+    // Set data
+    Rx.Observable.from(
+            [
+                [sltNotGrantedPrivs, notGrantedPrivs],
+                [sltGrantedPrivs, grantedPrivs]
+            ]
+            ).map(e => [e[0], e[1].reduce(
+                    (acc, cur) => acc + Tagger.option()
+                        .innerText(cur.item3)
+                        .withAttr('val', cur.item1)
+                        .build(),
+                    ''
+                    )])
+            .subscribe(selOpts => selOpts[0].html(selOpts[1]));
 };
 
 /*----------------------------------------------------Observable, Subjects, Observers----------------------------------------------------*/
@@ -580,7 +557,7 @@ var ServerResponseObservers = {
      * @type Map
      */
     getRetrieveUserDetailsResponseObserver: function () {
-        let successResponseFunc = UserDetailDlg.showForUpdate.bind(this._userDetailDlg);
+        let successResponseFunc = UserDetailDlg.prototype.showForUpdate.bind(this._userDetailDlg);
         return {
             // TODO Handle error
             next: (response) => successResponseFunc(response.resultObject)
@@ -592,7 +569,7 @@ var ServerResponseObservers = {
      * @type Map
      */
     getRetrieveAllUserPrivsResponseObserver: function () {
-        let successResponseFunc = UserDetailDlg.showForAdd.bind(this._userDetailDlg);
+        let successResponseFunc = UserDetailDlg.prototype.showForAdd.bind(this._userDetailDlg);
         return {
             // TODO Handle error
             next: (response) => successResponseFunc(response.resultObject)
@@ -762,9 +739,8 @@ function setupEvents() {
 
     // 5. Views
     let userRecordsPageFragment = UserRecordsPageFragment;
-    let userDetailDlg = UserDetailDlg;
+    let userDetailDlg = new UserDetailDlg('#mdlUserAddUpdate');
     userRecordsPageFragment.init($('#frgPaging'));
-    userDetailDlg.init($('#mdlUserAddUpdate'));
     userRecordsPageFragment.setUserActionSubjects(userActionSubjects._addUserSubject,
             userActionSubjects._getUserDetailsSubject,
             userActionSubjects._deleteUsersSubject,
@@ -774,7 +750,7 @@ function setupEvents() {
             pageRequestObservables._pageRequestAfterAddSuccess,
             pageRequestObservables._pageRequestAfterDeleteSuccess,
             pageRequestObservables._pageRequestAfterForceLogoutSuccess);
-    userDetailDlg.setUserActionSubject(userActionSubjects._updateUserSubject);
+    userDetailDlg.setSaveSubject(userActionSubjects._updateUserSubject);
 
     // 6. Server observers
     let serverResponseObservers = ServerResponseObservers;
