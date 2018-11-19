@@ -7,6 +7,7 @@
 /* global Tagger, MendelApp, MendelDialog, MendelAjaxObservableBuilder, MendelWebs, MendelAjaxResponseObserverBuilder */
 
 var Rx = Rx || {};
+var CommonDetailDlg = CommonDetailDlg || {};
 
 /*----------------------------------------------------Constants----------------------------------------------------*/
 /**
@@ -194,110 +195,86 @@ var ProjectRecordsPageFragment = {
     }
 };
 
+/*----------------Add/Update project dialog----------------------*/
+
+ProjectDetailDlg.prototype = Object.create(CommonDetailDlg.prototype);
+ProjectDetailDlg.prototype.constructor = ProjectDetailDlg;
+
 /**
- * Map for project details
- * @type Map
+ * Construct
+ * @param {JQuery} dlg
+ * @returns {ProjectDetailDlg}
+ *
  */
-var ProjectDetailDlg = {
-    /**
-     * Initialize
-     * @param {JQuery} mdlProjectAddUpdate
-     * @returns {undefined}
-     */
-    init: function (mdlProjectAddUpdate) {
-        this._mdlProjectAddUpdate = mdlProjectAddUpdate;
-        // Observers and subscriptions
-        this._projectInfoFormObservable = Rx.Observable
-                .fromEvent(mdlProjectAddUpdate.find('#btnProjectAddUpdateDone'), 'click')
-                .map(ev => {
-                    return {
-                        code: mdlProjectAddUpdate.find('#txtProjectCode').val(),
-                        displayedName: mdlProjectAddUpdate.find('#txtProjectDisplayedName').val(),
-                        description: mdlProjectAddUpdate.find('#txtProjectDesc').val(),
-                        referScopeCode: mdlProjectAddUpdate.find('#rd_scope_public').prop('checked') ? 1 : 2,
-                        statusCode: mdlProjectAddUpdate.find('#rd_status_open').prop('checked') ? 1 : (mdlProjectAddUpdate.find('#rd_status_pending').prop('checked') ? 2 : 3),
-                        userIds: []
-                    };
-                });
-        this._projectInfoFormSubscription = undefined;
-        // Subjects
-        this._saveSubject = undefined;
-        this._searchSubject = undefined;
-    },
+function ProjectDetailDlg(dlg) {
+    CommonDetailDlg.call(this, dlg, '#btnProjectAddUpdateDone');
+    this._searchSubject = undefined;
+}
 
-    /**
-     * Set subjects for user-interactions
-     * @param {Subject} saveSubject
-     * @param {Subject} searchSubject
-     * @returns {undefined}
-     */
-    setUserActionSubject: function (saveSubject, searchSubject) {
-        this._saveSubject = saveSubject;
-        this._searchSubject = searchSubject;
-    },
+/**
+ * Set subjects for user-interactions
+ * @param {Subject} saveSubject
+ * @param {Subject} searchSubject
+ * @returns {undefined}
+ */
+ProjectDetailDlg.prototype.setUserActionSubject = function (saveSubject, searchSubject) {
+    this.setSaveSubject(saveSubject);
+    this._searchSubject = searchSubject;
+};
 
-    /**
-     * Show modal for adding new project
-     * @returns {undefined}
-     */
-    showForAdd: function () {
-        let dlg = this._mdlProjectAddUpdate;
-        // TODO Implement
-        // Re-construct subsription
-        this.modifySubscription({
+/**
+ * Create data for save form from the dialog. To be implemented by subclass
+ * @param {JQuery} mdlProjectAddUpdate
+ * @returns {Map}
+ */
+ProjectDetailDlg.prototype.createSaveData = function (mdlProjectAddUpdate) {
+    return {
+        code: mdlProjectAddUpdate.find('#txtProjectCode').val(),
+        displayedName: mdlProjectAddUpdate.find('#txtProjectDisplayedName').val(),
+        description: mdlProjectAddUpdate.find('#txtProjectDesc').val(),
+        referScopeCode: mdlProjectAddUpdate.find('#rd_scope_public').prop('checked') ? 1 : 2,
+        statusCode: mdlProjectAddUpdate.find('#rd_status_open').prop('checked') ? 1 : (mdlProjectAddUpdate.find('#rd_status_pending').prop('checked') ? 2 : 3),
+        userIds: []
+    };
+};
+
+/**
+ * Render data for add action to the dialog
+ * @param {JQuery} dlg
+ * @param {Map} dataForAdd
+ * @returns {undefined}
+ */
+ProjectDetailDlg.prototype.renderRecordDetailForAdd = function (dlg, dataForAdd) {
+    // TODO Implement
+};
+
+/**
+ * Render to view the record with detailed information. To be implemented by subclass
+ * @param {JQuery} dlg
+ * @param {Map} recordDetails
+ * @returns {undefined}
+ */
+ProjectDetailDlg.prototype.renderRecordDetailForUpdate = function (dlg, recordDetails) {
+    // TODO Implement
+};
+
+/**
+ * Create extention information rather than from input fields
+ * @param {Map} projectDetails
+ * @returns {undefined}
+ */
+ProjectDetailDlg.prototype.createExtInfo = function (projectDetails) {
+    // Default return empty map
+    if (projectDetails) {
+        return {
+            toCreateProject: false,
+            projectId: projectDetails.id
+        };
+    } else {
+        return {
             toCreateProject: true,
             projectId: 0
-        });
-        dlg.modal('show');
-    },
-
-    /**
-     * Show modal with project detail
-     * @param {Map} projectDetail
-     * @returns {undefined}
-     */
-    showForUpdate: function (projectDetail) {
-        let dlg = this._mdlProjectAddUpdate;
-        // TODO Render info
-        // Re-construct subsription
-        this.modifySubscription({
-            toCreateProject: false,
-            projectId: projectDetail.id
-        });
-        dlg.modal('show');
-    },
-
-    /**
-     * Hide
-     * @returns {undefined}
-     */
-    hide: function () {
-        let dlg = this._mdlProjectAddUpdate;
-        // TODO Implement
-        dlg.modal('hide');
-    },
-
-    /**
-     * Render error (including disabling elements)
-     * @param {Array} errorMessages
-     * @returns {undefined}
-     */
-    renderErrors: function (errorMessages) {
-        // TODO Implement
-    },
-
-    /**
-     * Modify subscription of button Save 's click event
-     * @param {Map} extInfo
-     * @returns {undefined}
-     */
-    modifySubscription: function (extInfo) {
-        this._projectInfoFormSubscription && this._projectInfoFormSubscription.unsubscribe();
-        this._projectInfoFormSubscription = this._projectInfoFormObservable
-                .map((projectInfoForm) => {
-                    return $.extend({}, projectInfoForm, extInfo);
-                })
-                .subscribe(this._saveSubject);
+        };
     }
 };
 
@@ -315,7 +292,7 @@ var UserActionSubjects = {
         // 1. Add subject
         this._addProjectSubject = {
             // TODO Handle error
-            next: ProjectDetailDlg.showForAdd.bind(projectDetailDlg)
+            next: ProjectDetailDlg.prototype.showForAdd.bind(projectDetailDlg)
         };
 
         // 2. Other subjects depends on server response
@@ -436,15 +413,14 @@ $(document).ready(function () {
 function setupEvents() {
     // 1. User action observable
     let userActionSubjects = UserActionSubjects;
-    userActionSubjects.init(ProjectDetailDlg);
 
     // 2. View internal observables (paging)
     // 3. View internal subject (paging)
     // 4. Views
     let projectRecordsPageFragment = ProjectRecordsPageFragment;
-    let projectDetailDialog = ProjectDetailDlg;
+    let projectDetailDialog = new ProjectDetailDlg($('#mdlProjectAddUpdate'));
     projectRecordsPageFragment.init($('#frgPaging'));
-    projectDetailDialog.init($('#mdlProjectAddUpdate'));
+    userActionSubjects.init(projectDetailDialog);
     projectRecordsPageFragment.setUserActionSubject(userActionSubjects._addProjectSubject, userActionSubjects._updateProjectSubject, userActionSubjects._deleteProjectsSubject);
     projectDetailDialog.setUserActionSubject(userActionSubjects._saveProjectSubject);
 

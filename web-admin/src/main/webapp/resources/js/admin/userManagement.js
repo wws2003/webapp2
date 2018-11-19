@@ -382,7 +382,7 @@ UserDetailDlg.prototype.createExtInfo = function (userDetails) {
         return {
             toCreateUser: false,
             userId: userDetails.id
-        }
+        };
     } else {
         return {
             toCreateUser: true,
@@ -739,7 +739,7 @@ function setupEvents() {
 
     // 5. Views
     let userRecordsPageFragment = UserRecordsPageFragment;
-    let userDetailDlg = new UserDetailDlg('#mdlUserAddUpdate');
+    let userDetailDlg = new UserDetailDlg($('##mdlUserAddUpdate'));
     userRecordsPageFragment.init($('#frgPaging'));
     userRecordsPageFragment.setUserActionSubjects(userActionSubjects._addUserSubject,
             userActionSubjects._getUserDetailsSubject,
