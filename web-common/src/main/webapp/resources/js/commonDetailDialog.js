@@ -41,7 +41,7 @@ CommonDetailDlg.prototype.setSaveSubject = function (saveSubject) {
 CommonDetailDlg.prototype.showForAdd = function (dataForAdd) {
     let mdlAddUpdate = this._mdlAddUpdate;
     // Render
-    this.renderRecordDetailForAdd(this._mdlAddUpdate, dataForAdd);
+    this.renderDataForAdd(this._mdlAddUpdate, dataForAdd);
     // Re-construct subsription
     this.modifySubscription(this.createExtInfo());
     // Show up
@@ -111,7 +111,7 @@ CommonDetailDlg.prototype.createSaveData = function (dlg) {
  * @param {Map} dataForAdd
  * @returns {undefined}
  */
-CommonDetailDlg.prototype.renderRecordDetailForAdd = function (dlg, dataForAdd) {
+CommonDetailDlg.prototype.renderDataForAdd = function (dlg, dataForAdd) {
     // Default do nothing
 };
 

@@ -8,6 +8,8 @@
 /* global MendelApp, Tagger, MendelDialog, Stomp, MendelCommon, MendelAjaxObservableBuilder, MendelAjaxResponseObserverBuilder, MendelWebs  */
 
 var Rx = Rx || {};
+var CommonDetailDlg = CommonDetailDlg || {};
+
 /*----------------------------------------------------Constansts----------------------------------------------------*/
 /**
  * Based urls
@@ -313,6 +315,7 @@ UserDetailDlg.prototype.constructor = UserDetailDlg;
 
 /**
  * Construct
+ * @param {JQuery} dlg
  * @type UserDetailDlg
  */
 function UserDetailDlg(dlg) {
@@ -343,7 +346,7 @@ UserDetailDlg.prototype.createSaveData = function (mdlUserAddUpdate) {
  * @param {Map} allUserPrivs
  * @returns {undefined}
  */
-UserDetailDlg.prototype.renderRecordDetailForAdd = function (mdlUserAddUpdate, allUserPrivs) {
+UserDetailDlg.prototype.renderDataForAdd = function (mdlUserAddUpdate, allUserPrivs) {
     // Basic info
     mdlUserAddUpdate.find('#lblUserDialogTitle').text('Input new user info');
     mdlUserAddUpdate.find('#txtUserName').val('');

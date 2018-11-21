@@ -10,6 +10,18 @@ var Rx = Rx || {};
 var CommonDetailDlg = CommonDetailDlg || {};
 
 /*----------------------------------------------------Constants----------------------------------------------------*/
+
+let ProjectReferScope = {
+    PUBLIC: 1,
+    PRIVATE: 2
+};
+
+let ProjectStatus = {
+    ACTIVE: 1,
+    PENDING: 2,
+    CLOSE: 3
+};
+
 /**
  * Based urls
  * @type Map
@@ -232,30 +244,42 @@ ProjectDetailDlg.prototype.createSaveData = function (mdlProjectAddUpdate) {
         code: mdlProjectAddUpdate.find('#txtProjectCode').val(),
         displayedName: mdlProjectAddUpdate.find('#txtProjectDisplayedName').val(),
         description: mdlProjectAddUpdate.find('#txtProjectDesc').val(),
-        referScopeCode: mdlProjectAddUpdate.find('#rd_scope_public').prop('checked') ? 1 : 2,
-        statusCode: mdlProjectAddUpdate.find('#rd_status_open').prop('checked') ? 1 : (mdlProjectAddUpdate.find('#rd_status_pending').prop('checked') ? 2 : 3),
+        referScopeCode: this.getCheckedRadioButtonValue(mdlProjectAddUpdate.find('input:radio[name="rd_scope"]')),
+        statusCode: this.getCheckedRadioButtonValue(mdlProjectAddUpdate.find('input:radio[name="rd_status"]')),
         userIds: []
     };
 };
 
 /**
  * Render data for add action to the dialog
- * @param {JQuery} dlg
+ * @param {JQuery} mdlProjectAddUpdate
  * @param {Map} dataForAdd
  * @returns {undefined}
  */
-ProjectDetailDlg.prototype.renderRecordDetailForAdd = function (dlg, dataForAdd) {
-    // TODO Implement
+ProjectDetailDlg.prototype.renderDataForAdd = function (mdlProjectAddUpdate, dataForAdd) {
+    // Reset
+    mdlProjectAddUpdate.find('#lblProjectDialogTitle').text('Input new project info');
+    mdlProjectAddUpdate.find('#txtProjectCode').val('');
+    mdlProjectAddUpdate.find('#txtProjectDisplayedName').val('');
+    mdlProjectAddUpdate.find('#txtProjectDesc').val('');
+    this.checkRadioButtonByValue(mdlProjectAddUpdate.find('input:radio[name="rd_scope"]'), ProjectReferScope.PUBLIC);
+    this.checkRadioButtonByValue(mdlProjectAddUpdate.find('input:radio[name="rd_status"]'), ProjectStatus.ACTIVE);
 };
 
 /**
  * Render to view the record with detailed information. To be implemented by subclass
- * @param {JQuery} dlg
- * @param {Map} recordDetails
+ * @param {JQuery} mdlProjectAddUpdate
+ * @param {Map} projectDetails
  * @returns {undefined}
  */
-ProjectDetailDlg.prototype.renderRecordDetailForUpdate = function (dlg, recordDetails) {
-    // TODO Implement
+ProjectDetailDlg.prototype.renderRecordDetailForUpdate = function (mdlProjectAddUpdate, projectDetails) {
+    // Render project info
+    mdlProjectAddUpdate.find('#lblProjectDialogTitle').text('Update project info');
+    mdlProjectAddUpdate.find('#txtProjectCode').val(projectDetails.code);
+    mdlProjectAddUpdate.find('#txtProjectDisplayedName').val(projectDetails.displayedName);
+    mdlProjectAddUpdate.find('#txtProjectDesc').val(projectDetails.description);
+    this.checkRadioButtonByValue(mdlProjectAddUpdate.find('input:radio[name="rd_scope"]'), projectDetails.referScope);
+    this.checkRadioButtonByValue(mdlProjectAddUpdate.find('input:radio[name="rd_status"]'), projectDetails.status);
 };
 
 /**
@@ -276,6 +300,25 @@ ProjectDetailDlg.prototype.createExtInfo = function (projectDetails) {
             projectId: 0
         };
     }
+};
+
+/**
+ * Find radio button by value then check
+ * @param {JQuery} radioGroup
+ * @param {Number} val
+ * @returns {undefined}
+ */
+ProjectDetailDlg.prototype.checkRadioButtonByValue = function (radioGroup, val) {
+    radioGroup.filter((i, ele) => parseInt($(ele).val()) === val).prop('checked', 'checked');
+};
+
+/**
+ * Get checked value
+ * @param {type} radioGroup
+ * @returns {undefined}
+ */
+ProjectDetailDlg.prototype.getCheckedRadioButtonValue = function (radioGroup) {
+    return parseInt(radioGroup.filter(':checked').val());
 };
 
 /*----------------------------------------------------Observable, Subjects, Observers----------------------------------------------------*/
