@@ -89,7 +89,7 @@ public class ProjectMgtScreenServiceImpl implements IProjectMgtScrnService {
     public AjaxResult addUpdateProject(ProjectAddUpdateForm form) throws MendelRuntimeException {
         MendelProject project = parseProjectDtoFromForm(form);
         // 1. Create new / Update
-        MendelProject savedProject = (form.isToCreateProject()) ? projectService.createProject(project) : projectService.updateProject(project);
+        MendelProject savedProject = (form.getIdForm().getElementId() < 0) ? projectService.createProject(project) : projectService.updateProject(project);
         // 2. Assign users
         projectService.assignUsersToProject(savedProject, form.getUserIds());
         // Return sucess result. TODO Set message properly
@@ -135,7 +135,7 @@ public class ProjectMgtScreenServiceImpl implements IProjectMgtScrnService {
         // TODO Implement properly based on annotations
         MendelProject project = new MendelProject();
         project.setCode(form.getCode());
-        project.setId(form.getProjectId());
+        project.setId(form.getIdForm().getElementId());
         project.setDisplayedName(form.getDisplayedName());
         project.setDescription(form.getDescription());
         project.setReferScope(MendelReferScope.getProjectReferScopeByCode(form.getReferScopeCode()));

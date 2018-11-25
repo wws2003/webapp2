@@ -129,7 +129,7 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
     public AjaxResult addUpdateUser(UserAddUpdateForm form) throws MendelRuntimeException {
         MendelUser userToCreateOrUpdate = parseUserDtoFromForm(form);
         // Save
-        MendelUser savedUser = form.getToCreateUser() ? userService.createUser(userToCreateOrUpdate) : userService.updateUser(userToCreateOrUpdate);
+        MendelUser savedUser = form.getIdForm().getElementId() < 0 ? userService.createUser(userToCreateOrUpdate) : userService.updateUser(userToCreateOrUpdate);
         // TODO Grant privileges
         List<MendelPrivilege> grantedPrivileges = parseGrantedPrivilegesFromForm(form);
         userService.grantUserWithPrivileges(savedUser, grantedPrivileges);
@@ -169,7 +169,7 @@ public class UserMgtScreenServiceImpl implements IUserMgtScrnService {
         // TODO Implement properly based on annotations
         MendelUser user = new MendelUser();
         user.setDispName(form.getUserDispName());
-        user.setId(form.getUserId());
+        user.setId(form.getIdForm().getElementId());
         user.setName(form.getUserName());
         user.setEncodedPassword(Optional.ofNullable(passwordService).map(srv -> srv.getEncodedPassword(form.getRawPassword())).orElse(form.getRawPassword()));
         user.setPassword(user.getEncodedPassword());

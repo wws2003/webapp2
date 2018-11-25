@@ -95,6 +95,16 @@ CommonDetailDlg.prototype.modifySubscription = function (extInfo) {
             .subscribe(this._saveSubject);
 };
 
+/**
+ * Create extention information rather than from input fields
+ * @param {Map} recordDetails
+ * @returns {undefined}
+ */
+CommonDetailDlg.prototype.createExtInfo = function (recordDetails) {
+    // Default return empty map
+    return {idForm: recordDetails ? recordDetails.id : -1};
+};
+
 /*--------------------------Methods to be implemented in subclass-----------------------*/
 /**
  * Create data for save form from the dialog. To be implemented by subclass
@@ -123,14 +133,4 @@ CommonDetailDlg.prototype.renderDataForAdd = function (dlg, dataForAdd) {
  */
 CommonDetailDlg.prototype.renderRecordDetailForUpdate = function (dlg, recordDetails) {
     // Default do nothing
-};
-
-/**
- * Create extention information rather than from input fields
- * @param {Map} recordDetails
- * @returns {undefined}
- */
-CommonDetailDlg.prototype.createExtInfo = function (recordDetails) {
-    // Default return empty map
-    return {};
 };

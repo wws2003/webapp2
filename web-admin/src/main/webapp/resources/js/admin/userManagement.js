@@ -375,26 +375,6 @@ UserDetailDlg.prototype.renderRecordDetailForUpdate = function (mdlUserAddUpdate
 };
 
 /**
- * Create extention information rather than from input fields
- * @param {Map} userDetails
- * @returns {undefined}
- */
-UserDetailDlg.prototype.createExtInfo = function (userDetails) {
-    // Default return empty map
-    if (userDetails) {
-        return {
-            toCreateUser: false,
-            userId: userDetails.id
-        };
-    } else {
-        return {
-            toCreateUser: true,
-            userId: 0
-        };
-    }
-};
-
-/**
  * Action for privileges grant/revoke buttons
  * @returns {undefined}
  */
@@ -416,6 +396,7 @@ UserDetailDlg.prototype.setupGrantRevokeInternalActions = function (mdlUserAddUp
                 eles[0].find('option:selected').appendTo(eles[1]);
             });
 };
+
 /**
  * Set privileges into proper select elements
  * @param {Array} notGrantedPrivs
@@ -476,7 +457,7 @@ var UserActionSubjects = {
         // Get details
         this._getUserDetailsSubject
                 .switchMap(userId => ajaxObservableBuilder.getDetailsRetrieveAJAXObservable(userId))
-                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getRetrieveUserDetailsResponseObserver()));
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getRetrieveDetailsResponseObserver()));
 
         // Add
         this._addUserSubject
@@ -486,12 +467,12 @@ var UserActionSubjects = {
         // Update
         this._updateUserSubject
                 .switchMap(saveForm => ajaxObservableBuilder.getSaveAJAXObservable(saveForm))
-                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getSaveUserResponseObserver()));
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getSaveResponseObserver()));
 
         // Delete
         this._deleteUsersSubject
                 .switchMap(userIdsToDelete => ajaxObservableBuilder.getDeleteAJAXObservable(userIdsToDelete))
-                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getDeleteUserResponseObserver()));
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getDeleteResponseObserver()));
 
         // Force logout
         this._forceLogoutUsersSubject
@@ -534,109 +515,6 @@ var PageRequestObservables = {
 };
 
 /**
- * Observers for server response
- * @type Map
- */
-var ServerResponseObservers = {
-    /**
-     * Initialize by views and one user interaction subject (for index action)
-     * @param {Map} userRecordsPageFragment
-     * @param {Map} userDetailDlg
-     * @param {Subject} addSuccessSubject
-     * @param {Subject} deleteSuccessSubject
-     * @param {Subject} forceLogoutSuccessSubject
-     * @returns {undefined}
-     */
-    init: function (userRecordsPageFragment, userDetailDlg, addSuccessSubject, deleteSuccessSubject, forceLogoutSuccessSubject) {
-        this._userRecordsPageFragment = userRecordsPageFragment;
-        this._userDetailDlg = userDetailDlg;
-        this._addSuccessSubject = addSuccessSubject;
-        this._deleteSuccessSubject = deleteSuccessSubject;
-        this._forceLogoutSuccessSubject = forceLogoutSuccessSubject;
-    },
-
-    /**
-     * Subject for get details action
-     * @type Map
-     */
-    getRetrieveUserDetailsResponseObserver: function () {
-        let successResponseFunc = UserDetailDlg.prototype.showForUpdate.bind(this._userDetailDlg);
-        return {
-            // TODO Handle error
-            next: (response) => successResponseFunc(response.resultObject)
-        };
-    },
-
-    /**
-     * Subject for get all user privileges action
-     * @type Map
-     */
-    getRetrieveAllUserPrivsResponseObserver: function () {
-        let successResponseFunc = UserDetailDlg.prototype.showForAdd.bind(this._userDetailDlg);
-        return {
-            // TODO Handle error
-            next: (response) => successResponseFunc(response.resultObject)
-        };
-    },
-
-    /**
-     * Subject for user save action
-     * @type Map
-     */
-    getSaveUserResponseObserver: function () {
-        // TODO Implement properly, handle messages and error
-        let addSuccessSubject = this._addSuccessSubject;
-        let userDetailDlg = this._userDetailDlg;
-        return  {
-            next: (response) => {
-                userDetailDlg.hide();
-                if (response.success) {
-                    // Show dialog after hide dialog, then reload
-                    MendelDialog.info('Message', response.successMessages[0], () => addSuccessSubject.next());
-                } else {
-                    // Show error message
-                    MendelDialog.error('Message', response.errorMessages[0]);
-                }
-            }
-        };
-    },
-
-    /**
-     * Subject for user delete action
-     * @type Map
-     */
-    getDeleteUserResponseObserver: function () {
-        // TODO Implement properly, handle messages and error
-        let deleteSuccessSubject = this._deleteSuccessSubject;
-        let userDetailDlg = this._userDetailDlg;
-        return  {
-            next: (response) => {
-                userDetailDlg.hide();
-                // Show dialog after hide dialog
-                MendelDialog.info('Message', response.successMessages[0], () => deleteSuccessSubject.next());
-            }
-        };
-    },
-
-    /**
-     * Subject for user force logout action
-     * @type Map
-     */
-    getForceLogoutUserResponseObserver: function () {
-        // TODO Implement properly, handle messages and error
-        let forceLogoutSuccessSubject = this._forceLogoutSuccessSubject;
-        let userDetailDlg = this._userDetailDlg;
-        return  {
-            next: (response) => {
-                userDetailDlg.hide();
-                // Show dialog after hide dialog
-                MendelDialog.info('Message', response.successMessages[0], () => forceLogoutSuccessSubject.next());
-            }
-        };
-    }
-};
-
-/**
  * Observable for server message
  * @type Map
  */
@@ -664,29 +542,50 @@ var ServerMessageObservables = {
     }
 };
 
+// Observers for server response
+ServerResponseObserver.prototype = Object.create(CommonCRUDServerResponseObserver.prototype);
+ServerResponseObserver.prototype.constructor = ServerResponseObserver;
+
 /**
- * Observers for server message (e.g. via websocket)
+ * Initialize by views and one user interaction subject (for index action)
+ * @param {Map} userDetailDlg
+ * @param {Subject} addSuccessSubject
+ * @param {Subject} deleteSuccessSubject
+ * @param {Subject} forceLogoutSuccessSubject
+ * @returns {ServerResponseObserver}
+ */
+function ServerResponseObserver(userDetailDlg, addSuccessSubject, deleteSuccessSubject, forceLogoutSuccessSubject) {
+    CommonCRUDServerResponseObserver.call(this, userDetailDlg, addSuccessSubject, deleteSuccessSubject);
+    this._forceLogoutSuccessSubject = forceLogoutSuccessSubject;
+}
+
+/**
+ * Subject for get all user privileges action
  * @type Map
  */
-var ServerMessageObservers = {
-    /**
-     * Initialize by views and one user interaction subject (for index action)
-     * @param {Map} userRecordsPageFragment
-     * @returns {undefined}
-     */
-    init: function (userRecordsPageFragment) {
-        this._userRecordsPageFragment = userRecordsPageFragment;
-    },
+ServerResponseObserver.prototype.getRetrieveAllUserPrivsResponseObserver = function () {
+    let successResponseFunc = UserDetailDlg.prototype.showForAdd.bind(this._detailDlg);
+    return {
+        // TODO Handle error
+        next: (response) => successResponseFunc(response.resultObject)
+    };
+};
 
-    getRecentLoginStatusChangedObserver: function () {
-        let successResponseFunc = UserRecordsPageFragment.renderRecentLoginStatus.bind(this._userRecordsPageFragment);
-        return msg => {
-            let msgObj = JSON.parse(msg.body);
-            let recentLoggedInUserMap = msgObj.loggedInUserMap !== null ? msgObj.loggedInUserMap : {};
-            let recentLoggedOutUserIds = msgObj.loggedOutUserIds !== null ? msgObj.loggedOutUserIds : [];
-            successResponseFunc(recentLoggedInUserMap, recentLoggedOutUserIds);
-        };
-    }
+/**
+ * Subject for user force logout action
+ * @type Map
+ */
+ServerResponseObserver.prototype.getForceLogoutUserResponseObserver = function () {
+    // TODO Implement properly, handle messages and error
+    let forceLogoutSuccessSubject = this._forceLogoutSuccessSubject;
+    let userDetailDlg = this._detailDlg;
+    return  {
+        next: (response) => {
+            userDetailDlg.hide();
+            // Show dialog after hide dialog
+            MendelDialog.info('Message', response.successMessages[0], () => forceLogoutSuccessSubject.next());
+        }
+    };
 };
 
 /*--------------------------------------------------Service------------------------------------------------*/
@@ -756,9 +655,7 @@ function setupEvents() {
     userDetailDlg.setSaveSubject(userActionSubjects._updateUserSubject);
 
     // 6. Server observers
-    let serverResponseObservers = ServerResponseObservers;
-    serverResponseObservers.init(userRecordsPageFragment,
-            userDetailDlg,
+    let serverResponseObservers = new ServerResponseObserver(userDetailDlg,
             pageRequestObservables._pageRequestAfterAddSuccess,
             pageRequestObservables._pageRequestAfterDeleteSuccess,
             pageRequestObservables._pageRequestAfterForceLogoutSuccess);

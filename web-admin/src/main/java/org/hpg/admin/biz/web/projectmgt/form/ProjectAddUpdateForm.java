@@ -7,6 +7,8 @@ package org.hpg.admin.biz.web.projectmgt.form;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.validation.constraints.NotNull;
+import org.hpg.admin.biz.web.common.form.SimpleRequestByIDForm;
 
 /**
  * Project add/update form
@@ -17,14 +19,10 @@ public class ProjectAddUpdateForm implements Serializable {
     // TODO Add validation properly
 
     /**
-     * Flag to determine if update/create
+     * ID form. If ID &lt 0 consider add form, otherwise consider update form
      */
-    private boolean toCreateProject;
-
-    /**
-     * Project id. In the case of create, has the value -1
-     */
-    private long projectId;
+    @NotNull
+    private SimpleRequestByIDForm idForm;
 
     private String code;
 
@@ -41,20 +39,12 @@ public class ProjectAddUpdateForm implements Serializable {
      */
     private List<Long> userIds;
 
-    public boolean isToCreateProject() {
-        return toCreateProject;
+    public SimpleRequestByIDForm getIdForm() {
+        return idForm;
     }
 
-    public void setToCreateProject(boolean toCreateProject) {
-        this.toCreateProject = toCreateProject;
-    }
-
-    public long getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(long projectId) {
-        this.projectId = projectId;
+    public void setIdForm(SimpleRequestByIDForm idForm) {
+        this.idForm = idForm;
     }
 
     public String getCode() {
@@ -107,6 +97,6 @@ public class ProjectAddUpdateForm implements Serializable {
 
     @Override
     public String toString() {
-        return "ProjectAddUpdateForm{" + "toCreateProject=" + toCreateProject + ", projectId=" + projectId + ", code=" + code + ", displayedName=" + displayedName + ", description=" + description + ", referScopeCode=" + referScopeCode + ", statusCode=" + statusCode + ", userIds=" + userIds + '}';
+        return "ProjectAddUpdateForm{" + "idForm=" + idForm + ", code=" + code + ", displayedName=" + displayedName + ", description=" + description + ", referScopeCode=" + referScopeCode + ", statusCode=" + statusCode + ", userIds=" + userIds + '}';
     }
 }

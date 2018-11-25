@@ -283,26 +283,6 @@ ProjectDetailDlg.prototype.renderRecordDetailForUpdate = function (mdlProjectAdd
 };
 
 /**
- * Create extention information rather than from input fields
- * @param {Map} projectDetails
- * @returns {undefined}
- */
-ProjectDetailDlg.prototype.createExtInfo = function (projectDetails) {
-    // Default return empty map
-    if (projectDetails) {
-        return {
-            toCreateProject: false,
-            projectId: projectDetails.id
-        };
-    } else {
-        return {
-            toCreateProject: true,
-            projectId: 0
-        };
-    }
-};
-
-/**
  * Find radio button by value then check
  * @param {JQuery} radioGroup
  * @param {Number} val
@@ -368,80 +348,6 @@ var UserActionSubjects = {
     }
 };
 
-/**
- * Observers for server response
- * @type Map
- */
-var ServerResponseObservers = {
-    /**
-     * Initialize by views and one user interaction subject (for index action)
-     * @param {Map} projectRecordsPageFragment
-     * @param {Map} projectDetailDlg
-     * @param {Subject} addSuccessSubject
-     * @param {Subject} deleteSuccessSubject
-     * @returns {undefined}
-     */
-    init: function (projectRecordsPageFragment, projectDetailDlg, addSuccessSubject, deleteSuccessSubject) {
-        this._projectRecordsPageFragment = projectRecordsPageFragment;
-        this._projectDetailDlg = projectDetailDlg;
-        this._addSuccessSubject = addSuccessSubject;
-        this._deleteSuccessSubject = deleteSuccessSubject;
-    },
-
-    /**
-     * Subject for get details action
-     * @type Map
-     */
-    getRetrieveProjectDetailsResponseObserver: function () {
-        let successResponseFunc = ProjectDetailDlg.showForUpdate.bind(this._projectDetailDlg);
-        return {
-            // TODO Handle error
-            next: (response) => successResponseFunc(response.resultObject)
-        };
-    },
-
-    // TODO Method for user search response ?
-
-    /**
-     * Subject for user save action
-     * @type Map
-     */
-    getSaveProjectResponseObserver: function () {
-        // TODO Implement properly, handle messages and error
-        let addSuccessSubject = this._addSuccessSubject;
-        let projectDetailDlg = this._projectDetailDlg;
-        return  {
-            next: (response) => {
-                projectDetailDlg.hide();
-                if (response.success) {
-                    // Show dialog after hide dialog, then reload
-                    MendelDialog.info('Message', response.successMessages[0], () => addSuccessSubject.next());
-                } else {
-                    // Show error message
-                    MendelDialog.error('Message', response.errorMessages[0]);
-                }
-            }
-        };
-    },
-
-    /**
-     * Subject for user delete action
-     * @type Map
-     */
-    getDeleteProjectResponseObserver: function () {
-        // TODO Implement properly, handle messages and error
-        let deleteSuccessSubject = this._deleteSuccessSubject;
-        let projectDetailDlg = this._projectDetailDlg;
-        return  {
-            next: (response) => {
-                projectDetailDlg.hide();
-                // Show dialog after hide dialog
-                MendelDialog.info('Message', response.successMessages[0], () => deleteSuccessSubject.next());
-            }
-        };
-    }
-};
-
 /*--------------------------------------------------Main actions------------------------------------------------*/
 // Entry point
 $(document).ready(function () {
@@ -469,9 +375,7 @@ function setupEvents() {
 
     // 5. Server observers
     // TODO Variable for add, update, delete success subject
-    let serverResponseObservers = ServerResponseObservers;
-    serverResponseObservers.init(projectRecordsPageFragment,
-            projectDetailDialog);
+    let serverResponseObservers = new CommonCRUDServerResponseObserver(projectDetailDialog);
     userActionSubjects.setupObserversForServerResponses(serverResponseObservers);
 }
 

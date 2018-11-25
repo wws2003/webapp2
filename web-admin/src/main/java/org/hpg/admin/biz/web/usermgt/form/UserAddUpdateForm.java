@@ -7,6 +7,8 @@ package org.hpg.admin.biz.web.usermgt.form;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.validation.constraints.NotNull;
+import org.hpg.admin.biz.web.common.form.SimpleRequestByIDForm;
 
 /**
  * Form to add/update user
@@ -16,14 +18,10 @@ import java.util.List;
 public class UserAddUpdateForm implements Serializable {
 
     /**
-     * Flag to determine if update/create
+     * ID form. If ID &lt 0 consider add form, otherwise consider update form
      */
-    private boolean toCreateUser;
-
-    /**
-     * User id. In the case of create, has the value -1
-     */
-    private long userId;
+    @NotNull
+    private SimpleRequestByIDForm idForm;
 
     /**
      * User name
@@ -50,20 +48,12 @@ public class UserAddUpdateForm implements Serializable {
      */
     private List<Integer> grantedPrivilegeIds;
 
-    public boolean getToCreateUser() {
-        return toCreateUser;
+    public SimpleRequestByIDForm getIdForm() {
+        return idForm;
     }
 
-    public void setToCreateUser(boolean toCreateUser) {
-        this.toCreateUser = toCreateUser;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setIdForm(SimpleRequestByIDForm idForm) {
+        this.idForm = idForm;
     }
 
     public String getUserName() {
@@ -108,6 +98,6 @@ public class UserAddUpdateForm implements Serializable {
 
     @Override
     public String toString() {
-        return "UserAddUpdateForm{" + "toCreateUser=" + toCreateUser + ", userId=" + userId + ", userName=" + userName + ", userDipsName=" + userDispName + ", rawPassword=" + rawPassword + ", confirmedRawPassword=" + confirmedRawPassword + ", grantedPrivilegeIds=" + grantedPrivilegeIds + '}';
+        return "UserAddUpdateForm{" + "idForm=" + idForm + ", userName=" + userName + ", userDispName=" + userDispName + ", rawPassword=" + rawPassword + ", confirmedRawPassword=" + confirmedRawPassword + ", grantedPrivilegeIds=" + grantedPrivilegeIds + '}';
     }
 }
