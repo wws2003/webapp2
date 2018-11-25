@@ -62,7 +62,7 @@ var ProjectRecordsPageFragment = {
     /**
      * Initialize view with related buttons
      * @param {JQuery} projectRecordsPagingFragment
-     * @returns {undefined}
+     * @returns {ProjectRecordsPageFragment}
      */
     init: function (projectRecordsPagingFragment) {
         // Create view builders onto paging fragment
@@ -85,7 +85,10 @@ var ProjectRecordsPageFragment = {
         this._btnDelete = projectRecordsPagingFragment.find('#' + RecordsCtrlArea.BTN_DELETE.id);
 
         // Subjects (for events fired in this view)
-        this._projectUpdateSubject = undefined;
+        this._projectUpdateObserver = undefined;
+
+        // Return
+        return this;
     },
 
     /**
@@ -95,7 +98,7 @@ var ProjectRecordsPageFragment = {
      * @param {Subject} deleteObserver
      * @returns {undefined}
      */
-    setUserActionSubject: function (addObserver, updateObserver, deleteObserver) {
+    userActionSubject: function (addObserver, updateObserver, deleteObserver) {
         // Add
         Rx.Observable.fromEvent(this._btnAdd, 'click')
                 .subscribe(addObserver);
@@ -105,7 +108,11 @@ var ProjectRecordsPageFragment = {
                 '.mo_chkDelete:checked',
                 deleteObserver);
 
-        // TODO Implement other actions
+        // Update (for later use)
+        this._projectUpdateObserver = updateObserver;
+
+        // Return
+        return this;
     },
 
     /**
@@ -113,19 +120,57 @@ var ProjectRecordsPageFragment = {
      * @param {Subject} pageRequestSubject
      * @returns {undefined}
      */
-    setPageRequestSubject: function (pageRequestSubject) {
-
+    pageRequestSubject: function (pageRequestSubject) {
+        // Paging action (same subject as reload)
+        this._pageRender.pageRequestSubject(pageRequestSubject);
+        // Build renderer onto current paging fragment area
+        this._pageRender.applyPageRequestSubject(this._projectRecordsPagingFragment);
+        // Return
+        return this;
     },
 
     /**
      * Setup observables for page request
      * @param {Observable} screenIntializedObservable
-     * @param {Observable} addSuccessObservable
+     * @param {Observable} saveSuccessObservable
      * @param {Observable} deleteSuccessObservable
      * @returns {undefined}
      */
-    setObservablesForPageRequest: function (screenIntializedObservable, addSuccessObservable, deleteSuccessObservable) {
+    observablesForPageRequest: function (screenIntializedObservable, saveSuccessObservable, deleteSuccessObservable) {
+        // Apart from add and delete success, clicking on button Reload also included
+        let projectRecordsPagingFragment = this._projectRecordsPagingFragment;
+        let getRecordCountPerPageFunc = () => projectRecordsPagingFragment.find('#sltPagingRecordPerPage').val();
 
+        this._pageRender
+                .pageRequestObservable(Rx.Observable.fromEvent(this._btnReload, 'click').map(() => {
+                    // Providing paging subject with page request form
+                    return {
+                        pageNumber: parseInt(projectRecordsPagingFragment.find('#txtPagingCurrent').val()),
+                        recordCountPerPage: getRecordCountPerPageFunc()
+                    };
+                }))
+                .pageRequestObservable(screenIntializedObservable.map(() => {
+                    // Providing paging subject with page request form (starting from page 1)
+                    return {
+                        pageNumber: 1,
+                        recordCountPerPage: getRecordCountPerPageFunc()
+                    };
+                }))
+                .pageRequestObservable(saveSuccessObservable.map(() => {
+                    // Providing paging subject with page request form (starting from page 1)
+                    return {
+                        pageNumber: 1,
+                        recordCountPerPage: getRecordCountPerPageFunc()
+                    };
+                }))
+                .pageRequestObservable(deleteSuccessObservable.map(() => {
+                    // Providing paging subject with page request form (starting from page 1)
+                    return {
+                        pageNumber: 1,
+                        recordCountPerPage: getRecordCountPerPageFunc()
+                    };
+                }));
+        return this;
     },
 
     /*--------------------Private methods-------------------*/
@@ -149,7 +194,9 @@ var ProjectRecordsPageFragment = {
                 .then()
                 .th('Display name').withClass('col-xs-4')
                 .then()
-                .th('Document count').withClass('col-xs-4')
+                .th('Created at').withClass('col-xs-2')
+                .then()
+                .th('Updated at').withClass('col-xs-2')
                 .then()
                 .th('Delete').withClass('col-xs-1')
                 .then()
@@ -164,10 +211,11 @@ var ProjectRecordsPageFragment = {
                 .then()
                 .td(projectRecord.displayedName).withClass('col-xs-4')
                 .then()
-                .td(projectRecord.documentCount).withClass('col-xs-4')
+                .td(projectRecord.cDateTimeStamp).withClass('col-xs-2')
+                .then()
+                .td(projectRecord.mDateTimeStamp).withClass('col-xs-2')
                 .then()
                 .td().withClasses('col-xs-1 mo_checkbox_wrapper').innerTag('input').autoClose().withAttr('type', 'checkbox').withClass('mo_chkDelete').id('chkDelete_' + projectRecord.id).then()
-                .then()
                 .then()
                 .td().withClass('col-xs-1').innerTag('button').innerText('Update').withClass('mo_btnUpdate').id('btnAddUpdate_' + projectRecord.id).then()
                 .then()
@@ -187,7 +235,7 @@ var ProjectRecordsPageFragment = {
         Rx.Observable.fromEvent(tableEle.find('button.mo_btnUpdate'), 'click')
                 .map(e => $(e.target).attr('id').split('_')[1])
                 .map(idStr => parseInt(idStr))
-                .subscribe(this._projectUpdateSubject);
+                .subscribe(this._projectUpdateObserver);
     },
 
     /**
@@ -339,12 +387,53 @@ var UserActionSubjects = {
         let observerBuilder = MendelWebs.getDefaultAjaxResponseObserverBuilder();
         let createAjaxResponseFunc = MendelAjaxResponseObserverBuilder.prototype.createAjaxResponseObserver.bind(observerBuilder);
 
+        // Get detail (before showing update dialog)
+        this._getProjectDetailsSubject
+                .switchMap(projectId => ajaxObservableBuilder.getDetailsRetrieveAJAXObservable(projectId))
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getRetrieveDetailsResponseObserver()));
+
         // Save (for both create and update)
         this._saveProjectSubject
                 .switchMap(saveForm => ajaxObservableBuilder.getSaveAJAXObservable(saveForm))
                 .subscribe(createAjaxResponseFunc(serverResponseOberservers.getSaveResponseObserver()));
 
         // TODO: Other actions
+    }
+};
+
+/**
+ * Subject for page request
+ * @type Map
+ */
+var PageRequestSubject = {
+    /**
+     * Initialize subjects from user interacting events
+     */
+    init: function () {
+        // Subjects
+        this._pageRequestSubject = (new Rx.Subject()).switchMap(
+                indexForm => MendelAjaxObservableBuilder.baseCRUDUrl(Urls.PROJECT_MGT_BASE_URL)
+                    .indexActionUrl(Urls.PROJECT_MGT_INDEX_ACTION)
+                    .getIndexAJAXObservable(indexForm)
+        );
+        return this;
+    }
+};
+
+/**
+ * Observables for page request subject (i.e. firing page request for each value emitted)
+ * @type Map
+ */
+var PageRequestObservables = {
+    /**
+     * Initialize
+     * @returns {undefined}
+     */
+    init: function () {
+        this._pageRequestAfterScreenInitialized = new Rx.Subject();
+        this._pageRequestAfterSaveSuccess = new Rx.Subject();
+        this._pageRequestAfterDeleteSuccess = new Rx.Subject();
+        return this;
     }
 };
 
@@ -364,18 +453,34 @@ function setupEvents() {
     let userActionSubjects = UserActionSubjects;
 
     // 2. View internal observables (paging)
-    // 3. View internal subject (paging)
+    let pageRequestObservables = PageRequestObservables.init();
+
+    // 4. View internal subject (paging)
+    let pageRequestSubject = PageRequestSubject.init();
+
     // 4. Views
-    let projectRecordsPageFragment = ProjectRecordsPageFragment;
     let projectDetailDialog = new ProjectDetailDlg($('#mdlProjectAddUpdate'));
-    projectRecordsPageFragment.init($('#frgPaging'));
     userActionSubjects.init(projectDetailDialog);
-    projectRecordsPageFragment.setUserActionSubject(userActionSubjects._addProjectSubject, userActionSubjects._updateProjectSubject, userActionSubjects._deleteProjectsSubject);
     projectDetailDialog.setUserActionSubject(userActionSubjects._saveProjectSubject);
+
+    ProjectRecordsPageFragment.init($('#frgPaging'))
+            .userActionSubject(
+                    userActionSubjects._addProjectSubject,
+                    userActionSubjects._getProjectDetailsSubject,
+                    userActionSubjects._deleteProjectsSubject
+                    )
+            .pageRequestSubject(pageRequestSubject._pageRequestSubject)
+            .observablesForPageRequest(
+                    pageRequestObservables._pageRequestAfterScreenInitialized,
+                    pageRequestObservables._pageRequestAfterSaveSuccess,
+                    pageRequestObservables._pageRequestAfterDeleteSuccess
+                    );
 
     // 5. Server observers
     // TODO Variable for add, update, delete success subject
-    let serverResponseObservers = new CommonCRUDServerResponseObserver(projectDetailDialog);
+    let serverResponseObservers = new CommonCRUDServerResponseObserver(projectDetailDialog,
+            pageRequestObservables._pageRequestAfterSaveSuccess,
+            pageRequestObservables._pageRequestAfterDeleteSuccess);
     userActionSubjects.setupObserversForServerResponses(serverResponseObservers);
 }
 
@@ -384,5 +489,6 @@ function setupEvents() {
  * @returns {undefined}
  */
 function loadInitialData() {
-    // TODO Implement
+    // Here subject acts as an observer
+    PageRequestObservables._pageRequestAfterScreenInitialized.next();
 }

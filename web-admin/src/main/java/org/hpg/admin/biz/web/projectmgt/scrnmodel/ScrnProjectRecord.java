@@ -24,9 +24,14 @@ public class ScrnProjectRecord implements Serializable {
     private final String displayedName;
 
     /**
-     * Login timestamp in YYYY/MM/DD format
+     * Created timestamp in YYYY/MM/DD format
      */
     private final String cDateTimeStamp;
+
+    /**
+     * Updated timestamp in YYYY/MM/DD format
+     */
+    private final String mDateTimeStamp;
 
     /**
      * Constructor. Almost info retrieved from the base model
@@ -37,7 +42,8 @@ public class ScrnProjectRecord implements Serializable {
         this.id = project.getId();
         this.code = project.getCode();
         this.displayedName = project.getDisplayedName();
-        this.cDateTimeStamp = DateUtil.dateTime2String(project.getcDate(), DateFormatConst.DATE_A_YYMMDD);
+        this.cDateTimeStamp = DateUtil.dateTime2String(project.getcDate(), DateFormatConst.DATE_A);
+        this.mDateTimeStamp = DateUtil.dateTime2String(project.getmDate(), DateFormatConst.DATE_A);
     }
 
     public long getId() {
@@ -56,9 +62,12 @@ public class ScrnProjectRecord implements Serializable {
         return cDateTimeStamp;
     }
 
-    @Override
-    public String toString() {
-        return "ScrnProjectRecord{" + "id=" + id + ", code=" + code + ", displayedName=" + displayedName + ", cDateTimeStamp=" + cDateTimeStamp + '}';
+    public String getmDateTimeStamp() {
+        return mDateTimeStamp;
     }
 
+    @Override
+    public String toString() {
+        return "ScrnProjectRecord{" + "id=" + id + ", code=" + code + ", displayedName=" + displayedName + ", cDateTimeStamp=" + cDateTimeStamp + ", mDateTimeStamp=" + mDateTimeStamp + '}';
+    }
 }

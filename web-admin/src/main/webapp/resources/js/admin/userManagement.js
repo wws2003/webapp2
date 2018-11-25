@@ -178,7 +178,6 @@ var UserRecordsPageFragment = {
                         recordCountPerPage: getRecordCountPerPageFunc()
                     };
                 }));
-        // TODO Handle forceLogoutSuccessObservable
     },
 
     /**
