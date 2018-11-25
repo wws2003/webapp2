@@ -71,8 +71,8 @@ CREATE TABLE TBL_PROJECT(
 	description varchar(4000) NOT NULL,
 	status smallint NOT NULL,
 	refer_scope smallint NOT NULL,
-	cdate timestamp(3) NOT NULL with time zone DEFAULT CURRENT_TIMESTAMP,
-	mdate timestamp(3) NOT NULL with time zone DEFAULT CURRENT_TIMESTAMP,
+	cdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	mdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	UNIQUE(code)
 );
 
@@ -108,8 +108,8 @@ CREATE TABLE TBL_DOCUMENT(
 	author_id bigint NOT NULL,
 	project_id bigint NOT NULL,
 	description varchar(1000) NOT NULL,
-	cdate timestamp(3) with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	mdate timestamp(3) with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	cdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	mdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	FOREIGN KEY (author_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (project_id) REFERENCES TBL_PROJECT(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -161,8 +161,8 @@ CREATE TABLE TBL_POSTIT(
 	color integer NOT NULL,
 	border_color integer NOT NULL,
 	coord box NOT NULL,
-	cdate timestamp(3) with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	mdate timestamp(3) with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	cdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	mdate timestamp(3) with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	FOREIGN KEY (page_id) REFERENCES TBL_POSTIT(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY (creator_id) REFERENCES TBL_USER(id) ON UPDATE CASCADE ON DELETE CASCADE
 );

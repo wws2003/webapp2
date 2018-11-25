@@ -45,11 +45,11 @@ public class ProjectEntity implements Serializable {
     @Column(name = "refer_scope")
     private short referScope;
 
-    @Column(name = "cdate")
+    @Column(name = "cdate", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date cDate;
 
-    @Column(name = "mdate")
+    @Column(name = "mdate", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date mDate;
 

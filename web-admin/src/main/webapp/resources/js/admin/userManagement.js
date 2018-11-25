@@ -354,7 +354,7 @@ UserDetailDlg.prototype.renderDataForAdd = function (mdlUserAddUpdate, allUserPr
     mdlUserAddUpdate.find('#txtPassword').val('');
     mdlUserAddUpdate.find('#txtPasswordConfirm').val('');
     // Privileges
-    this.setPrivsGrantRevokeOptions(allUserPrivs, []);
+    this.setPrivsGrantRevokeOptions(mdlUserAddUpdate, allUserPrivs, []);
 };
 
 /**
@@ -586,6 +586,31 @@ ServerResponseObserver.prototype.getForceLogoutUserResponseObserver = function (
             MendelDialog.info('Message', response.successMessages[0], () => forceLogoutSuccessSubject.next());
         }
     };
+};
+
+/**
+ * Observers for server message (e.g. via websocket)
+ * @type Map
+ */
+var ServerMessageObservers = {
+    /**
+     * Initialize by views and one user interaction subject (for index action)
+     * @param {Map} userRecordsPageFragment
+     * @returns {undefined}
+     */
+    init: function (userRecordsPageFragment) {
+        this._userRecordsPageFragment = userRecordsPageFragment;
+    },
+
+    getRecentLoginStatusChangedObserver: function () {
+        let successResponseFunc = UserRecordsPageFragment.renderRecentLoginStatus.bind(this._userRecordsPageFragment);
+        return msg => {
+            let msgObj = JSON.parse(msg.body);
+            let recentLoggedInUserMap = msgObj.loggedInUserMap !== null ? msgObj.loggedInUserMap : {};
+            let recentLoggedOutUserIds = msgObj.loggedOutUserIds !== null ? msgObj.loggedOutUserIds : [];
+            successResponseFunc(recentLoggedInUserMap, recentLoggedOutUserIds);
+        };
+    }
 };
 
 /*--------------------------------------------------Service------------------------------------------------*/

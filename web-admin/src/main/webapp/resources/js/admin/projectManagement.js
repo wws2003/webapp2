@@ -342,7 +342,7 @@ var UserActionSubjects = {
         // Save (for both create and update)
         this._saveProjectSubject
                 .switchMap(saveForm => ajaxObservableBuilder.getSaveAJAXObservable(saveForm))
-                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getSaveProjectResponseObserver()));
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getSaveResponseObserver()));
 
         // TODO: Other actions
     }

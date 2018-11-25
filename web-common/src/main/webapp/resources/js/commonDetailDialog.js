@@ -102,7 +102,7 @@ CommonDetailDlg.prototype.modifySubscription = function (extInfo) {
  */
 CommonDetailDlg.prototype.createExtInfo = function (recordDetails) {
     // Default return empty map
-    return {idForm: recordDetails ? recordDetails.id : -1};
+    return {idForm: {elementId: recordDetails ? recordDetails.id : -1}};
 };
 
 /*--------------------------Methods to be implemented in subclass-----------------------*/
