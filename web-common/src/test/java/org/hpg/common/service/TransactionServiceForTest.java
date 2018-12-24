@@ -35,11 +35,13 @@ public class TransactionServiceForTest implements ITransactionServiceForTest {
     @Autowired
     private IUserRepository userRepository;
 
+    @Override
     public void saveThenException(MendelUser dto) {
         userService.createUser(dto);
         throw new MendelRuntimeException();
     }
 
+    @Override
     public void saveThenException(UserEntity entity) {
         userRepository.save(entity);
         throw new MendelRuntimeException();
