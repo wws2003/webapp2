@@ -51,11 +51,15 @@ public class IProjectRepositoryTest extends WebCommonTestBase {
         ProjectEntity originEntity = projectRepository.save(createSampleEntity());
         assert (originEntity.getId() > 0);
         // Update
-        originEntity.setCode("Code2");
-        final ProjectEntity savedEntity = srv.executeSave(ent -> {
-            projectUserRepository.deleteByProjectId(originEntity.getId());
-            return projectRepository.save(ent);
-        }, originEntity);
+        ProjectEntity entityForUpdate = createSampleEntity();
+        entityForUpdate.setCode("Code2");
+        entityForUpdate.setId(originEntity.getId());
+        final ProjectEntity savedEntity = srv.executeSave(
+                ent -> {
+                    projectUserRepository.deleteByProjectId(ent.getId());
+                    return projectRepository.save(ent);
+                },
+                entityForUpdate);
         assert ("Code2".equals(savedEntity.getCode()));
     }
 

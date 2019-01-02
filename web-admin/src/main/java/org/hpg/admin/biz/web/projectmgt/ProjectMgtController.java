@@ -75,7 +75,7 @@ public class ProjectMgtController {
     @ResponseBody
     public AjaxResult addUpdateProject(@RequestBody ProjectAddUpdateForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
-                MendelTransactionalLevel.DEFAULT_READONLY,
+                MendelTransactionalLevel.DEFAULT,
                 projectMgtScrnService::addUpdateProject);
     }
 
@@ -89,7 +89,7 @@ public class ProjectMgtController {
     @ResponseBody
     public AjaxResult deleteProject(@RequestBody SimpleDeleteByIDForm form) {
         return actionFlowService.executeSyncForAjaxResult(form,
-                MendelTransactionalLevel.DEFAULT_READONLY,
+                MendelTransactionalLevel.DEFAULT,
                 projectMgtScrnService::deleteProjects);
     }
 
