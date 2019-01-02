@@ -397,7 +397,11 @@ var UserActionSubjects = {
                 .switchMap(saveForm => ajaxObservableBuilder.getSaveAJAXObservable(saveForm))
                 .subscribe(createAjaxResponseFunc(serverResponseOberservers.getSaveResponseObserver()));
 
-        // TODO: Other actions
+        // Delete
+        this._deleteProjectsSubject
+                .switchMap(projectIdsToDelete => ajaxObservableBuilder.getDeleteAJAXObservable(projectIdsToDelete))
+                .subscribe(createAjaxResponseFunc(serverResponseOberservers.getDeleteResponseObserver()));
+
     }
 };
 
