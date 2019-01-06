@@ -280,6 +280,17 @@ function ProjectDetailDlg(dlg) {
 ProjectDetailDlg.prototype.setUserActionSubject = function (saveSubject, searchSubject) {
     this.setSaveSubject(saveSubject);
     this._searchSubject = searchSubject;
+
+    // Attempts for search action
+    this._userSearchBox = (new CommonSearchBoxFragmentRender())
+            .searchInputPlaceHolder('User name')
+            .searchObserver(this._searchSubject)
+            .searchResultOptionEleGenerator((usr) => Tagger.option()
+                        .id(usr.id)
+                        .innerText(usr.name)
+                        .build()
+            )
+            .build($('#frgSearchBox'));
 };
 
 /**
@@ -370,6 +381,9 @@ var UserActionSubjects = {
         this._saveProjectSubject = new Rx.Subject();
         this._deleteProjectsSubject = new Rx.Subject();
         this._getProjectDetailsSubject = new Rx.Subject();
+
+        // For search action
+        this._userSearchAction = new Rx.Subject();
     },
 
     /**
@@ -384,6 +398,7 @@ var UserActionSubjects = {
                 .saveActionUrl(Urls.PROJECT_MGT_ADDUPDATE_ACTION)
                 .detailActionUrl(Urls.PROJECT_MGT_GETDETAIL_ACTION)
                 .deleteActionUrl(Urls.PROJECT_MGT_DELETE_ACTION);
+
         let observerBuilder = MendelWebs.getDefaultAjaxResponseObserverBuilder();
         let createAjaxResponseFunc = MendelAjaxResponseObserverBuilder.prototype.createAjaxResponseObserver.bind(observerBuilder);
 
@@ -402,6 +417,13 @@ var UserActionSubjects = {
                 .switchMap(projectIdsToDelete => ajaxObservableBuilder.getDeleteAJAXObservable(projectIdsToDelete))
                 .subscribe(createAjaxResponseFunc(serverResponseOberservers.getDeleteResponseObserver()));
 
+        // User search
+        let searchUrl = Urls.PROJECT_MGT_BASE_URL + '/' + Urls.PROJECT_MGT_SEARCH_USER_ACTION;
+        this._userSearchAction
+                .switchMap(userText => MendelAjaxObservableBuilder.createPostActionObservable(searchUrl,
+                            {
+                                userText: userText
+                            }));
     }
 };
 
@@ -465,7 +487,7 @@ function setupEvents() {
     // 4. Views
     let projectDetailDialog = new ProjectDetailDlg($('#mdlProjectAddUpdate'));
     userActionSubjects.init(projectDetailDialog);
-    projectDetailDialog.setUserActionSubject(userActionSubjects._saveProjectSubject);
+    projectDetailDialog.setUserActionSubject(userActionSubjects._saveProjectSubject, userActionSubjects._userSearchAction);
 
     ProjectRecordsPageFragment.init($('#frgPaging'))
             .userActionSubject(

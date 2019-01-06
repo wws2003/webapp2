@@ -16,7 +16,7 @@ var Rx = Rx || {};
 function CommonSearchBoxFragmentRender() {
     this._searchTextBoxPlaceHolder = 'Search..';
     this._searchOnTyping = false;
-    this._searchFunc = null;
+    this._searchObserver = null;
     this._selectedSearchResultEleGenerator = null;
 }
 
@@ -41,11 +41,11 @@ CommonSearchBoxFragmentRender.prototype.searchOnTyping = function () {
 
 /**
  * Set the function to process search text box
- * @param {Function} searchFunc
+ * @param {Observer} searchObserver
  * @returns {undefined}
  */
-CommonSearchBoxFragmentRender.prototype.searchFunc = function (searchFunc) {
-    this._searchFunc = searchFunc;
+CommonSearchBoxFragmentRender.prototype.searchObserver = function (searchObserver) {
+    this._searchObserver = searchObserver;
     return this;
 };
 
@@ -70,7 +70,7 @@ CommonSearchBoxFragmentRender.prototype.build = function (frgSearchBox) {
     frgSearchBox.find('#txtSearchBoxQuery').attr('placeholder', this._searchTextBoxPlaceHolder);
 
     // Search process
-    if (this._searchFunc) {
+    if (this._searchObserver) {
         let txtSearchBox = frgSearchBox.find('#txtSearchBoxQuery');
         let btnSearch = frgSearchBox.find('#btnSearch');
         let searchBtnClickObservable = Rx.Observable.fromEvent(btnSearch, 'click')
@@ -79,7 +79,7 @@ CommonSearchBoxFragmentRender.prototype.build = function (frgSearchBox) {
         // TODO Implement search on typing
         let searchObservable = !this._searchOnTyping ? searchBtnClickObservable : Rx.Observable.merge(searchBtnClickObservable);
 
-        searchObservable.subscribe(this._searchFunc);
+        searchObservable.subscribe(this._searchObserver);
     }
 
     // Select search result
