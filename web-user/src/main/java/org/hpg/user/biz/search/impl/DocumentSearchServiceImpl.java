@@ -29,6 +29,14 @@ public class DocumentSearchServiceImpl implements IDocumentSearchService {
 //                    .addTransportAddress(new TransportAddress(InetAddress.getByName("host1"), 9300))
 //                    .addTransportAddress(new TransportAddress(InetAddress.getByName("host2"), 9300));
 
+            // Hierrachy
+            // 1. Project -> index
+            // 2. Document -> mapping
+            // 3. Page -> document
+            // OR ?
+            // With the elimination of mapping types
+            // 1. Project -> index
+            // 2. Page -> document (with a document id field)
             // TODO Get pages
             XContentBuilder xContentBuilder = jsonBuilder().startObject()
                     .field("content", "xxxxx")
