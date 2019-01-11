@@ -12,9 +12,10 @@ else
 	source 00_setEnv.sh
 fi
 
-echo "To create index @$ES_HOST:$ES_PORT/mendel"
+echo "To create index @$ES_HOST:$ES_PORT/$ES_INDEX_NAME"
 
-curl -X PUT "$ES_HOST:$ES_PORT/mendel" -H 'Content-Type: application/json' -d'
+# The simplest case: Single index for the whole application
+curl -X PUT "$ES_HOST:$ES_PORT/$ES_INDEX_NAME" -H 'Content-Type: application/json' -d'
 {
     "settings" : {
         "number_of_shards" : 1
@@ -23,7 +24,8 @@ curl -X PUT "$ES_HOST:$ES_PORT/mendel" -H 'Content-Type: application/json' -d'
         "_doc" : {
             "properties" : {
                 "content" : { "type" : "text" },
-				"external_doc_id" : { "type" : "long" }
+				"external_project_id" : { "type" : "long" },
+				"external_doc_id" : { "type" : "long" },
 				"external_page_id" : { "type" : "long" }
             }
         }
