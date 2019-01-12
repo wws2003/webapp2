@@ -3,23 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.user.model.entity.es;
+package org.hpg.project.model.entity.es;
 
 import org.springframework.data.elasticsearch.annotations.Document;
 
 /**
- * Entity class for document (used by Spring data elastic search)
  *
- * @author trungpt
+ * Model for document
+ *
+ * @author wws2003
  */
-@Document(indexName = "mendel", createIndex = false)
+@Document(indexName = "", createIndex = false)
 public class EsDocument {
 
-    private long projectID;
+    private long pageId;
 
-    private long docID;
+    private long documentId;
 
-    private long pageID;
-
-    private String content;
+    private long projectId;
 }

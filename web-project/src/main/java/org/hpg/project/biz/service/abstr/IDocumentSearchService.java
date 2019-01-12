@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hpg.project.biz.service;
+package org.hpg.project.biz.service.abstr;
 
+import org.hpg.common.model.dto.document.Document;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.project.model.dto.DocumentSearchRequest;
 import org.hpg.project.model.dto.DocumentSearchResult;
@@ -15,6 +16,14 @@ import org.hpg.project.model.dto.DocumentSearchResult;
  * @author trungpt
  */
 public interface IDocumentSearchService {
+
+    /**
+     * Indexing document for full-text search
+     *
+     * @param document
+     * @throws MendelRuntimeException When indexing failed
+     */
+    public void indexDocument(Document document) throws MendelRuntimeException;
 
     /**
      * Search for documents
