@@ -14,4 +14,6 @@ import java.io.Serializable;
  */
 public class DocumentSearchRequest implements Serializable {
     // TODO Add proper attributes
+
+    private String query;
 }

@@ -5,7 +5,9 @@
  */
 package org.hpg.project.biz.service.impl;
 
+import java.util.List;
 import org.hpg.common.model.dto.document.Document;
+import org.hpg.common.model.dto.document.Page;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.project.biz.service.abstr.IDocumentSearchService;
 import org.hpg.project.model.dto.DocumentSearchRequest;
@@ -18,7 +20,7 @@ import org.hpg.project.model.dto.DocumentSearchResult;
 public class DocumentSearchServiceElasticSearchImpl implements IDocumentSearchService {
 
     @Override
-    public void indexDocument(Document document) throws MendelRuntimeException {
+    public void indexDocument(Document document, List<Page> pages) throws MendelRuntimeException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
