@@ -5,8 +5,8 @@
  */
 package org.hpg.project.dao.repository.es;
 
+import org.hpg.common.dao.repository.IPagingAndSortingRepository;
 import org.hpg.project.model.entity.es.EsDocument;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
  * @author wws2003
  */
 @Repository
-public interface IEsDocumentRepository extends PagingAndSortingRepository<EsDocument, Long> {
+public interface IEsDocumentRepository extends IPagingAndSortingRepository<EsDocument, Long> {
 
 }
