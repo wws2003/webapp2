@@ -25,17 +25,16 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * Elatic search config
+ * Configuration for elastic search in test
  *
  * @author trungpt
  */
 @Configuration
 @PropertySources({
-    @PropertySource("datasources_elasticsearch.properties")
+    @PropertySource("datasources_elasticsearch_fortest.properties")
 })
 @EnableElasticsearchRepositories(basePackages = "org.hpg.project.dao.repository.es")
-public class ElasticSearchConfig {
-    // Search template ?
+public class ElasticSearchConfigForTest {
 
     @Autowired
     private Environment environment;

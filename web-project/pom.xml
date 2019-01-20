@@ -70,8 +70,9 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-elasticsearch</artifactId>
-            <version>3.0.8.RELEASE</version>
+            <version>3.1.4.RELEASE</version>
         </dependency>
+
     </dependencies>
 
 </project>
