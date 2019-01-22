@@ -7,6 +7,8 @@ package org.hpg.project;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -17,9 +19,21 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * @author wws2003
  */
 @ContextConfiguration(classes = ProjectTestBase.class)
-@WebAppConfiguration
 @ComponentScan(basePackages = "org.hpg")
+@PropertySources({
+    @PropertySource("classpath:datasources_elasticsearch_fortest.properties")
+    ,
+    @PropertySource("classpath:datasources_elasticsearch.properties")
+})
+@WebAppConfiguration(value = "classpath:")
 public class ProjectTestBase {
+
+    /**
+     * Constructor for debug
+     */
+    public ProjectTestBase() {
+        System.out.println("Try to debug ProjectTestBase for properties classes");
+    }
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {

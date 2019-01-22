@@ -15,8 +15,6 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -30,9 +28,6 @@ import org.springframework.web.context.WebApplicationContext;
  * @author trungpt
  */
 @Configuration
-@PropertySources({
-    @PropertySource("datasources_elasticsearch_fortest.properties")
-})
 @EnableElasticsearchRepositories(basePackages = "org.hpg.project.dao.repository.es")
 public class ElasticSearchConfigForTest {
 
@@ -46,7 +41,7 @@ public class ElasticSearchConfigForTest {
      * @return
      * @throws java.net.UnknownHostException
      */
-    @Bean
+    @Bean(name = {"elasticsearchTemplate"})
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public ElasticsearchOperations getElasticsearchOperations() throws UnknownHostException {
         return new ElasticsearchTemplate(getElasticSearchClient());
