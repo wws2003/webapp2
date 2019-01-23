@@ -31,7 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
  */
 @Configuration
 @PropertySources({
-    @PropertySource("datasources_elasticsearch.properties")
+    @PropertySource("classpath:datasources_elasticsearch.properties")
 })
 @EnableElasticsearchRepositories(basePackages = "org.hpg.project.dao.repository.es")
 public class ElasticSearchConfig {
@@ -47,7 +47,7 @@ public class ElasticSearchConfig {
      * @return
      * @throws java.net.UnknownHostException
      */
-    @Bean
+    @Bean(name = {"elasticsearchTemplate"})
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
     public ElasticsearchOperations getElasticsearchOperations() throws UnknownHostException {
         return new ElasticsearchTemplate(getElasticSearchClient());
