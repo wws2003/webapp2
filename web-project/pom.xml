@@ -17,6 +17,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java-version>1.8</java-version>
+        <org.elasticsearch-version>5.6.0</org.elasticsearch-version>
+        <org.springframework.data.elasticsearch-version>3.0.6.RELEASE</org.springframework.data.elasticsearch-version>
     </properties>
 
     <!-- Build -->
@@ -63,14 +65,27 @@
 
         <!-- Elastic search -->
         <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${org.elasticsearch-version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
-            <version>6.5.4</version>
+            <version>${org.elasticsearch-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-elasticsearch</artifactId>
-            <version>3.1.4.RELEASE</version>
+            <version>${org.springframework.data.elasticsearch-version}</version>
+        </dependency>
+
+        <!-- Std validation (for compabiliy to Hibernate) -->
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

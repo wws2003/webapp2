@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -65,7 +65,7 @@ public class ElasticSearchConfigForTest {
 //        );
         // Any better with TransportClient directly
         TransportClient client = new PreBuiltTransportClient(Settings.EMPTY)
-                .addTransportAddress(new TransportAddress(
+                .addTransportAddress(new InetSocketTransportAddress(
                         InetAddress.getByName(environment.getProperty("elasticsearch.server", "localhost")),
                         environment.getProperty("elasticsearch.port", Integer.class, 9200))
                 );

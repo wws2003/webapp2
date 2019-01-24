@@ -8,15 +8,15 @@ package org.hpg.project.model.entity.es;
 import javax.persistence.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
+ * Test class for document entity
  *
- * Model for document. Currently with minimum specification
- *
- * @author wws2003
+ * @author trungpt
  */
-@Document(indexName = "mendel", createIndex = true, replicas = 1, shards = 1)
-public class EsDocument {
+@Document(indexName = "mendel_test", createIndex = true, replicas = 1, shards = 1)
+public class EsTestDocument {
 
     @Id
     private long id;
@@ -24,14 +24,16 @@ public class EsDocument {
     /**
      * PageID in the RDBMS
      */
-    @Field
+    @Field(type = FieldType.Long)
     private long pageId;
 
+    @Field(type = FieldType.text)
     private String content;
 
     /**
      * Project ID in the RDBMS. Used for searching
      */
+    @Field(type = FieldType.Long)
     private long projectId;
 
     public long getId() {
@@ -68,6 +70,6 @@ public class EsDocument {
 
     @Override
     public String toString() {
-        return "EsDocument{" + "id=" + id + ", pageId=" + pageId + ", content=" + content + ", projectId=" + projectId + '}';
+        return "EsTestDocument{" + "id=" + id + ", pageId=" + pageId + ", content=" + content + ", projectId=" + projectId + '}';
     }
 }
