@@ -23,6 +23,10 @@
         <thymeleaf-extras-java8time-version>3.0.1.RELEASE</thymeleaf-extras-java8time-version>
         <!-- AssertJ is not a part of Spring IO platform, so the version must be provided explicitly -->
         <assertj-core-version>3.8.0</assertj-core-version>
+		<!-- Spring Data JPA -->
+		<org.springframework.data-version>2.1.4.RELEASE</org.springframework.data-version>
+		<!-- Hibernate -->
+		<org.hibernate-version>4.3.1.Final</org.hibernate-version>
     </properties>
 
     <!-- Modules -->
@@ -108,7 +112,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>2.0.6.RELEASE</version>
+            <version>${org.springframework.data-version}</version>
         </dependency>
         <!-- Hikari connection pool-currently ununsed -->
         <!-- JPA -->
@@ -121,12 +125,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.3.1.Final</version>
+            <version>${org.hibernate-version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.3.1.Final</version>
+            <version>${org.hibernate-version}</version>
         </dependency>
         <!-- Postgres and JDBC -->
         <dependency>
@@ -203,13 +207,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>
-            <version>5.0.8.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <!-- Spring messaging -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
-            <version>5.0.8.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <!-- JMS -->
         <dependency>
@@ -220,7 +224,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
-            <version>5.0.8.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <!-- Test -->
         <dependency>

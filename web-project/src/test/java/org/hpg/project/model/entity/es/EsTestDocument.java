@@ -27,7 +27,7 @@ public class EsTestDocument {
     @Field(type = FieldType.Long)
     private long pageId;
 
-    @Field(type = FieldType.text)
+    @Field(type = FieldType.Text)
     private String content;
 
     /**

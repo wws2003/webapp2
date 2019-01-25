@@ -19,9 +19,9 @@ curl -X GET "$ES_HOST:$ES_PORT/_cat/indices"
 
 # Get detailed information
 echo "-------------Settings----------------"
-curl -X GET "$ES_HOST:$ES_PORT/_all/_settings"
+curl -X GET "$ES_HOST:$ES_PORT/$ES_INDEX_NAME/_settings?pretty"
 echo ""
 
 echo "-------------Mappings----------------"
-curl -X GET "$ES_HOST:$ES_PORT/_all/_mappings"
+curl -X GET "$ES_HOST:$ES_PORT/$ES_INDEX_NAME/_mappings?pretty"
 echo ""

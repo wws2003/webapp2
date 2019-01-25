@@ -6,8 +6,9 @@
 package org.hpg.project.dao.repository.es;
 
 import javax.inject.Inject;
+import org.hpg.libcommon.CH;
 import org.hpg.project.ProjectTestBase;
-import org.hpg.project.model.entity.es.EsTestDocument;
+import org.hpg.project.model.entity.es.EsDocument;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class IEsDocumentRepositoryTest extends ProjectTestBase {
 
     @Inject
-    private IEsTestDocumentRepository documentRepository;
+    private IEsDocumentRepository documentRepository;
 
     public IEsDocumentRepositoryTest() {
     }
@@ -32,14 +33,14 @@ public class IEsDocumentRepositoryTest extends ProjectTestBase {
 
     @Test
     public void testPutSampleDocument() {
-        EsTestDocument document = new EsTestDocument();
-        document.setContent("Test content... Should be longer ?");
+        EsDocument document = new EsDocument();
+        document.setContent("Content of the second test document");
         document.setProjectId(1);
-        // document.setDocumentId(1);
+        document.setDocId(100);
         document.setPageId(1);
 
-        EsTestDocument doc = documentRepository.save(document);
-        assert (doc.getId() > 0);
+        EsDocument doc = documentRepository.save(document);
+        assert (!CH.isEmpty(doc.getId()));
     }
 
     public void testSearch1() {
