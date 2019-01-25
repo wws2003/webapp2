@@ -64,10 +64,14 @@ public class ElasticSearchConfigForTest {
 //                        environment.getProperty("elasticsearch.protocol", "http")))
 //        );
         // Any better with TransportClient directly
-        TransportClient client = new PreBuiltTransportClient(Settings.EMPTY)
+        Settings settings = Settings.builder()
+                .put("cluster.name", environment.getProperty("elasticsearch.cluster", "elasticsearch-clt1"))
+                .build();
+
+        TransportClient client = new PreBuiltTransportClient(settings)
                 .addTransportAddress(new InetSocketTransportAddress(
                         InetAddress.getByName(environment.getProperty("elasticsearch.server", "localhost")),
-                        environment.getProperty("elasticsearch.port", Integer.class, 9200))
+                        environment.getProperty("elasticsearch.port", Integer.class, 9300))
                 );
 
         return client;
