@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
  * @author wws2003
  */
 @Repository
-public interface IEsDocumentRepository extends IPagingAndSortingRepository<EsDocument, Long> {
+public interface IEsDocumentRepository extends IPagingAndSortingRepository<EsDocument, String> {
 
 }

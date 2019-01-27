@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout/main}">
+    <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
+        <title>Create document</title>
+        <link href="../../../resources/css/commonModal.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/commonModal.css?'+ ${timeToken}}" />
+    </head>
+    <body>
+        <!-- /* Header */ -->
+        <header layout:fragment="frgHeader" th:insert="project/fragments/adminHeaderMenu::frgNavBar">
+        </header>
+        <!-- /* Content of this page will be decorated by the elements of layout.html (task/layout) */ -->
+        <div layout:fragment="frgContent">
+            <h4>Input document info</h4>
+            <!-- Project selection  -->
+            <select id="sltProjects">
+            </select>
+            <!-- Document info  -->
+            <div>
+                <!-- Document name -->
+                <div class="form-group">
+                    <label>Document name</label>
+                    <input id="txtDocumentName" type="text" class="form-control"/>
+                </div>
+                <!-- Document description -->
+                <div class="form-group">
+                    <label>Document description</label>
+                    <textarea id="txtDocumentDesc" class="form-control"></textarea>
+                </div>
+                <!-- Type -->
+                <div class="form-group">
+                    <label>Document type</label>
+                    <input type="radio" id="rd_document_type_text" name="rd_document_type" checked="checked" value="1"/> Text origin
+                    <input type="radio" id="rd_document_type_image" name="rd_document_type" value="2"/> Image origin
+                </div>
+                <!-- Page count -->
+                <div class="form-group">
+                    <label>Page count</label>
+                    <input id="txtDocumentPageCount" type="text" class="form-control"/>
+                </div>
+            </div>
+            <!-- Confirm area -->
+            <div class="form-group">
+                <button class="btn">OK, create document</button>
+            </div>
+        </div>
+    </body>
+</html>

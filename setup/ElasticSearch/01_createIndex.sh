@@ -21,7 +21,7 @@ curl -X PUT "$ES_HOST:$ES_PORT/$ES_INDEX_NAME" -H 'Content-Type: application/jso
         "number_of_shards" : 1
     },
     "mappings" : {
-        "$ES_MAPPING_NAME" : {
+        "'$ES_MAPPING_NAME'" : {
             "properties" : {
 				"type": {"type": "keyword"},
                 "content" : { "type" : "text" },

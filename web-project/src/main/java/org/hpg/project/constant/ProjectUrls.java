@@ -34,9 +34,14 @@ public class ProjectUrls {
     public static final String PROJECT_INDEX_DOCUMENT = "/indexDoc";
 
     /**
+     * Starting URL for document pages
+     */
+    public static final String PROJECT_DOCUMENT_ROOT_URL = "/document";
+
+    /**
      * URL for adding document to working project
      */
-    public static final String PROJECT_ADD_DOCUMENT = "/addDoc";
+    public static final String PROJECT_CREATE_DOCUMENT = "/create";
 
     public static final String SEARCH_START = "/start";
 
