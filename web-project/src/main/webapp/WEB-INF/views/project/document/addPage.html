@@ -8,7 +8,8 @@ and open the template in the editor.
     <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
         <title>Add page</title>
         <link href="../../../resources/css/commonModal.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/commonModal.css?'+ ${timeToken}}" />
-    </head>
+        <link href="../../../resources/css/project/document/addPage.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/project/document/addPage.css?'+ ${timeToken}}" />
+        <script src="../../../../resources/js/project/document/addPage.js" th:src="@{'/resources/js/project/document/addPage.js?' +  ${timeToken}}"></script>    </head>
     <body>
         <!-- /* Header */ -->
         <header layout:fragment="frgHeader" th:insert="project/fragments/adminHeaderMenu::frgNavBar">
@@ -27,10 +28,26 @@ and open the template in the editor.
                 </div>
             </div>
             <!-- Content area -->
+            <div class="form-group">
+                <label>Input type</label>
+                <input type="radio" id="rd_page_from_text" name="rd_page_from" checked="checked" value="1"/> Input by text
+                <input type="radio" id="rd_page_from_file" name="rd_page_from" value="2"/> Upload file
+            </div>
+            <div class="form-group">
+                <label>Page content</label>
+                <textarea id="txtPageContent" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Upload file</label>
+                <input type="file" id="flPage"/>
+            </div>
             <!-- Confirm area -->
             <div class="form-group">
                 <label>Index for full text search</label>
                 <input id="chkIndex" type="checkbox" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <button class="btn">OK</button>
             </div>
         </div>
     </body>

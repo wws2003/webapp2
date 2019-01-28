@@ -24,7 +24,7 @@ public class DocumentController {
 
     @GetMapping(ProjectUrls.PROJECT_CREATE_DOCUMENT)
     public String index() {
-        return "project/document/create";
+        return "project/document/createDocument";
     }
 
     /**

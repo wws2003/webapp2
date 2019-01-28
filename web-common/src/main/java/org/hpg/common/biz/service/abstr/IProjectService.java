@@ -71,4 +71,14 @@ public interface IProjectService {
      * @throws MendelRuntimeException when retrieval failed
      */
     List<MendelUser> findUsersAssignedToProject(MendelProject project) throws MendelRuntimeException;
+
+    /**
+     * Find the project an user has been assigned to (meaning the user can
+     * create document)
+     *
+     * @param user
+     * @return
+     * @throws MendelRuntimeException
+     */
+    List<MendelProject> findProjectUserAssignedTo(MendelUser user) throws MendelRuntimeException;
 }

@@ -8,6 +8,8 @@ and open the template in the editor.
     <head th:replace="common/fragments/commonHeader::frg_common_header(~{::title},~{::link},~{::script})" th:with="timeToken=${#dates.format(#calendars.createNow(), 'yyyyMMddHHmmss')}">
         <title>Create document</title>
         <link href="../../../resources/css/commonModal.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/commonModal.css?'+ ${timeToken}}" />
+        <link href="../../../resources/css/project/document/createDocument.css" rel="stylesheet" media="screen" th:href="@{'/resources/css/project/document/createDocument.css?'+ ${timeToken}}" />
+        <script src="../../../../resources/js/project/document/createDocument.js" th:src="@{'/resources/js/project/document/createDocument.js?' +  ${timeToken}}"></script>
     </head>
     <body>
         <!-- /* Header */ -->

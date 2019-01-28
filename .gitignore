@@ -9,4 +9,6 @@ dataspace_fortest/
 
 /web-auth/nbproject/
 /web-common/nbproject/
-/web-project/nbproject/
+/web-project/nbprioject/
+datasources_elasticsearch.properties
+

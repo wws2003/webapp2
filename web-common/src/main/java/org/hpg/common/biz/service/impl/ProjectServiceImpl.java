@@ -5,6 +5,7 @@
  */
 package org.hpg.common.biz.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,6 +19,8 @@ import org.hpg.common.model.entity.ProjectEntity;
 import org.hpg.common.model.entity.ProjectUserEntity;
 import org.hpg.common.model.entity.UserEntity;
 import org.hpg.common.model.exception.MendelRuntimeException;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 
 /**
  * Implementation of project biz service
@@ -94,5 +97,13 @@ public class ProjectServiceImpl implements IProjectService {
                 .stream()
                 .map(userEntityDtoMapper::getDtoFromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MendelProject> findProjectUserAssignedTo(MendelUser user) throws MendelRuntimeException {
+        // TODO Implement. Currently just return all the projects
+        List<MendelProject> projects = new ArrayList();
+        projectRepository.findAll(Sort.by(Order.asc("id"))).forEach(projectEntity -> projects.add(projectEntityDtoMapper.getDtoFromEntity(projectEntity)));
+        return projects;
     }
 }
