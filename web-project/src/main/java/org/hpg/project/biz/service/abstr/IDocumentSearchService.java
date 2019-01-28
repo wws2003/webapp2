@@ -7,7 +7,7 @@ package org.hpg.project.biz.service.abstr;
 
 import java.util.List;
 import org.hpg.common.model.dto.document.Document;
-import org.hpg.common.model.dto.document.Page;
+import org.hpg.common.model.dto.document.MendelPage;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.project.model.dto.DocumentSearchRequest;
 import org.hpg.project.model.dto.DocumentSearchResult;
@@ -26,7 +26,7 @@ public interface IDocumentSearchService {
      * @param pages
      * @throws MendelRuntimeException When indexing failed
      */
-    public void indexDocument(Document document, List<Page> pages) throws MendelRuntimeException;
+    public void indexDocument(Document document, List<MendelPage> pages) throws MendelRuntimeException;
 
     /**
      * Search for documents

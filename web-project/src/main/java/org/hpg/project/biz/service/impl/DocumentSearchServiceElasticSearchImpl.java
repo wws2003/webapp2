@@ -7,11 +7,13 @@ package org.hpg.project.biz.service.impl;
 
 import java.util.List;
 import org.hpg.common.model.dto.document.Document;
-import org.hpg.common.model.dto.document.Page;
+import org.hpg.common.model.dto.document.MendelPage;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.project.biz.service.abstr.IDocumentSearchService;
+import org.hpg.project.dao.repository.es.IEsDocumentRepository;
 import org.hpg.project.model.dto.DocumentSearchRequest;
 import org.hpg.project.model.dto.DocumentSearchResult;
+import org.hpg.project.model.entity.es.EsDocument;
 
 /**
  *
@@ -19,13 +21,43 @@ import org.hpg.project.model.dto.DocumentSearchResult;
  */
 public class DocumentSearchServiceElasticSearchImpl implements IDocumentSearchService {
 
+    private final IEsDocumentRepository documentRepository;
+
+    /**
+     * Constructor
+     *
+     * @param documentRepository
+     */
+    public DocumentSearchServiceElasticSearchImpl(IEsDocumentRepository documentRepository) {
+        this.documentRepository = documentRepository;
+    }
+
     @Override
-    public void indexDocument(Document document, List<Page> pages) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void indexDocument(Document document, List<MendelPage> pages) throws MendelRuntimeException {
+        pages.stream()
+                .map(this::createESDocumentFromPage)
+                .forEachOrdered(esDocument -> {
+                    documentRepository.save(esDocument);
+                });
     }
 
     @Override
     public DocumentSearchResult searchDocuments(DocumentSearchRequest request) throws MendelRuntimeException {
+        // TODO Implement
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Create Elastic search document instance for each page
+     *
+     * @param page
+     * @return
+     */
+    private EsDocument createESDocumentFromPage(MendelPage page) {
+        EsDocument esDocument = new EsDocument();
+        esDocument.setContent(page.getContent());
+        esDocument.setDocId(page.getDocumentId());
+        esDocument.setProjectId(page.getProjectId());
+        return esDocument;
     }
 }

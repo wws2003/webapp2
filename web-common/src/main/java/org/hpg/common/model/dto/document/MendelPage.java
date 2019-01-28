@@ -12,11 +12,15 @@ import java.io.Serializable;
  *
  * @author trungpt
  */
-public class Page implements Serializable {
+public class MendelPage implements Serializable {
+
+    private long id;
+
+    private long pageNo;
 
     private long documentId;
 
-    private long pageNo;
+    private long projectId;
 
     private String content;
 
@@ -44,8 +48,24 @@ public class Page implements Serializable {
         this.content = content;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(long projectId) {
+        this.projectId = projectId;
+    }
+
     @Override
     public String toString() {
-        return "Page{" + "documentId=" + documentId + ", pageNo=" + pageNo + ", content=" + content + '}';
+        return "MendelPage{" + "id=" + id + ", pageNo=" + pageNo + ", documentId=" + documentId + ", projectId=" + projectId + ", content=" + content + '}';
     }
 }
