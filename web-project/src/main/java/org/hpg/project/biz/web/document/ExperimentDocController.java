@@ -6,14 +6,10 @@
 package org.hpg.project.biz.web.document;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.project.constant.ProjectUrls;
 import org.hpg.project.dao.repository.es.IEsDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,18 +28,22 @@ public class ExperimentDocController {
     @Autowired
     private IEsDocumentRepository documentRepository;
 
-    @GetMapping("/testIndex")
+    @GetMapping("/testTest")
     @ResponseBody
+    public String testTest() {
+        return "1234";
+    }
+
+//    @Autowired
+//    private ExecutorService executorService;
+    @GetMapping("/testIndex")
     public DeferredResult<String> testIndex() {
         DeferredResult<String> ret = new DeferredResult(100L);
-        ExecutorService executorService = Executors.newWorkStealingPool();
-        executorService.submit(() -> {
-            ret.setResult("123");
-        });
-        ret.onCompletion(() -> {
-            ResponseEntity.status(HttpStatus.OK)
-                    .body(ret.getResult());
-        });
+        try {
+            ret.setResult("1234");
+        } catch (Exception e) {
+            ret.setErrorResult(e);
+        }
         return ret;
     }
 

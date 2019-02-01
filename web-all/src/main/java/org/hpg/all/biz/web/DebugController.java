@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.async.DeferredResult;
 
 /**
  * Controller for debug purpose
@@ -39,6 +40,19 @@ public class DebugController {
     public Map<String, Integer> postTest(@RequestBody PostForm1 form) {
         Map<String, Integer> ret = new HashMap();
         ret.put("abc", 123);
+        return ret;
+    }
+
+    @GetMapping("/testAsync")
+    @ResponseBody
+    public DeferredResult<String> testAsync() {
+        // Work without any problem, why does not work in project module ?
+        DeferredResult<String> ret = new DeferredResult(100L);
+        try {
+            ret.setResult("1234");
+        } catch (Exception e) {
+            ret.setErrorResult(e);
+        }
         return ret;
     }
 
