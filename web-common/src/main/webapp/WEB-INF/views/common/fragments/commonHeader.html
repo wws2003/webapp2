@@ -11,8 +11,8 @@ and open the template in the editor.
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <!-- /* Ref: IST project TODO Think over: Does this cause dependency to Spring-sec ? */ -->
-        <meta name="_csrf" content="1234567" th:content="${_csrf.token}" />
-        <meta name="_csrf_header" content="1234567-header" th:content="${_csrf.headerName}" />
+        <meta name="_csrf" content="1234567" th:content="${_csrf != null} ? ${_csrf.token}" />
+        <meta name="_csrf_header" content="1234567-header" th:content="${_csrf != null} ? ${_csrf.headerName}" />
         <!-- /* Common assets */ -->
         <link href="../../../resources/assets/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/resources/assets/css/bootstrap.min.css}"/>
         <link href="../../../resources/assets/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/assets/css/core.css}" />

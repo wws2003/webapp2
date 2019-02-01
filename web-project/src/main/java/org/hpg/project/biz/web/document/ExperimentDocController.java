@@ -37,6 +37,7 @@ public class ExperimentDocController {
 //    @Autowired
 //    private ExecutorService executorService;
     @GetMapping("/testIndex")
+    @ResponseBody
     public DeferredResult<String> testIndex() {
         DeferredResult<String> ret = new DeferredResult(100L);
         try {

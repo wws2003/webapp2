@@ -5,6 +5,7 @@
  */
 package org.hpg.auth.config;
 
+import org.hpg.auth.biz.service.abstr.IAccessErrorHandler;
 import org.hpg.auth.biz.service.abstr.ILoginLogoutMessageService;
 import org.hpg.auth.biz.service.impl.AuthenticatedUserSessionImpl;
 import org.hpg.auth.biz.service.impl.DefaultAuthenticationFailureHandlerImpl;
@@ -26,6 +27,7 @@ import org.hpg.common.constant.MendelRole;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jms.core.JmsTemplate;
@@ -38,7 +40,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 import org.springframework.web.context.WebApplicationContext;
-import org.hpg.auth.biz.service.abstr.IAccessErrorHandler;
 
 /**
  * Configuration (mostly in term of producer) for beans provided by auth module
@@ -95,6 +96,7 @@ public class AuthBeanConfig {
      */
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    @Primary
     public IUserSession getAuthenticatedUserSession() {
         // TODO Probably move to common module
         return new AuthenticatedUserSessionImpl();

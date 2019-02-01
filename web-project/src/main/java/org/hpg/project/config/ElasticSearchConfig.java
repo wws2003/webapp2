@@ -7,7 +7,6 @@ package org.hpg.project.config;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -60,7 +59,7 @@ public class ElasticSearchConfig {
      */
     @Bean(destroyMethod = "close")
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public Client getElasticSearchClient() throws UnknownHostException {
+    public TransportClient getElasticSearchClient() throws UnknownHostException {
         // Try to use RestHightLevel client. But it is not an implementation of Client class ?
 
         // But it looks RestHighLevelClient is not quite compatible with Spring Data ?

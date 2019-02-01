@@ -1,6 +1,6 @@
 #!/bin/bash
 # Package web-all
-mvn clean package -ff -Dnocomp=true -DskipTests=true -pl web-all
+mvn clean package -ff -Dweballonly=true -Dnocomp=true -DskipTests=true -pl web-all
 
 # Check artifacts
 ./04_checkArtifact.sh

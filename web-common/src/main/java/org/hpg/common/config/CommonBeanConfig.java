@@ -14,6 +14,8 @@ import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IProjectService;
 import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
+import org.hpg.common.biz.service.abstr.IUserSession;
+import org.hpg.common.biz.service.impl.DummySessionImpl;
 import org.hpg.common.biz.service.impl.PagingServiceImpl;
 import org.hpg.common.biz.service.impl.PrivilegeServiceImpl;
 import org.hpg.common.biz.service.impl.ProjectServiceImpl;
@@ -48,6 +50,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.env.Environment;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -91,6 +94,13 @@ public class CommonBeanConfig {
             IEntityDtoMapper<ProjectEntity, MendelProject> projectEntityDtoMapper,
             IEntityDtoMapper<UserEntity, MendelUser> userEntityDtoMapper) {
         return new ProjectServiceImpl(projectRepository, projectUserRepository, projectEntityDtoMapper, userEntityDtoMapper);
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public IUserSession getSampleUserSession() {
+        // For the case module web-auth not deployed
+        return new DummySessionImpl();
     }
 
     @Bean

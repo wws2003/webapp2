@@ -86,11 +86,37 @@
                 </dependency>
             </dependencies>
         </profile>
+        <!-- No authentication -->
+        <profile>
+            <activation>
+                <property>
+                    <name>noauth</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <id>no-auth</id>
+            <dependencies>
+                <!-- Dependency on web-project module-->
+                <dependency>
+                    <groupId>org.hpg.multi</groupId>
+                    <artifactId>web-project</artifactId>
+                    <version>1.0</version>
+                    <type>war</type>
+                </dependency>
+                <!-- Dependency on web-common module (war)-->
+                <dependency>
+                    <groupId>org.hpg.multi</groupId>
+                    <artifactId>web-common</artifactId>
+                    <version>1.0</version>
+                    <type>war</type>
+                </dependency>
+            </dependencies>
+        </profile>
         <!-- Web-all only -->
         <profile>
             <activation>
                 <property>
-                    <name>nocomp</name>
+                    <name>weballonly</name>
                     <value>true</value>
                 </property>
             </activation>

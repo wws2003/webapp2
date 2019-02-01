@@ -12,7 +12,6 @@ import javax.servlet.ServletRegistration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
@@ -52,9 +51,8 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         characterEncodingFilter.setForceEncoding(true);
 
         // Think over: Why can refer to springSecurityFilterChain can be hard coded here without any reference ?
-        DelegatingFilterProxy securityFilterChain = new DelegatingFilterProxy("springSecurityFilterChain");
-
-        return new Filter[]{characterEncodingFilter, securityFilterChain};
+        // DelegatingFilterProxy securityFilterChain = new DelegatingFilterProxy("springSecurityFilterChain");
+        return new Filter[]{characterEncodingFilter};
     }
 
     @Override
