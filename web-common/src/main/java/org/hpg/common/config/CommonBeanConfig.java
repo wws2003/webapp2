@@ -15,10 +15,10 @@ import org.hpg.common.biz.service.abstr.IProjectService;
 import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.abstr.IUserSession;
-import org.hpg.common.biz.service.impl.DummySessionImpl;
 import org.hpg.common.biz.service.impl.PagingServiceImpl;
 import org.hpg.common.biz.service.impl.PrivilegeServiceImpl;
 import org.hpg.common.biz.service.impl.ProjectServiceImpl;
+import org.hpg.common.biz.service.impl.SampleUserSessionImpl;
 import org.hpg.common.biz.service.impl.ScreenServiceImpl;
 import org.hpg.common.biz.service.impl.SimpleLoggerImpl;
 import org.hpg.common.biz.service.impl.StdFormValidatorImpl;
@@ -98,9 +98,9 @@ public class CommonBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION, proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public IUserSession getSampleUserSession() {
+    public IUserSession getSampleUserSession(IUserService userService) {
         // For the case module web-auth not deployed
-        return new DummySessionImpl();
+        return new SampleUserSessionImpl(userService);
     }
 
     @Bean

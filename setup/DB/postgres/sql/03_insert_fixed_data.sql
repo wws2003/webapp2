@@ -67,6 +67,15 @@ INSERT INTO TBL_USER(
 	'$2a$10$VQWHAxM4PokPGX/L7I8dQefCw.QMmssZ754ISsRrkC7.EWis9bBMG'
 );
 
+INSERT INTO TBL_USER(
+	name, displayed_name, role_id, password
+) VALUES (
+	'USER_SMPL', 
+	'Sample user', 
+	(SELECT id FROM TBL_ROLE WHERE name = 'USER'), 
+	'$2a$10$VQWHAxM4PokPGX/L7I8dQefCw.QMmssZ754ISsRrkC7.EWis9bBMG'
+);
+
 -- ================================User-Privilegs map: Privileges for root and user admin
 INSERT INTO TBL_USER_PRIV(
 	user_id, privilege_id

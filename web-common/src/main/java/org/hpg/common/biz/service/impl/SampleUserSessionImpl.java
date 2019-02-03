@@ -5,25 +5,47 @@
  */
 package org.hpg.common.biz.service.impl;
 
+import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.abstr.IUserSession;
+import org.hpg.common.constant.MendelRole;
 import org.hpg.common.model.dto.principal.LoginInfo;
 import org.hpg.common.model.dto.user.MendelUser;
+import org.hpg.common.model.exception.MendelRuntimeException;
 
 /**
  * Just a dummy class for session (used when module auth not deployed)
  *
  * @author trungpt
  */
-public class DummySessionImpl implements IUserSession {
+public class SampleUserSessionImpl implements IUserSession {
+
+    private final IUserService userService;
+
+    /**
+     * User instance. Wonder if this kind of storage work along with proxy
+     * instance
+     */
+    private MendelUser sampleUser = null;
+
+    /**
+     * Constructor
+     *
+     * @param userService
+     */
+    public SampleUserSessionImpl(IUserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public LoginInfo getCurrentLoginInfo() {
-        MendelUser user = new MendelUser();
-        user.setDispName("Sample user");
-        user.setId(1L);
-        user.setName("SMPLUSR");
-        user.setPassword("pass001");
-        return LoginInfo.withUser(user)
+        if (this.sampleUser == null) {
+            this.sampleUser = userService.findUserByName("USER_SMPL", MendelRole.USER)
+                    .orElseThrow(() -> new MendelRuntimeException("No sample user available"));
+        }
+        return LoginInfo.withUser(this.sampleUser)
+                .authenticated(true)
+                .disabled(false)
+                .credentialsExpired(false)
                 .accountLocked(false)
                 .accountExpired(false)
                 .build();
