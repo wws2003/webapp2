@@ -12,6 +12,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -54,11 +55,14 @@ public class ElasticSearchConfig {
 
     // Client config ? (should be in the same file with search template ?)
     /**
+     * Get instance for transport client. Looks like destroy method not get
+     * called if the scope is not singleton, including the scope of
+     * ApplicationContext
      *
      * @return @throws java.net.UnknownHostException
      */
     @Bean(destroyMethod = "close")
-    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public TransportClient getElasticSearchClient() throws UnknownHostException {
         // Try to use RestHightLevel client. But it is not an implementation of Client class ?
 

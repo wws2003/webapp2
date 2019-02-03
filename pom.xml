@@ -23,10 +23,12 @@
         <thymeleaf-extras-java8time-version>3.0.1.RELEASE</thymeleaf-extras-java8time-version>
         <!-- AssertJ is not a part of Spring IO platform, so the version must be provided explicitly -->
         <assertj-core-version>3.8.0</assertj-core-version>
-		<!-- Spring Data JPA -->
-		<org.springframework.data-version>2.1.4.RELEASE</org.springframework.data-version>
-		<!-- Hibernate -->
-		<org.hibernate-version>4.3.1.Final</org.hibernate-version>
+        <!-- Spring Data JPA -->
+        <org.springframework.data-version>2.1.4.RELEASE</org.springframework.data-version>
+        <!-- Hibernate -->
+        <org.hibernate-version>4.3.1.Final</org.hibernate-version>
+        <!-- Log4J -->
+        <log4j-version>2.8.2</log4j-version>
     </properties>
 
     <!-- Modules -->
@@ -163,9 +165,14 @@
             <version>1.7.25</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j-version}</version>
         </dependency>
         <!-- @Inject -->
         <dependency>
