@@ -6,7 +6,6 @@
 package org.hpg.project.biz.web.document;
 
 import java.util.concurrent.Callable;
-import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.project.constant.ProjectUrls;
 import org.hpg.project.dao.repository.es.IEsDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,7 @@ public class ExperimentDocController {
 
     @GetMapping("/testCancelIndex")
     @ResponseBody
-    public Callable<AjaxResult> testCancelIndex() {
-        return null;
+    public Callable<String> testCancelIndex() {
+        return () -> "1234";
     }
 }

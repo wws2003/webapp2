@@ -9,6 +9,7 @@ import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.model.dto.principal.LoginInfo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.context.WebApplicationContext;
@@ -27,6 +28,7 @@ public class ProjectBeanConfigForTest {
      * @return
      */
     @Bean
+    @Primary
     @Scope(scopeName = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public IUserSession getAuthenticatedUserSession() {
         // TODO Probably move to common module
