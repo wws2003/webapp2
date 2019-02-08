@@ -20,8 +20,6 @@ public class MendelPage implements Serializable {
 
     private long documentId;
 
-    private long projectId;
-
     private String content;
 
     public long getDocumentId() {
@@ -56,16 +54,8 @@ public class MendelPage implements Serializable {
         this.id = id;
     }
 
-    public long getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(long projectId) {
-        this.projectId = projectId;
-    }
-
     @Override
     public String toString() {
-        return "MendelPage{" + "id=" + id + ", pageNo=" + pageNo + ", documentId=" + documentId + ", projectId=" + projectId + ", content=" + content + '}';
+        return "MendelPage{" + "id=" + id + ", pageNo=" + pageNo + ", documentId=" + documentId + ", content=" + content + '}';
     }
 }

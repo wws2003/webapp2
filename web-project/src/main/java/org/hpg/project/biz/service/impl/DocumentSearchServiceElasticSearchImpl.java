@@ -6,6 +6,7 @@
 package org.hpg.project.biz.service.impl;
 
 import java.util.List;
+import org.hpg.common.biz.service.abstr.IDocumentService;
 import org.hpg.common.model.dto.document.Document;
 import org.hpg.common.model.dto.document.MendelPage;
 import org.hpg.common.model.exception.MendelRuntimeException;
@@ -23,13 +24,22 @@ public class DocumentSearchServiceElasticSearchImpl implements IDocumentSearchSe
 
     private final IEsDocumentRepository documentRepository;
 
+    private final IDocumentService documentService;
+
     /**
      * Constructor
      *
      * @param documentRepository
+     * @param documentService
      */
-    public DocumentSearchServiceElasticSearchImpl(IEsDocumentRepository documentRepository) {
+    public DocumentSearchServiceElasticSearchImpl(IEsDocumentRepository documentRepository, IDocumentService documentService) {
         this.documentRepository = documentRepository;
+        this.documentService = documentService;
+    }
+
+    @Override
+    public void indexPage(MendelPage page) throws MendelRuntimeException {
+        documentRepository.save(createESDocumentFromPage(page));
     }
 
     @Override
@@ -57,7 +67,6 @@ public class DocumentSearchServiceElasticSearchImpl implements IDocumentSearchSe
         EsDocument esDocument = new EsDocument();
         esDocument.setContent(page.getContent());
         esDocument.setDocId(page.getDocumentId());
-        esDocument.setProjectId(page.getProjectId());
         return esDocument;
     }
 }

@@ -43,6 +43,11 @@ public class ProjectUrls {
      */
     public static final String PROJECT_CREATE_DOCUMENT = "/create";
 
+    /**
+     * URL for adding page to document
+     */
+    public static final String PROJECT_ADD_PAGE = "/addPage";
+
     public static final String SEARCH_START = "/start";
 
     public static final String SEARCH_CANCEL = "/cancel";

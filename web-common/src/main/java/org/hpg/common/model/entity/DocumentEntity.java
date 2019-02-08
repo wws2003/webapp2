@@ -38,7 +38,7 @@ public class DocumentEntity implements Serializable {
 
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
-    private UserEntity role;
+    private UserEntity author;
 
     @Column(name = "description")
     private String description;
@@ -67,12 +67,12 @@ public class DocumentEntity implements Serializable {
         this.type = type;
     }
 
-    public UserEntity getRole() {
-        return role;
+    public UserEntity getAuthor() {
+        return author;
     }
 
-    public void setRole(UserEntity role) {
-        this.role = role;
+    public void setAuthor(UserEntity author) {
+        this.author = author;
     }
 
     public String getDescription() {

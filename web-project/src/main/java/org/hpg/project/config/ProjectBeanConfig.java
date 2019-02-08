@@ -5,7 +5,14 @@
  */
 package org.hpg.project.config;
 
+import org.hpg.common.biz.service.abstr.IDocumentService;
+import org.hpg.project.biz.service.abstr.IDocumentSearchService;
+import org.hpg.project.biz.service.impl.DocumentSearchServiceElasticSearchImpl;
+import org.hpg.project.dao.repository.es.IEsDocumentRepository;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Bean config for project module
@@ -20,4 +27,9 @@ public class ProjectBeanConfig {
 //    public ExecutorService getExecutorService() {
 //        return Executors.newWorkStealingPool();
 //    }
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IDocumentSearchService getDocumentSearchService(IEsDocumentRepository documentRepository, IDocumentService documentService) {
+        return new DocumentSearchServiceElasticSearchImpl(documentRepository, documentService);
+    }
 }

@@ -20,6 +20,14 @@ import org.hpg.project.model.dto.DocumentSearchResult;
 public interface IDocumentSearchService {
 
     /**
+     * Index a single page (attached to a single document)
+     *
+     * @param page
+     * @throws MendelRuntimeException
+     */
+    public void indexPage(MendelPage page) throws MendelRuntimeException;
+
+    /**
      * Indexing document for full-text search
      *
      * @param document

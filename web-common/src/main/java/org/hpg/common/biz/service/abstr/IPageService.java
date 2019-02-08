@@ -20,17 +20,19 @@ public interface IPageService {
      * Create a new page
      *
      * @param page
+     * @return The saved page instance
      * @throws MendelRuntimeException When page creation failed
      */
-    public void createPage(MendelPage page) throws MendelRuntimeException;
+    public MendelPage createPage(MendelPage page) throws MendelRuntimeException;
 
     /**
      * Update page content
      *
      * @param page
+     * @return The saved page instance
      * @throws MendelRuntimeException When update failed
      */
-    public void updatePage(MendelPage page) throws MendelRuntimeException;
+    public MendelPage updatePage(MendelPage page) throws MendelRuntimeException;
 
     /**
      * Delete page
