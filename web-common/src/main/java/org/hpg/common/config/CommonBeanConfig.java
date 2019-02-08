@@ -7,6 +7,7 @@ package org.hpg.common.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.hpg.common.biz.service.abstr.IDocumentService;
 import org.hpg.common.biz.service.abstr.IFormValidator;
 import org.hpg.common.biz.service.abstr.ILogger;
 import org.hpg.common.biz.service.abstr.IPageService;
@@ -16,6 +17,7 @@ import org.hpg.common.biz.service.abstr.IProjectService;
 import org.hpg.common.biz.service.abstr.IScreenService;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.abstr.IUserSession;
+import org.hpg.common.biz.service.impl.DocumentServiceImpl;
 import org.hpg.common.biz.service.impl.PageServiceImpl;
 import org.hpg.common.biz.service.impl.PagingServiceImpl;
 import org.hpg.common.biz.service.impl.PrivilegeServiceImpl;
@@ -27,8 +29,11 @@ import org.hpg.common.biz.service.impl.StdFormValidatorImpl;
 import org.hpg.common.biz.service.impl.UserServiceImpl;
 import org.hpg.common.constant.MendelTransactionalLevel;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
+import org.hpg.common.dao.mapper.impl.DocumentEntityDtoMapperImpl;
+import org.hpg.common.dao.mapper.impl.PageEntityDtoMapperImpl;
 import org.hpg.common.dao.mapper.impl.ProjectEntityDtoMapperImpl;
 import org.hpg.common.dao.mapper.impl.UserEntityDtoMapperImpl;
+import org.hpg.common.dao.repository.IDocumentRespository;
 import org.hpg.common.dao.repository.IPageRepository;
 import org.hpg.common.dao.repository.IProjectRepository;
 import org.hpg.common.dao.repository.IProjectUserRepository;
@@ -41,9 +46,11 @@ import org.hpg.common.framework.transaction.DefaultTransactionalExecutorImpl;
 import org.hpg.common.framework.transaction.ITransactionExecutor;
 import org.hpg.common.framework.transaction.NewReadOnlyTransactionalExecutorImpl;
 import org.hpg.common.framework.transaction.NewTransactionalExecutorImpl;
+import org.hpg.common.model.dto.document.Document;
 import org.hpg.common.model.dto.document.MendelPage;
 import org.hpg.common.model.dto.project.MendelProject;
 import org.hpg.common.model.dto.user.MendelUser;
+import org.hpg.common.model.entity.DocumentEntity;
 import org.hpg.common.model.entity.PageEntity;
 import org.hpg.common.model.entity.ProjectEntity;
 import org.hpg.common.model.entity.UserEntity;
@@ -103,8 +110,26 @@ public class CommonBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public IPageService getPageService(IPageRepository pageRepository, IEntityDtoMapper<PageEntity, MendelPage> pageEntityDtoMapper) {
-        return new PageServiceImpl(pageRepository, pageEntityDtoMapper);
+    public IEntityDtoMapper<DocumentEntity, Document> getDocumentEtityDtoMapper() {
+        return new DocumentEntityDtoMapperImpl();
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IDocumentService getDocumentService(IDocumentRespository documentRepository, IEntityDtoMapper<DocumentEntity, Document> documentEntityDtoMapper) {
+        return new DocumentServiceImpl(documentRepository, documentEntityDtoMapper);
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IEntityDtoMapper<PageEntity, MendelPage> getPageEtityDtoMapper() {
+        return new PageEntityDtoMapperImpl();
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    public IPageService getPageService(IPageRepository pageRepository, IEntityDtoMapper<PageEntity, MendelPage> pageEntityDtoMapper, IDocumentService documentService) {
+        return new PageServiceImpl(pageRepository, pageEntityDtoMapper, documentService);
     }
 
     @Bean

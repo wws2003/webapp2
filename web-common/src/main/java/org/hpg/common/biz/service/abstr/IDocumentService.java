@@ -63,6 +63,15 @@ public interface IDocumentService {
     public void updateDocument(Document document) throws MendelRuntimeException;
 
     /**
+     * Update document to reflect changes in page (effectively just update the
+     * mDate value to current timestamp)
+     *
+     * @param documentId
+     * @throws MendelRuntimeException When updating failed
+     */
+    public void updateDocumentForPageChange(long documentId) throws MendelRuntimeException;
+
+    /**
      * Delete documents
      *
      * @param documentIds

@@ -67,7 +67,12 @@ public class DocumentSrcnServiceImpl implements IDocumentSrcnService {
      */
     private Document createDocumentFromForm(DocumentCreateForm form) {
         // TODO Implement
-        return new Document();
+        Document document = new Document();
+        document.setAuthor(null);
+        document.setName(form.getName());
+        // document.setProject(form.getProjectId());
+        document.setDescription(form.getDescription());
+        return document;
     }
 
     /**

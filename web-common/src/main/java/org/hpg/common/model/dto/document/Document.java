@@ -6,6 +6,9 @@
 package org.hpg.common.model.dto.document;
 
 import java.io.Serializable;
+import java.util.Date;
+import org.hpg.common.constant.MendelDocumentType;
+import org.hpg.common.model.dto.project.MendelProject;
 import org.hpg.common.model.dto.user.MendelUser;
 
 /**
@@ -26,14 +29,34 @@ public class Document implements Serializable {
     private MendelUser author;
 
     /**
+     * Project
+     */
+    private MendelProject project;
+
+    /**
      * Document name
      */
     private String name;
 
     /**
-     * Document content
+     * Document description
      */
-    private String content;
+    private String description;
+
+    /**
+     * Type
+     */
+    private MendelDocumentType type;
+
+    /**
+     * Create date
+     */
+    private Date cDate;
+
+    /**
+     * Update date
+     */
+    private Date mDate;
 
     /**
      * Get document id
@@ -51,6 +74,24 @@ public class Document implements Serializable {
      */
     public void setId(long id) {
         this.id = id;
+    }
+
+    /**
+     * Get containing project
+     *
+     * @return
+     */
+    public MendelProject getProject() {
+        return project;
+    }
+
+    /**
+     * Set the containing project
+     *
+     * @param project
+     */
+    public void setProject(MendelProject project) {
+        this.project = project;
     }
 
     /**
@@ -90,25 +131,75 @@ public class Document implements Serializable {
     }
 
     /**
-     * Get content
+     * Get description
      *
      * @return
      */
-    public String getContent() {
-        return content;
+    public String getDescription() {
+        return description;
     }
 
     /**
-     * Set content
+     * Set description
      *
-     * @param content
+     * @param description
      */
-    public void setContent(String content) {
-        this.content = content;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Get create date
+     *
+     * @return the cDate
+     */
+    public Date getcDate() {
+        return cDate;
+    }
+
+    /**
+     * Set create date
+     *
+     * @param cDate the cDate to set
+     */
+    public void setcDate(Date cDate) {
+        this.cDate = cDate;
+    }
+
+    /**
+     * Get update date
+     *
+     * @return the mDate
+     */
+    public Date getmDate() {
+        return mDate;
+    }
+
+    /**
+     * Set update date
+     *
+     * @param mDate the mDate to set
+     */
+    public void setmDate(Date mDate) {
+        this.mDate = mDate;
+    }
+
+    /**
+     * @return the type
+     */
+    public MendelDocumentType getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(MendelDocumentType type) {
+        this.type = type;
     }
 
     @Override
     public String toString() {
-        return "Document{" + "id=" + id + ", author=" + author + ", name=" + name + ", content=" + content + '}';
+        return "Document{" + "id=" + id + ", author=" + author + ", project=" + project + ", name=" + name + ", description=" + description + ", type=" + type + ", cDate=" + cDate + ", mDate=" + mDate + '}';
     }
 }

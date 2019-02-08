@@ -7,6 +7,7 @@ package org.hpg.common.biz.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import org.hpg.common.biz.service.abstr.IDocumentService;
 import org.hpg.common.biz.service.abstr.IPageService;
 import org.hpg.common.dao.mapper.abstr.IEntityDtoMapper;
 import org.hpg.common.dao.repository.IPageRepository;
@@ -25,21 +26,44 @@ public class PageServiceImpl implements IPageService {
 
     private final IEntityDtoMapper<PageEntity, MendelPage> pageEntityDtoMapper;
 
-    public PageServiceImpl(IPageRepository pageRepository, IEntityDtoMapper<PageEntity, MendelPage> pageEntityDtoMapper) {
+    private final IDocumentService documentService;
+
+    public PageServiceImpl(IPageRepository pageRepository,
+            IEntityDtoMapper<PageEntity, MendelPage> pageEntityDtoMapper,
+            IDocumentService documentService) {
         this.pageRepository = pageRepository;
         this.pageEntityDtoMapper = pageEntityDtoMapper;
+        this.documentService = documentService;
     }
 
     @Override
     public MendelPage createPage(MendelPage page) throws MendelRuntimeException {
         PageEntity savedEntity = pageRepository.save(pageEntityDtoMapper.getEntityFromDto(page));
-        return Optional.ofNullable(savedEntity).map(pageEntityDtoMapper::getDtoFromEntity).orElse(null);
+
+        // Update document also
+        Optional.ofNullable(savedEntity)
+                .map(PageEntity::getDocId)
+                .filter(docId -> docId > 0)
+                .ifPresent(documentService::updateDocumentForPageChange);
+
+        return Optional.ofNullable(savedEntity)
+                .map(pageEntityDtoMapper::getDtoFromEntity)
+                .orElse(null);
     }
 
     @Override
     public MendelPage updatePage(MendelPage page) throws MendelRuntimeException {
         PageEntity savedEntity = pageRepository.save(pageEntityDtoMapper.getEntityFromDto(page));
-        return Optional.ofNullable(savedEntity).map(pageEntityDtoMapper::getDtoFromEntity).orElse(null);
+
+        // Update document also
+        Optional.ofNullable(savedEntity)
+                .map(PageEntity::getDocId)
+                .filter(docId -> docId > 0)
+                .ifPresent(documentService::updateDocumentForPageChange);
+
+        return Optional.ofNullable(savedEntity)
+                .map(pageEntityDtoMapper::getDtoFromEntity)
+                .orElse(null);
     }
 
     @Override

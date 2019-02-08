@@ -9,6 +9,7 @@ import java.util.List;
 import org.hpg.common.biz.service.abstr.IDocumentService;
 import org.hpg.common.model.dto.document.Document;
 import org.hpg.common.model.dto.document.MendelPage;
+import org.hpg.common.model.dto.project.MendelProject;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.project.biz.service.abstr.IDocumentSearchService;
 import org.hpg.project.dao.repository.es.IEsDocumentRepository;
@@ -67,6 +68,13 @@ public class DocumentSearchServiceElasticSearchImpl implements IDocumentSearchSe
         EsDocument esDocument = new EsDocument();
         esDocument.setContent(page.getContent());
         esDocument.setDocId(page.getDocumentId());
+
+        long projectId = documentService.findDocumentById(page.getDocumentId())
+                .map(Document::getProject)
+                .map(MendelProject::getId)
+                .orElseThrow(() -> new MendelRuntimeException("Project not found, document id = " + page.getDocumentId()));
+
+        esDocument.setProjectId(projectId);
         return esDocument;
     }
 }

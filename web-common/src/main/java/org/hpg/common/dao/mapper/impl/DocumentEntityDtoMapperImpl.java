@@ -5,10 +5,14 @@
  */
 package org.hpg.common.dao.mapper.impl;
 
+import org.hpg.common.model.dto.document.Document;
+import org.hpg.common.model.entity.DocumentEntity;
+
 /**
+ * Mapping Entity-DTO for document
  *
  * @author wws2003
  */
-public class DocumentEntityDtoMapperImpl {
+public class DocumentEntityDtoMapperImpl extends BaseEntityDtoMapper<DocumentEntity, Document> {
 
 }

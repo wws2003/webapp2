@@ -24,8 +24,6 @@ public class DocumentCreateForm implements Serializable {
 
     private String name;
 
-    private int pageCount;
-
     public long getProjectId() {
         return projectId;
     }
@@ -66,16 +64,8 @@ public class DocumentCreateForm implements Serializable {
         this.name = name;
     }
 
-    public int getPageCount() {
-        return pageCount;
-    }
-
-    public void setPageCount(int pageCount) {
-        this.pageCount = pageCount;
-    }
-
     @Override
     public String toString() {
-        return "DocumentCreateForm{" + "projectId=" + projectId + ", authorId=" + authorId + ", description=" + description + ", type=" + type + ", name=" + name + ", pageCount=" + pageCount + '}';
+        return "DocumentCreateForm{" + "projectId=" + projectId + ", authorId=" + authorId + ", description=" + description + ", type=" + type + ", name=" + name + '}';
     }
 }
