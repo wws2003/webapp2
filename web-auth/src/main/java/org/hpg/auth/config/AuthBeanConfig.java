@@ -17,11 +17,13 @@ import org.hpg.auth.biz.service.impl.DefaultUserDetailsServiceImpl;
 import org.hpg.auth.biz.service.impl.GeneralPurposeAccessErrorHandlerImpl;
 import org.hpg.auth.biz.service.impl.LoginLogoutJMSImpl;
 import org.hpg.auth.biz.service.impl.SessionRegistryLoginUserServiceImpl;
+import org.hpg.auth.biz.service.impl.TaskExecutorSecurityAwareImpl;
 import org.hpg.auth.constant.AuthBeanConstant;
 import org.hpg.auth.constant.AuthUrls;
 import org.hpg.auth.util.AuthUtil;
 import org.hpg.common.biz.service.abstr.ILoginUserService;
 import org.hpg.common.biz.service.abstr.IPasswordService;
+import org.hpg.common.biz.service.abstr.ITaskExecutor;
 import org.hpg.common.biz.service.abstr.IUserSession;
 import org.hpg.common.constant.MendelRole;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -190,5 +192,11 @@ public class AuthBeanConfig {
     public SessionRegistry getSessionRegistry() {
         // TODO Better implementation ?
         return new SessionRegistryImpl();
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public ITaskExecutor getTaskExecutor() {
+        return new TaskExecutorSecurityAwareImpl();
     }
 }

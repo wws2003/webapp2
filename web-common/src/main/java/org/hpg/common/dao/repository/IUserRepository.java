@@ -55,7 +55,8 @@ public interface IUserRepository extends IPagingAndSortingRepository<UserEntity,
     List<UserEntity> deleteBatchByIdIn(List<Long> userIds) throws MendelRuntimeException;
 
     /**
-     * Find users having name or display name containg given text (ignore case)
+     * Find users having name or display name containing given text (ignore
+     * case)
      *
      * @param text
      * @param roleId

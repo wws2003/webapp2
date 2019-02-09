@@ -6,6 +6,7 @@
 package org.hpg.project.biz.web.document;
 
 import java.util.concurrent.Callable;
+import org.hpg.common.biz.service.abstr.ITaskExecutor;
 import org.hpg.project.constant.ProjectUrls;
 import org.hpg.project.dao.repository.es.IEsDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +28,26 @@ public class ExperimentDocController {
     @Autowired
     private IEsDocumentRepository documentRepository;
 
+    @Autowired
+    private ITaskExecutor taskExecutor;
+
     @GetMapping("/testTest")
     @ResponseBody
     public String testTest() {
         return "1234";
     }
 
-//    @Autowired
-//    private ExecutorService executorService;
     @GetMapping("/testIndex")
     @ResponseBody
     public DeferredResult<String> testIndex() {
         DeferredResult<String> ret = new DeferredResult(100L);
-        try {
-            ret.setResult("1234");
-        } catch (Exception e) {
-            ret.setErrorResult(e);
-        }
+        taskExecutor.submit("12345678", () -> {
+            try {
+                ret.setResult("1234");
+            } catch (Exception e) {
+                ret.setErrorResult(e);
+            }
+        });
         return ret;
     }
 

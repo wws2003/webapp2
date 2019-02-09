@@ -56,20 +56,20 @@
                     <version>1.0</version>
                     <type>war</type>
                 </dependency>
-                <!--  Dependency on web-admin module -->
+                <!--                  Dependency on web-admin module
                 <dependency>
                     <groupId>org.hpg.multi</groupId>
                     <artifactId>web-admin</artifactId>
                     <version>1.0</version>
                     <type>war</type>
                 </dependency>
-                <!-- Dependency on web-user module-->
+                 Dependency on web-user module
                 <dependency>
                     <groupId>org.hpg.multi</groupId>
                     <artifactId>web-user</artifactId>
                     <version>1.0</version>
                     <type>war</type>
-                </dependency>
+                </dependency>-->
                 <!-- Dependency on web-project module-->
                 <dependency>
                     <groupId>org.hpg.multi</groupId>
