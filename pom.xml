@@ -13,7 +13,7 @@
         <java-version>1.8</java-version>
         <!-- Override Spring version -->
         <spring.version>5.1.4.RELEASE</spring.version>
-        <jackson.version>2.9.1</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
         <!-- Thymeleaf 3 -->
         <org.thymeleaf-version>3.0.7.RELEASE</org.thymeleaf-version>
         <org.thymeleaf-spring5-version>3.0.7.RC1</org.thymeleaf-spring5-version>
