@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import org.hpg.common.biz.service.abstr.ITaskExecutor;
 import org.hpg.common.model.exception.MendelRuntimeException;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.concurrent.DelegatingSecurityContextExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
@@ -27,6 +27,8 @@ public class TaskExecutorSecurityAwareImpl implements ITaskExecutor {
 
     private final Map<String, CompletableFuture> taskMap = new ConcurrentHashMap();
 
+    private final ThreadPoolTaskExecutor delegateExecutor = new ThreadPoolTaskExecutor();
+
     @Override
     public boolean start() throws MendelRuntimeException {
         // TODO Implement (probably in other class)
@@ -36,13 +38,16 @@ public class TaskExecutorSecurityAwareImpl implements ITaskExecutor {
     @Override
     public void submit(String taskKey, Runnable runnable) throws MendelRuntimeException {
         // Yet a very simple solution
-        SimpleAsyncTaskExecutor delegateExecutor = new SimpleAsyncTaskExecutor();
-
         DelegatingSecurityContextExecutor executor = new DelegatingSecurityContextAsyncTaskExecutor(delegateExecutor,
                 SecurityContextHolder.getContext());
 
-        // This only create new thread then execute the task without thread pool
-        executor.execute(runnable);
+        // No need of explicit call to execute()
+        CompletableFuture completableFuture = CompletableFuture.runAsync(runnable, executor);
+
+        // Add to map
+        synchronized (this) {
+            this.taskMap.put(taskKey, completableFuture);
+        }
     }
 
     @Override
@@ -55,8 +60,8 @@ public class TaskExecutorSecurityAwareImpl implements ITaskExecutor {
 
     @Override
     public void stop() throws MendelRuntimeException {
-        // TODO Implement (probably in other class)
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO Implement probably (probably in other class)
+        delegateExecutor.shutdown();
     }
 
 }
