@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.hpg.common.biz.service.abstr.ITaskExecutor;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -29,10 +30,17 @@ public class TaskExecutorSecurityAwareImpl implements ITaskExecutor {
 
     private final ThreadPoolTaskExecutor delegateExecutor = new ThreadPoolTaskExecutor();
 
+    private final AtomicBoolean started = new AtomicBoolean(false);
+
     @Override
     public boolean start() throws MendelRuntimeException {
-        // TODO Implement (probably in other class)
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (started.compareAndSet(false, true)) {
+            // A sample of waiting time out
+            delegateExecutor.setAwaitTerminationSeconds(20);
+            delegateExecutor.setWaitForTasksToCompleteOnShutdown(false);
+            delegateExecutor.initialize();
+        }
+        return true;
     }
 
     @Override
@@ -53,6 +61,7 @@ public class TaskExecutorSecurityAwareImpl implements ITaskExecutor {
     @Override
     public boolean cancelTask(String taskKey) throws MendelRuntimeException {
         // Now just a dummy implementation
+        // But looks like does not work with threads blocking, e.g.the case of Thread.sleep()
         return Optional.ofNullable(taskMap.get(taskKey))
                 .map(completableFuture -> completableFuture.cancel(true))
                 .orElse(false);
@@ -60,8 +69,8 @@ public class TaskExecutorSecurityAwareImpl implements ITaskExecutor {
 
     @Override
     public void stop() throws MendelRuntimeException {
-        // TODO Implement probably (probably in other class)
-        delegateExecutor.shutdown();
+        if (started.compareAndSet(true, false)) {
+            delegateExecutor.shutdown();
+        }
     }
-
 }
