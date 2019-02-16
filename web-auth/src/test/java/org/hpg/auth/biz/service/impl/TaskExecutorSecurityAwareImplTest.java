@@ -5,10 +5,8 @@
  */
 package org.hpg.auth.biz.service.impl;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.rmi.UnknownHostException;
+import java.nio.channels.SocketChannel;
 import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -28,7 +26,7 @@ public class TaskExecutorSecurityAwareImplTest {
      * Test of start method, of class TaskExecutorSecurityAwareImpl.
      */
     @Test
-    public void test() {
+    public void test() throws InterruptedException {
         System.out.println("start");
         TaskExecutorSecurityAwareImpl instance = new TaskExecutorSecurityAwareImpl();
         // Start
@@ -39,19 +37,25 @@ public class TaskExecutorSecurityAwareImplTest {
         String taskKey = "1234";
         instance.submit(taskKey, () -> {
             try {
-                System.out.print("Task is submitted and to be processed.......................................");
+                System.out.println("Task is submitted and to be processed.......................................");
                 // Can not cancel sleeping thread as interrupt is not used !!
-                doSomeBlockingTask();
+                doSomeIOBlockingTask();
                 // doCPUIntensiveTask();
+                // doSomeSleepTask(); // Cancel OK !?
                 System.out.println("Task has been processed.......................................");
             } catch (Exception ex) {
                 ex.printStackTrace();
                 throw new RuntimeException(ex);
             }
         });
+
+        // A workaround to make sure the task has already started before try to cancel it
+        Thread.sleep(1300);
+
         // Cancel
         boolean toCancel = true;
         if (toCancel) {
+            System.out.println("Trying to cancel the task.......................................");
             boolean expCancelResult = true;
             boolean cancelResult = instance.cancelTask(taskKey);
             assertEquals(expCancelResult, cancelResult);
@@ -60,19 +64,31 @@ public class TaskExecutorSecurityAwareImplTest {
         instance.stop();
     }
 
-    private void doSomeBlockingTask() throws Exception {
-        // IO blocking
+    private void doSomeSleepTask() throws InterruptedException {
+        Thread.sleep(12000);
+    }
+
+    private void doSomeIOBlockingTask() throws Exception {
         String ipAddress = "10.12.35.222";
         int port = 8080;
 
-        try (Socket socket = new Socket(ipAddress, port)) {
-            socket.connect(new InetSocketAddress(ipAddress, port), 12000);
-
-        } catch (UnknownHostException ex) {
-            System.out.println("Server not found: " + ex.getMessage());
-        } catch (IOException ex) {
-            System.out.println("I/O error: " + ex.getMessage());
+        // An interruptible channel actually
+        SocketChannel socketChannel = SocketChannel.open();
+        socketChannel.configureBlocking(true);
+        socketChannel.connect(new InetSocketAddress(ipAddress, port));
+        while (!socketChannel.finishConnect()) {
+            // Just wait
         }
+//
+//        // IO blocking -> Not interruptible !?
+//        try (Socket socket = new Socket(ipAddress, port)) {
+//            socket.connect(new InetSocketAddress(ipAddress, port), 12000);
+//
+//        } catch (UnknownHostException ex) {
+//            System.out.println("Server not found: " + ex.getMessage());
+//        } catch (IOException ex) {
+//            System.out.println("I/O error: " + ex.getMessage());
+//        }
     }
 
     private void doCPUIntensiveTask() {

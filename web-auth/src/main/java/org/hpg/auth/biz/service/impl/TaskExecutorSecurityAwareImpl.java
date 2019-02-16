@@ -7,15 +7,14 @@ package org.hpg.auth.biz.service.impl;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.hpg.common.biz.service.abstr.ITaskExecutor;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.security.concurrent.DelegatingSecurityContextExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
+import org.springframework.security.scheduling.DelegatingSecurityContextSchedulingTaskExecutor;
 
 /**
  * Implementation for security context aware task executor
@@ -26,7 +25,7 @@ import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecu
  */
 public class TaskExecutorSecurityAwareImpl implements ITaskExecutor {
 
-    private final Map<String, CompletableFuture> taskMap = new ConcurrentHashMap();
+    private final Map<String, Future> taskMap = new ConcurrentHashMap();
 
     private final ThreadPoolTaskExecutor delegateExecutor = new ThreadPoolTaskExecutor();
 
@@ -46,15 +45,16 @@ public class TaskExecutorSecurityAwareImpl implements ITaskExecutor {
     @Override
     public void submit(String taskKey, Runnable runnable) throws MendelRuntimeException {
         // Yet a very simple solution
-        DelegatingSecurityContextExecutor executor = new DelegatingSecurityContextAsyncTaskExecutor(delegateExecutor,
+        DelegatingSecurityContextSchedulingTaskExecutor executor = new DelegatingSecurityContextSchedulingTaskExecutor(
+                delegateExecutor,
                 SecurityContextHolder.getContext());
 
         // No need of explicit call to execute()
-        CompletableFuture completableFuture = CompletableFuture.runAsync(runnable, executor);
+        Future future = executor.submit(runnable);
 
         // Add to map
         synchronized (this) {
-            this.taskMap.put(taskKey, completableFuture);
+            this.taskMap.put(taskKey, future);
         }
     }
 
