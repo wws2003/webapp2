@@ -5,14 +5,10 @@
  */
 package org.hpg.auth.biz.service.impl;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.hpg.common.biz.service.abstr.ITaskExecutor;
-import org.hpg.common.model.exception.MendelRuntimeException;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.hpg.common.biz.service.impl.BaseTaskExecutor;
+import org.springframework.scheduling.SchedulingTaskExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.scheduling.DelegatingSecurityContextSchedulingTaskExecutor;
 
@@ -23,54 +19,33 @@ import org.springframework.security.scheduling.DelegatingSecurityContextScheduli
  *
  * @author wws2003
  */
-public class TaskExecutorSecurityAwareImpl implements ITaskExecutor {
-
-    private final Map<String, Future> taskMap = new ConcurrentHashMap();
-
-    private final ThreadPoolTaskExecutor delegateExecutor = new ThreadPoolTaskExecutor();
-
-    private final AtomicBoolean started = new AtomicBoolean(false);
+public class TaskExecutorSecurityAwareImpl extends BaseTaskExecutor {
 
     @Override
-    public boolean start() throws MendelRuntimeException {
-        if (started.compareAndSet(false, true)) {
-            // A sample of waiting time out
-            delegateExecutor.setAwaitTerminationSeconds(20);
-            delegateExecutor.setWaitForTasksToCompleteOnShutdown(false);
-            delegateExecutor.initialize();
-        }
-        return true;
+    protected CompletableFuture getInterruptibleFutureStage(SchedulingTaskExecutor delegateExecutor, Runnable runnable) {
+        DelegatingSecurityContextSchedulingTaskExecutor executor = getSecurityExecutor(delegateExecutor);
+
+        // The completable future created is not interruptible, only be able to cancel it by cancelling the
+        // interruptible stage so that it can not be executed at all
+        return CompletableFuture.runAsync(runnable, executor);
     }
 
     @Override
-    public void submit(String taskKey, Runnable runnable) throws MendelRuntimeException {
-        // Yet a very simple solution
-        DelegatingSecurityContextSchedulingTaskExecutor executor = new DelegatingSecurityContextSchedulingTaskExecutor(
+    protected Future getInterruptibleFuture(SchedulingTaskExecutor delegateExecutor, Runnable runnable) {
+        DelegatingSecurityContextSchedulingTaskExecutor executor = getSecurityExecutor(delegateExecutor);
+
+        return executor.submit(runnable);
+    }
+
+    /**
+     * Get executor for spring security context
+     *
+     * @param delegateExecutor
+     * @return
+     */
+    private DelegatingSecurityContextSchedulingTaskExecutor getSecurityExecutor(SchedulingTaskExecutor delegateExecutor) {
+        return new DelegatingSecurityContextSchedulingTaskExecutor(
                 delegateExecutor,
                 SecurityContextHolder.getContext());
-
-        // No need of explicit call to execute()
-        Future future = executor.submit(runnable);
-
-        // Add to map
-        synchronized (this) {
-            this.taskMap.put(taskKey, future);
-        }
-    }
-
-    @Override
-    public boolean cancelTask(String taskKey) throws MendelRuntimeException {
-        // Now just a dummy implementation
-        // But looks like does not work with threads blocking, e.g.the case of Thread.sleep()
-        return Optional.ofNullable(taskMap.get(taskKey))
-                .map(completableFuture -> completableFuture.cancel(true))
-                .orElse(false);
-    }
-
-    @Override
-    public void stop() throws MendelRuntimeException {
-        if (started.compareAndSet(true, false)) {
-            delegateExecutor.shutdown();
-        }
     }
 }

@@ -7,6 +7,7 @@ package org.hpg.common.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.hpg.common.biz.annotation.SecurityContextAware;
 import org.hpg.common.biz.service.abstr.IDocumentService;
 import org.hpg.common.biz.service.abstr.IFormValidator;
 import org.hpg.common.biz.service.abstr.ILogger;
@@ -15,8 +16,10 @@ import org.hpg.common.biz.service.abstr.IPagingService;
 import org.hpg.common.biz.service.abstr.IPrivilegeService;
 import org.hpg.common.biz.service.abstr.IProjectService;
 import org.hpg.common.biz.service.abstr.IScreenService;
+import org.hpg.common.biz.service.abstr.ITaskExecutor;
 import org.hpg.common.biz.service.abstr.IUserService;
 import org.hpg.common.biz.service.abstr.IUserSession;
+import org.hpg.common.biz.service.impl.BaseTaskExecutor;
 import org.hpg.common.biz.service.impl.DocumentServiceImpl;
 import org.hpg.common.biz.service.impl.PageServiceImpl;
 import org.hpg.common.biz.service.impl.PagingServiceImpl;
@@ -157,6 +160,13 @@ public class CommonBeanConfig {
     public ILogger getLogger() {
         int maxTraceLevel = environment.getProperty("logger.max-trace-level", Integer.class);
         return new SimpleLoggerImpl(maxTraceLevel);
+    }
+
+    @Bean(destroyMethod = "stop", initMethod = "start")
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @SecurityContextAware(false)
+    public ITaskExecutor getBaseTaskExecutor() {
+        return new BaseTaskExecutor();
     }
 
     @Bean

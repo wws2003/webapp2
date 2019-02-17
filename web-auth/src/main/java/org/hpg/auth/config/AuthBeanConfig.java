@@ -21,6 +21,7 @@ import org.hpg.auth.biz.service.impl.TaskExecutorSecurityAwareImpl;
 import org.hpg.auth.constant.AuthBeanConstant;
 import org.hpg.auth.constant.AuthUrls;
 import org.hpg.auth.util.AuthUtil;
+import org.hpg.common.biz.annotation.SecurityContextAware;
 import org.hpg.common.biz.service.abstr.ILoginUserService;
 import org.hpg.common.biz.service.abstr.IPasswordService;
 import org.hpg.common.biz.service.abstr.ITaskExecutor;
@@ -102,6 +103,13 @@ public class AuthBeanConfig {
     public IUserSession getAuthenticatedUserSession() {
         // TODO Probably move to common module
         return new AuthenticatedUserSessionImpl();
+    }
+
+    @Bean(destroyMethod = "stop", initMethod = "start")
+    @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
+    @SecurityContextAware(true)
+    public ITaskExecutor getSecurityAwareTaskExecutor() {
+        return new TaskExecutorSecurityAwareImpl();
     }
 
     @Bean

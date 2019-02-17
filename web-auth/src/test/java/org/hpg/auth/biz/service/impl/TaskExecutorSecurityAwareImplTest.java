@@ -56,7 +56,7 @@ public class TaskExecutorSecurityAwareImplTest {
         boolean toCancel = true;
         if (toCancel) {
             System.out.println("Trying to cancel the task.......................................");
-            boolean expCancelResult = true;
+            boolean expCancelResult = false;
             boolean cancelResult = instance.cancelTask(taskKey);
             assertEquals(expCancelResult, cancelResult);
         }

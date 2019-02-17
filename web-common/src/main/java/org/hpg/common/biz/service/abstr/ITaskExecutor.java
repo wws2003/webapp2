@@ -25,6 +25,14 @@ public interface ITaskExecutor {
     public boolean start() throws MendelRuntimeException;
 
     /**
+     * Get new key for new task
+     *
+     * @return
+     * @throws MendelRuntimeException If there is no new key can be generated
+     */
+    public String getNewTaskKey() throws MendelRuntimeException;
+
+    /**
      * Submit the task to process on a task (possibly to set result to a
      * deferred result)
      *
@@ -33,6 +41,19 @@ public interface ITaskExecutor {
      * @throws MendelRuntimeException When submit failed or duplicated key
      */
     public void submit(String taskKey, Runnable runnable) throws MendelRuntimeException;
+
+    /**
+     * Submit a task so that any attempts to cancel it would be ignored, except
+     * in when the given interruptibleStage has not completed
+     *
+     * @param taskKey
+     * @param interruptibleStage
+     * @param uninterruptibleTask
+     * @throws MendelRuntimeException
+     */
+    public void submitUninterruptibleTask(String taskKey,
+            Runnable interruptibleStage,
+            Runnable uninterruptibleTask) throws MendelRuntimeException;
 
     /**
      * Cancel the submitted task
