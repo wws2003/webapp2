@@ -6,6 +6,7 @@
 package org.hpg.common.model.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Entity for document record
@@ -34,14 +37,26 @@ public class DocumentEntity implements Serializable {
     private String name;
 
     @Column(name = "type")
-    private Integer type;
+    private short type;
 
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     private UserEntity author;
 
+    @ManyToOne(targetEntity = ProjectUserEntity.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "project_id")
+    private ProjectEntity project;
+
     @Column(name = "description")
     private String description;
+
+    @Column(name = "cdate", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date cDate;
+
+    @Column(name = "mdate", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date mDate;
 
     public Integer getId() {
         return id;
@@ -59,14 +74,6 @@ public class DocumentEntity implements Serializable {
         this.name = name;
     }
 
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
     public UserEntity getAuthor() {
         return author;
     }
@@ -81,5 +88,37 @@ public class DocumentEntity implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(short type) {
+        this.type = type;
+    }
+
+    public ProjectEntity getProject() {
+        return project;
+    }
+
+    public void setProject(ProjectEntity project) {
+        this.project = project;
+    }
+
+    public Date getcDate() {
+        return cDate;
+    }
+
+    public void setcDate(Date cDate) {
+        this.cDate = cDate;
+    }
+
+    public Date getmDate() {
+        return mDate;
+    }
+
+    public void setmDate(Date mDate) {
+        this.mDate = mDate;
     }
 }
