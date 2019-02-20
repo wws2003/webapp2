@@ -44,7 +44,7 @@ public class DocumentServiceImpl implements IDocumentService {
 
     @Override
     public Optional<Document> findDocumentById(long documentId) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return documentRespository.findById(documentId).map(documentEntityDtoMapper::getDtoFromEntity);
     }
 
     @Override
@@ -53,13 +53,15 @@ public class DocumentServiceImpl implements IDocumentService {
     }
 
     @Override
-    public void createDocument(Document document) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Document createDocument(Document document) throws MendelRuntimeException {
+        DocumentEntity savedEntity = documentRespository.save(documentEntityDtoMapper.getEntityFromDto(document));
+        return Optional.ofNullable(savedEntity).map(documentEntityDtoMapper::getDtoFromEntity).orElse(null);
     }
 
     @Override
-    public void updateDocument(Document document) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Document updateDocument(Document document) throws MendelRuntimeException {
+        DocumentEntity savedEntity = documentRespository.save(documentEntityDtoMapper.getEntityFromDto(document));
+        return Optional.ofNullable(savedEntity).map(documentEntityDtoMapper::getDtoFromEntity).orElse(null);
     }
 
     @Override

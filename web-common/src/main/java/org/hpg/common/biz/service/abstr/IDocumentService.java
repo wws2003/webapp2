@@ -50,17 +50,19 @@ public interface IDocumentService {
      * Save new document
      *
      * @param document
+     * @return The saved document
      * @throws MendelRuntimeException When creating failed
      */
-    public void createDocument(Document document) throws MendelRuntimeException;
+    public Document createDocument(Document document) throws MendelRuntimeException;
 
     /**
      * Save modified document
      *
      * @param document
+     * @return The saved document
      * @throws MendelRuntimeException When updating failed
      */
-    public void updateDocument(Document document) throws MendelRuntimeException;
+    public Document updateDocument(Document document) throws MendelRuntimeException;
 
     /**
      * Update document to reflect changes in page (effectively just update the

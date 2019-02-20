@@ -55,6 +55,8 @@ public class DocumentEntityDtoMapperImpl extends BaseEntityDtoMapper<DocumentEnt
     protected void finalizeEntityFromDto(Document dto, DocumentEntity entity) {
         super.finalizeEntityFromDto(dto, entity);
         entity.setType(dto.getType().getCode());
+        entity.setAuthor(userEntityDtoMapper.getEntityFromDto(dto.getAuthor()));
+        entity.setProject(projectEntityDtoMapper.getEntityFromDto(dto.getProject()));
         // cDate and mDate must be add manually since they do not start with upper case character !
         entity.setcDate(dto.getcDate());
         entity.setmDate(dto.getmDate());
@@ -64,6 +66,8 @@ public class DocumentEntityDtoMapperImpl extends BaseEntityDtoMapper<DocumentEnt
     protected void finalizeDtoFromEntity(DocumentEntity entity, Document dto) {
         super.finalizeDtoFromEntity(entity, dto);
         dto.setType(MendelDocumentType.getDocumentTypeByCode((short) entity.getType()));
+        dto.setAuthor(userEntityDtoMapper.getDtoFromEntity(entity.getAuthor()));
+        dto.setProject(projectEntityDtoMapper.getDtoFromEntity(entity.getProject()));
         // cDate and mDate must be add manually since they do not start with upper case character !
         dto.setcDate(entity.getcDate());
         dto.setmDate(entity.getmDate());

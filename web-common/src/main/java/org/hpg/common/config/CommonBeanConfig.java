@@ -113,8 +113,8 @@ public class CommonBeanConfig {
 
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_APPLICATION)
-    public IEntityDtoMapper<DocumentEntity, Document> getDocumentEtityDtoMapper() {
-        return new DocumentEntityDtoMapperImpl();
+    public IEntityDtoMapper<DocumentEntity, Document> getDocumentEtityDtoMapper(IEntityDtoMapper<UserEntity, MendelUser> userEntityDtoMapper, IEntityDtoMapper<ProjectEntity, MendelProject> projectEntityDtoMapper) {
+        return new DocumentEntityDtoMapperImpl(userEntityDtoMapper, projectEntityDtoMapper);
     }
 
     @Bean

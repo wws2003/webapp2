@@ -31,7 +31,7 @@ public class DocumentEntity implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -43,7 +43,7 @@ public class DocumentEntity implements Serializable {
     @JoinColumn(name = "author_id")
     private UserEntity author;
 
-    @ManyToOne(targetEntity = ProjectUserEntity.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = ProjectEntity.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id")
     private ProjectEntity project;
 
@@ -58,11 +58,11 @@ public class DocumentEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date mDate;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

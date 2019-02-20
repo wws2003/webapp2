@@ -20,7 +20,7 @@ public class DocumentCreateForm implements Serializable {
 
     private String description;
 
-    private int type;
+    private short type;
 
     private String name;
 
@@ -48,11 +48,11 @@ public class DocumentCreateForm implements Serializable {
         this.description = description;
     }
 
-    public int getType() {
+    public short getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(short type) {
         this.type = type;
     }
 

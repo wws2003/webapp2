@@ -7,8 +7,11 @@ package org.hpg.project.biz.web.document.scrnservice;
 
 import org.hpg.common.biz.service.abstr.IDocumentService;
 import org.hpg.common.biz.service.abstr.IPageService;
+import org.hpg.common.constant.MendelDocumentType;
 import org.hpg.common.model.dto.document.Document;
 import org.hpg.common.model.dto.document.MendelPage;
+import org.hpg.common.model.dto.project.MendelProject;
+import org.hpg.common.model.dto.user.MendelUser;
 import org.hpg.common.model.dto.web.AjaxResult;
 import org.hpg.common.model.exception.MendelRuntimeException;
 import org.hpg.common.util.AjaxResultBuilder;
@@ -66,12 +69,18 @@ public class DocumentSrcnServiceImpl implements IDocumentSrcnService {
      * @return
      */
     private Document createDocumentFromForm(DocumentCreateForm form) {
-        // TODO Implement
+        // User and project reference (only set id is enough ?)
+        MendelUser author = new MendelUser();
+        author.setId(form.getAuthorId());
+        MendelProject project = new MendelProject();
+        author.setId(form.getProjectId());
+        // Set to document
         Document document = new Document();
-        document.setAuthor(null);
+        document.setAuthor(author);
+        document.setProject(project);
         document.setName(form.getName());
-        // document.setProject(form.getProjectId());
         document.setDescription(form.getDescription());
+        document.setType(MendelDocumentType.getDocumentTypeByCode((short) form.getType()));
         return document;
     }
 
