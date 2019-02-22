@@ -66,7 +66,8 @@ public class DocumentServiceImpl implements IDocumentService {
 
     @Override
     public void updateDocumentForPageChange(long documentId) throws MendelRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        DocumentEntity documentToUpdate = documentRespository.findById(documentId).orElseThrow(() -> new MendelRuntimeException("Document not found ID = " + documentId));
+        documentRespository.updateModifiedDate(documentToUpdate);
     }
 
     @Override

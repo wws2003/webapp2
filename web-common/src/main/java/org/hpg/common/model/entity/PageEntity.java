@@ -25,7 +25,7 @@ public class PageEntity implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "content")
     private String content;
@@ -36,11 +36,11 @@ public class PageEntity implements Serializable {
     @Column(name = "page_no")
     private Long pageNo;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
