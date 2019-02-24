@@ -50,6 +50,15 @@ CommonSearchBoxFragmentRender.prototype.searchObserver = function (searchObserve
 };
 
 /**
+ * Set the function to generate search result item DOM
+ * @param {Function} searchResultOptionEleGenerator Function to generate item for one search result
+ * @returns {undefined}
+ */
+CommonSearchBoxFragmentRender.prototype.searchResultOptionEleGenerator = function (searchResultOptionEleGenerator) {
+
+};
+
+/**
  * Set the function to generate selected search result element
  * @param {Function} selectedSearchResultEleGeneratingFunc
  * @returns {undefined}
