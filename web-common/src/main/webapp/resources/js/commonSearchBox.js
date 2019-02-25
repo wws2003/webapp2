@@ -3,6 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+/* global MendelWebs */
+
 var Rx = Rx || {};
 
 // Imagination
@@ -17,6 +19,7 @@ function CommonSearchBoxFragmentRender() {
     this._searchTextBoxPlaceHolder = 'Search..';
     this._searchOnTyping = false;
     this._searchObserver = null;
+    this._searchResultOptionGenerator = null;
     this._selectedSearchResultEleGenerator = null;
 }
 
@@ -55,7 +58,7 @@ CommonSearchBoxFragmentRender.prototype.searchObserver = function (searchObserve
  * @returns {undefined}
  */
 CommonSearchBoxFragmentRender.prototype.searchResultOptionEleGenerator = function (searchResultOptionEleGenerator) {
-
+    this._searchResultOptionGenerator = searchResultOptionEleGenerator;
 };
 
 /**
@@ -85,18 +88,68 @@ CommonSearchBoxFragmentRender.prototype.build = function (frgSearchBox) {
         let searchBtnClickObservable = Rx.Observable.fromEvent(btnSearch, 'click')
                 .map(() => txtSearchBox.val());
 
-        // TODO Implement search on typing
+        // Observable for search button and possibly typing on search field
         let searchObservable = !this._searchOnTyping ? searchBtnClickObservable : Rx.Observable.merge(searchBtnClickObservable);
-
         searchObservable.subscribe(this._searchObserver);
+
+        // Search observer (actually search subject ?) subscribe the generator ?
+        let observerBuilder = MendelWebs.getDefaultAjaxResponseObserverBuilder();
+        this._searchSubscription = this._searchObserver.subscribe(observerBuilder.createAjaxResponseObserver(this.createObserverForSearchResponse(frgSearchBox.find('#sltSearchResultList'))));
     }
 
     // Select search result
     if (this._selectedSearchResultEleGeneratingFunc) {
-        let searchResultEle = frgSearchBox.find('#ulSearchResultList li');
+        let searchResultEle = frgSearchBox.find('#sltSearchResultList option');
         let _selectedSearchResultEleGenerator = this._selectedSearchResultEleGenerator;
         let searchResultEleClickObservable = Rx.Observable.fromEvent(searchResultEle, 'click')
                 .map(() => txtSearchBox.val())
                 .subscribe((e) => console.log(e));
     }
+};
+
+/*-------------------------------------------------Private methods-------------------------------------------------*/
+
+/**
+ * Create observer object for search request action
+ * @param {JQuery} searchResultSelectEle
+ * @returns {Observer}
+ */
+CommonSearchBoxFragmentRender.prototype.createObserverForSearchResponse = function (searchResultSelectEle) {
+    let renderFunc = CommonSearchBoxFragmentRender.prototype.renderResult.bind(this, searchResultSelectEle);
+    let emptyFunc = CommonSearchBoxFragmentRender.prototype.renderEmpty.bind(this, searchResultSelectEle);
+    let errorFunc = CommonSearchBoxFragmentRender.prototype.renderError.bind(this, searchResultSelectEle);
+    return {
+        next: response => {
+            let isSuccess = response.success;
+            if (isSuccess) {
+                let page = response.resultObject;
+                renderFunc(page);
+            } else {
+                emptyFunc();
+                let erroMsg = response.errorMessages.reduce((acc, cur) => acc + cur + '<br>', '');
+                errorFunc(erroMsg);
+            }
+        },
+        error: err => {
+            // TODO Handle errors properly
+            console.log(err);
+            emptyFunc();
+            errorFunc('Can not receive response properly');
+        },
+        complete: () => {
+
+        }
+    };
+};
+
+CommonSearchBoxFragmentRender.prototype.renderResult = function () {
+
+};
+
+CommonSearchBoxFragmentRender.prototype.renderEmpty = function () {
+
+};
+
+CommonSearchBoxFragmentRender.prototype.renderError = function () {
+
 };
