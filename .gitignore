@@ -12,3 +12,4 @@ dataspace_fortest/
 /web-project/nbprioject/
 datasources_elasticsearch.properties
 
+/web-client-test/nbproject/private/

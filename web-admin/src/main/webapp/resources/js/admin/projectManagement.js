@@ -284,7 +284,7 @@ ProjectDetailDlg.prototype.setUserActionSubject = function (saveSubject, searchS
     // Attempts for search action
     this._userSearchBox = (new CommonSearchBoxFragmentRender())
             .searchInputPlaceHolder('User name')
-            .searchObserver(this._searchSubject)
+            .searchSubject(this._searchSubject)
             .searchResultOptionEleGenerator((usr) => Tagger.option()
                         .id(usr.id)
                         .innerText(usr.name)

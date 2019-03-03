@@ -18,7 +18,7 @@ var Rx = Rx || {};
 function CommonSearchBoxFragmentRender() {
     this._searchTextBoxPlaceHolder = 'Search..';
     this._searchOnTyping = false;
-    this._searchObserver = null;
+    this._searchSubject = null;
     this._searchResultOptionGenerator = null;
     this._selectedSearchResultEleGenerator = null;
 }
@@ -44,11 +44,11 @@ CommonSearchBoxFragmentRender.prototype.searchOnTyping = function () {
 
 /**
  * Set the function to process search text box
- * @param {Observer} searchObserver
+ * @param {Observer} searchSubject
  * @returns {undefined}
  */
-CommonSearchBoxFragmentRender.prototype.searchObserver = function (searchObserver) {
-    this._searchObserver = searchObserver;
+CommonSearchBoxFragmentRender.prototype.searchSubject = function (searchSubject) {
+    this._searchSubject = searchSubject;
     return this;
 };
 
@@ -59,6 +59,7 @@ CommonSearchBoxFragmentRender.prototype.searchObserver = function (searchObserve
  */
 CommonSearchBoxFragmentRender.prototype.searchResultOptionEleGenerator = function (searchResultOptionEleGenerator) {
     this._searchResultOptionGenerator = searchResultOptionEleGenerator;
+    return this;
 };
 
 /**
@@ -82,7 +83,7 @@ CommonSearchBoxFragmentRender.prototype.build = function (frgSearchBox) {
     frgSearchBox.find('#txtSearchBoxQuery').attr('placeholder', this._searchTextBoxPlaceHolder);
 
     // Search process
-    if (this._searchObserver) {
+    if (this._searchSubject) {
         let txtSearchBox = frgSearchBox.find('#txtSearchBoxQuery');
         let btnSearch = frgSearchBox.find('#btnSearch');
         let searchBtnClickObservable = Rx.Observable.fromEvent(btnSearch, 'click')
@@ -90,11 +91,11 @@ CommonSearchBoxFragmentRender.prototype.build = function (frgSearchBox) {
 
         // Observable for search button and possibly typing on search field
         let searchObservable = !this._searchOnTyping ? searchBtnClickObservable : Rx.Observable.merge(searchBtnClickObservable);
-        searchObservable.subscribe(this._searchObserver);
+        searchObservable.subscribe(this._searchSubject);
 
         // Search observer (actually search subject ?) subscribe the generator ?
         let observerBuilder = MendelWebs.getDefaultAjaxResponseObserverBuilder();
-        this._searchSubscription = this._searchObserver.subscribe(observerBuilder.createAjaxResponseObserver(this.createObserverForSearchResponse(frgSearchBox.find('#sltSearchResultList'))));
+        this._searchSubscription = this._searchSubject.subscribe(observerBuilder.createAjaxResponseObserver(this.createObserverForSearchResponse(frgSearchBox.find('#sltSearchResultList'))));
     }
 
     // Select search result
@@ -122,8 +123,8 @@ CommonSearchBoxFragmentRender.prototype.createObserverForSearchResponse = functi
         next: response => {
             let isSuccess = response.success;
             if (isSuccess) {
-                let page = response.resultObject;
-                renderFunc(page);
+                let searchResult = response.resultObject;
+                renderFunc(searchResult);
             } else {
                 emptyFunc();
                 let erroMsg = response.errorMessages.reduce((acc, cur) => acc + cur + '<br>', '');
@@ -142,14 +143,38 @@ CommonSearchBoxFragmentRender.prototype.createObserverForSearchResponse = functi
     };
 };
 
-CommonSearchBoxFragmentRender.prototype.renderResult = function () {
+/**
+ * Render the retrieved result
+ * @param {JQuery} searchResultEle
+ * @param {Map} searchResult
+ * @returns {undefined}
+ */
+CommonSearchBoxFragmentRender.prototype.renderResult = function (searchResultEle, searchResult) {
+    // Test first
+    console.log(searchResult);
+    let searchResultEleContent = Rx.Observable.from(searchResult)
+            .map(tag => this._selectedSearchResultEleGenerator(tag))
+            .reduce((acc, cur) => acc + cur, '');
 
+    console.log(searchResultEleContent);
+    searchResultEle.html(searchResultEleContent);
 };
 
-CommonSearchBoxFragmentRender.prototype.renderEmpty = function () {
-
+/**
+ * Render no-result
+ * @param {JQuery} searchResultEle
+ * @returns {undefined}
+ */
+CommonSearchBoxFragmentRender.prototype.renderEmpty = function (searchResultEle) {
+    searchResultEle.empty();
 };
 
-CommonSearchBoxFragmentRender.prototype.renderError = function () {
-
+/**
+ * Render error message
+ * @param {JQuery} searchResultEle
+ * @param {String} errorMsg
+ * @returns {undefined}
+ */
+CommonSearchBoxFragmentRender.prototype.renderError = function (searchResultEle, errorMsg) {
+    // TODO Implement
 };
